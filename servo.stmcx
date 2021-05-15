@@ -597,7 +597,7 @@
 						</mtpa>
 						<feed_forward version="1.0">
 							<vars>
-								<var version="1.0" type="MC_Bool" name="AF_Feed_Forward" enable="true" visible="true" readonly="false" value="false" />
+								<var version="1.0" type="MC_Bool" name="AF_Feed_Forward" enable="true" visible="true" readonly="false" value="true" />
 							</vars>
 						</feed_forward>
 						<overmodulation version="1.0">

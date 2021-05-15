@@ -88,6 +88,8 @@ void Error_Handler(void);
 #define M1_TEMPERATURE_GPIO_Port GPIOB
 #define M1_PWM_WL_Pin GPIO_PIN_15
 #define M1_PWM_WL_GPIO_Port GPIOB
+#define LED_STATUS_Pin GPIO_PIN_6
+#define LED_STATUS_GPIO_Port GPIOC
 #define M1_PWM_UH_Pin GPIO_PIN_8
 #define M1_PWM_UH_GPIO_Port GPIOA
 #define M1_PWM_VH_Pin GPIO_PIN_9
@@ -100,6 +102,15 @@ void Error_Handler(void);
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
+#define M1_DIR_Pin GPIO_PIN_15
+#define M1_DIR_GPIO_Port GPIOA
+#define USER_BUTTON_Pin GPIO_PIN_10
+#define USER_BUTTON_GPIO_Port GPIOC
+#define USER_BUTTON_EXTI_IRQn EXTI15_10_IRQn
+#define M1_STEP_Pin GPIO_PIN_3
+#define M1_STEP_GPIO_Port GPIOB
+#define M1_EN_Pin GPIO_PIN_4
+#define M1_EN_GPIO_Port GPIOB
 #define M1_ENCODER_A_Pin GPIO_PIN_6
 #define M1_ENCODER_A_GPIO_Port GPIOB
 #define M1_ENCODER_B_Pin GPIO_PIN_7
