@@ -1,0 +1,17 @@
+stm32g4xx_hal_cordic.c:326:13:HAL_CORDIC_MspInit	0	static
+stm32g4xx_hal_cordic.c:202:19:HAL_CORDIC_Init	8	static
+stm32g4xx_hal_cordic.c:341:13:HAL_CORDIC_MspDeInit	0	static
+stm32g4xx_hal_cordic.c:269:19:HAL_CORDIC_DeInit	8	static
+stm32g4xx_hal_cordic.c:559:19:HAL_CORDIC_Configure	12	static
+stm32g4xx_hal_cordic.c:606:19:HAL_CORDIC_Calculate	32	static
+stm32g4xx_hal_cordic.c:700:19:HAL_CORDIC_CalculateZO	32	static
+stm32g4xx_hal_cordic.c:793:19:HAL_CORDIC_Calculate_IT	12	static
+stm32g4xx_hal_cordic.c:885:19:HAL_CORDIC_Calculate_DMA	24	static
+stm32g4xx_hal_cordic.c:1053:13:HAL_CORDIC_ErrorCallback	0	static
+stm32g4xx_hal_cordic.c:1321:13:CORDIC_DMAError	8	static
+stm32g4xx_hal_cordic.c:1069:13:HAL_CORDIC_CalculateCpltCallback	0	static
+stm32g4xx_hal_cordic.c:1261:13:CORDIC_DMAInCplt	8	static
+stm32g4xx_hal_cordic.c:1293:13:CORDIC_DMAOutCplt	8	static
+stm32g4xx_hal_cordic.c:1102:6:HAL_CORDIC_IRQHandler	16	static
+stm32g4xx_hal_cordic.c:1173:25:HAL_CORDIC_GetState	0	static
+stm32g4xx_hal_cordic.c:1186:10:HAL_CORDIC_GetError	0	static

@@ -1,0 +1,17 @@
+mc_tasks.c:518:13:FOC_Clear	24	static
+mc_tasks.c:108:13:MCboot	56	static
+mc_tasks.c:554:13:FOC_InitAdditionalMethods	0	static
+mc_tasks.c:571:13:FOC_CalcCurrRef	8	static
+mc_tasks.c:594:13:TSK_SetChargeBootCapDelayM1	0	static
+mc_tasks.c:605:13:TSK_ChargeBootCapDelayHasElapsedM1	0	static
+mc_tasks.c:621:13:TSK_SetStopPermanencyTimeM1	0	static
+mc_tasks.c:632:13:TSK_StopPermanencyTimeHasElapsedM1	0	static
+mc_tasks.c:298:13:TSK_MediumFrequencyTaskM1	16	static
+mc_tasks.c:237:13:MC_Scheduler	16	static
+mc_tasks.c:658:16:TSK_HighFrequencyTask	48	static
+mc_tasks.c:780:13:TSK_SafetyTask_PWMOFF	24	static
+mc_tasks.c:758:13:TSK_SafetyTask	8	static
+mc_tasks.c:219:13:MC_RunMotorControlTasks	8	static
+mc_tasks.c:835:23:GetMCI	0	static
+mc_tasks.c:851:13:TSK_HardwareFaultTask	8	static
+mc_tasks.c:866:13:mc_lock_pins	120	static

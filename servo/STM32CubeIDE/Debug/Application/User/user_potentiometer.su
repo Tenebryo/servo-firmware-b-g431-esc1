@@ -1,0 +1,2 @@
+user_potentiometer.c:31:6:POT_Init	8	static
+user_potentiometer.c:41:10:POT_ReadValue	16	static

@@ -11,6 +11,7 @@
 
 #include "mc_api.h"
 #include "parameters_conversion.h"
+#include "regular_conversion_manager.h"
 
 
 #ifdef __cplusplus
@@ -20,7 +21,7 @@
 
  void POT_ReadValue(uint16_t *potentiometer_value);
 
- void POT_Init(uint8_t handle);
+ void POT_Init(RegConv_t * regConv);
 
 
 #ifdef __cplusplus

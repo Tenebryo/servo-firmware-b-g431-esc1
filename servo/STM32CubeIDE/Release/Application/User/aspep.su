@@ -1,0 +1,14 @@
+aspep.c:103:6:ASPEP_ComputeHeaderCRC	12	static
+aspep.c:138:6:ASPEP_CheckHeaderCRC	0	static
+aspep.c:161:6:ASPEP_start	8	static
+aspep.c:172:6:ASPEP_sendBeacon	16	static,ignoring_inline_asm
+aspep.c:185:6:ASPEP_sendNack	4	static,ignoring_inline_asm
+aspep.c:192:6:ASPEP_sendPing	12	static,ignoring_inline_asm
+aspep.c:201:6:ASPEP_getBuffer	4	static
+aspep.c:248:6:ASPEP_CheckBeacon	12	static
+aspep.c:275:9:ASPEP_sendPacket	24	static,ignoring_inline_asm
+aspep.c:332:9:ASPEP_TXframeProcess	24	static,ignoring_inline_asm
+aspep.c:413:6:ASPEP_HWDataTransmittedIT	16	static,ignoring_inline_asm
+aspep.c:467:10:ASPEP_RXframeProcess	24	static,ignoring_inline_asm
+aspep.c:591:6:ASPEP_HWDataReceivedIT	16	static
+aspep.c:644:6:ASPEP_HWDMAReset	0	static

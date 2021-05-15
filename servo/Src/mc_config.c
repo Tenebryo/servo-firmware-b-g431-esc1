@@ -103,6 +103,18 @@ PID_Handle_t PIDIdHandle_M1 =
 };
 
 /**
+  * @brief  FeedForwardCtrl parameters Motor 1
+  */
+FF_Handle_t FF_M1 =
+{
+  .hVqdLowPassFilterBW    = M1_VQD_SW_FILTER_BW_FACTOR,
+  .wDefConstant_1D        = (int32_t)CONSTANT1_D,
+  .wDefConstant_1Q        = (int32_t)CONSTANT1_Q,
+  .wDefConstant_2         = (int32_t)CONSTANT2_QD,
+  .hVqdLowPassFilterBWLOG = M1_VQD_SW_FILTER_BW_FACTOR_LOG
+};
+
+/**
   * @brief  SpeednTorque Controller parameters Motor 1
   */
 SpeednTorqCtrl_Handle_t SpeednTorqCtrlM1 =
@@ -290,6 +302,7 @@ PID_Handle_t *pPIDIq[NBR_OF_MOTORS] = {&PIDIqHandle_M1};
 PID_Handle_t *pPIDId[NBR_OF_MOTORS] = {&PIDIdHandle_M1};
 NTC_Handle_t *pTemperatureSensor[NBR_OF_MOTORS] = {&TempSensor_M1};
 PQD_MotorPowMeas_Handle_t *pMPM[NBR_OF_MOTORS] = {&PQD_MotorPowMeasM1};
+FF_Handle_t *pFF[NBR_OF_MOTORS] = {&FF_M1};
 
 /* USER CODE BEGIN Additional configuration */
 

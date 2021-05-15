@@ -24,6 +24,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "user_potentiometer.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -142,8 +144,35 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  RegConv_t pot_regConv;
+  pot_regConv.channel = 11;
+  pot_regConv.regADC = hadc1.Instance;
+  pot_regConv.samplingTime = 47;
+
+  POT_Init(&pot_regConv);
+
+  uint16_t pot_value;
+  // one call beforehand to start the first conversion
+  POT_ReadValue(&pot_value);
+  pot_value = 250;
+
+  uint32_t last = HAL_GetTick();
+  uint32_t now = last;
+
   while (1)
   {
+
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+
+    while (now < last + pot_value) {
+      HAL_Delay(1);
+      now = HAL_GetTick();
+      POT_ReadValue(&pot_value);
+      pot_value /= 128;
+      pot_value += 8;
+    }
+    last = now;
 
     /* USER CODE END WHILE */
 

@@ -20,7 +20,7 @@ uint8_t POT_Handle;
 /* Private macros ------------------------------------------------------------*/
 
 /* Function prototypes -----------------------------------------------*/
-bool POT_ReadValue(uint16_t *potentiometer_value);
+uint32_t POT_ReadValue(uint16_t *potentiometer_value);
 
 /* Function -----------------------------------------------*/
 

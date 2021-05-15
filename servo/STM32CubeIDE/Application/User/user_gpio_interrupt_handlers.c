@@ -7,7 +7,10 @@
  *      Author: Sam Blazes
  */
 
-#include "stm32g4xx_hal_gpio.h"
+#include "stm32g4xx.h"
+
+void step_pin_interrupt(void);
+void button_interrupt(void);
 
 /*
  * @brief User GPIO interrupt handler for EXTI.
@@ -38,7 +41,7 @@ typedef struct {
  * @param None
  * @retval None
  */
-void step_pin_interrupt() {
+void step_pin_interrupt(void) {
   if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) {
 
   } else {
@@ -51,6 +54,6 @@ void step_pin_interrupt() {
  * @param None
  * @retval None
  */
-void button_interrupt() {
+void button_interrupt(void) {
 
 }

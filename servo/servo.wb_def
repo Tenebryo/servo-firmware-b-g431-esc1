@@ -196,7 +196,7 @@
 		<define key="FW_KPDIV" value="32768" />
 		<define key="FW_KIDIV" value="32768" />
 		<define key="MTPA_ENABLING" value="DISABLE" />
-		<define key="FEED_FORWARD_CURRENT_REG_ENABLING" value="DISABLE" />
+		<define key="FEED_FORWARD_CURRENT_REG_ENABLING" value="ENABLE" />
 		<define key="OVERMODULATION" value="FALSE" />
 		<define key="DISCONTINUOUS_PWM" value="FALSE" />
 		<define key="CONSTANT1_Q" value="2168275" />

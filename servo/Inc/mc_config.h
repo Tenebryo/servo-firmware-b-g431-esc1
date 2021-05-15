@@ -30,6 +30,7 @@
 #include "mc_interface.h"
 #include "r_divider_bus_voltage_sensor.h"
 #include "virtual_bus_voltage_sensor.h"
+#include "feed_forward_ctrl.h"
 #include "pqd_motor_power_measurement.h"
 #include "r3_2_g4xx_pwm_curr_fdbk.h"
 
@@ -55,6 +56,7 @@ extern EncAlign_Handle_t EncAlignCtrlM1;
 extern RDivider_Handle_t BusVoltageSensor_M1;
 extern CircleLimitation_Handle_t CircleLimitationM1;
 extern RampExtMngr_Handle_t RampExtMngrHFParamsM1;
+extern FF_Handle_t FF_M1;
 
 #define NBR_OF_MOTORS 1
 extern MCI_Handle_t Mci[NBR_OF_MOTORS];
@@ -64,6 +66,7 @@ extern PID_Handle_t *pPIDIq[NBR_OF_MOTORS];
 extern PID_Handle_t *pPIDId[NBR_OF_MOTORS];
 extern NTC_Handle_t *pTemperatureSensor[NBR_OF_MOTORS];
 extern PQD_MotorPowMeas_Handle_t *pMPM[NBR_OF_MOTORS];
+extern FF_Handle_t *pFF[NBR_OF_MOTORS];
 /* USER CODE BEGIN Additional extern */
 
 /* USER CODE END Additional extern */
