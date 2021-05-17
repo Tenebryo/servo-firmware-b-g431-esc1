@@ -85,7 +85,7 @@ Application/User/main.o: \
  ../../Inc/parameters_conversion.h ../../Inc/mc_math.h \
  ../../Inc/parameters_conversion_g4xx.h ../../Inc/pmsm_motor_parameters.h \
  ../../Inc/drive_parameters.h ../../Inc/power_stage_parameters.h \
- ../../Inc/mc_api.h \
+ ../../Inc/mc_api.h ../../Inc/mc_config.h \
  C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include/user_potentiometer.h \
  ../../Inc/mc_api.h ../../Inc/parameters_conversion.h
 
@@ -272,6 +272,8 @@ Application/User/main.o: \
 ../../Inc/power_stage_parameters.h:
 
 ../../Inc/mc_api.h:
+
+../../Inc/mc_config.h:
 
 C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include/user_potentiometer.h:
 

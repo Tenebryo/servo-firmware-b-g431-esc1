@@ -1,0 +1,2 @@
+user_state_machine.c:19:6:SetState	0	static
+user_state_machine.c:24:6:STATEMACHINE_Update	16	static

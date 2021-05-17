@@ -1,0 +1,2 @@
+user_position_controller.c:15:6:POSCTRL_init	4	static
+user_position_controller.c:20:6:POSCTRL_update	0	static

@@ -28,9 +28,9 @@
  ************************/
 
 /***************** MOTOR ELECTRICAL PARAMETERS  ******************************/
-#define POLE_PAIR_NUM          1 /* Number of motor pole pairs */
-#define RS                     0.35 /* Stator resistance , ohm*/
-#define LS                     0.000600 /* Stator inductance, H
+#define POLE_PAIR_NUM          11 /* Number of motor pole pairs */
+#define RS                     0.01 /* Stator resistance , ohm*/
+#define LS                     0.000033 /* Stator inductance, H
                                                  For I-PMSM it is equal to Lq */
 
 /* When using Id = 0, NOMINAL_CURRENT is utilized to saturate the output of the
@@ -42,8 +42,8 @@
 */
 
 #define NOMINAL_CURRENT         5445
-#define MOTOR_MAX_SPEED_RPM     500 /*!< Maximum rated speed  */
-#define MOTOR_VOLTAGE_CONSTANT  2.7 /*!< Volts RMS ph-ph /kRPM */
+#define MOTOR_MAX_SPEED_RPM     1000 /*!< Maximum rated speed  */
+#define MOTOR_VOLTAGE_CONSTANT  2.2 /*!< Volts RMS ph-ph /kRPM */
 #define ID_DEMAG                -5445 /*!< Demagnetization current */
 /***************** MOTOR SENSORS PARAMETERS  ******************************/
 /* Motor sensors parameters are always generated but really meaningful only
@@ -62,7 +62,7 @@
                                                  signal H1 and the maximum of
                                                  the Bemf induced on phase A */
 /*** Quadrature encoder ***/
-#define M1_ENCODER_PPR             400  /*!< Number of pulses per
+#define M1_ENCODER_PPR             1024  /*!< Number of pulses per
                                             revolution */
 
 #endif /*__PMSM_MOTOR_PARAMETERS_H*/

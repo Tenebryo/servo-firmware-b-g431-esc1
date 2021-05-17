@@ -1,10 +1,8 @@
-Application/User/user_position_controller.o: \
- ../Application/User/user_position_controller.c \
- C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include/user_position_controller.h \
- ../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/pid_regulator.h \
- ../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/mc_type.h \
- ../../Inc/mc_stm_types.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_bus.h \
+Application/User/user_step_dir.o: ../Application/User/user_step_dir.c \
+ ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
+ ../../Inc/stm32g4xx_hal_conf.h \
+ ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
+ ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h \
  ../../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g4xx.h \
  ../../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g431xx.h \
  ../../Drivers/CMSIS/Include/core_cm4.h \
@@ -13,10 +11,6 @@ Application/User/user_position_controller.o: \
  ../../Drivers/CMSIS/Include/cmsis_gcc.h \
  ../../Drivers/CMSIS/Include/mpu_armv7.h \
  ../../Drivers/CMSIS/Device/ST/STM32G4xx/Include/system_stm32g4xx.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
- ../../Inc/stm32g4xx_hal_conf.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h \
  ../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h \
  ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc_ex.h \
  ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_gpio.h \
@@ -42,36 +36,15 @@ Application/User/user_position_controller.o: \
  ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr.h \
  ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr_ex.h \
  ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_rcc.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_system.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_adc.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_tim.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_gpio.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_usart.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_dac.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_dma.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_dmamux.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_comp.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_opamp.h \
- ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_cordic.h \
- ../../Inc/mc_api.h \
- ../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/mc_type.h \
- ../../Inc/mc_interface.h \
- ../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/state_machine.h \
- ../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/speed_torq_ctrl.h \
- ../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/pid_regulator.h \
- ../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/speed_pos_fdbk.h
+ ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h
 
-C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include/user_position_controller.h:
+../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 
-../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/pid_regulator.h:
+../../Inc/stm32g4xx_hal_conf.h:
 
-../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/mc_type.h:
+../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h:
 
-../../Inc/mc_stm_types.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_bus.h:
+../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h:
 
 ../../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g4xx.h:
 
@@ -88,14 +61,6 @@ C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Ap
 ../../Drivers/CMSIS/Include/mpu_armv7.h:
 
 ../../Drivers/CMSIS/Device/ST/STM32G4xx/Include/system_stm32g4xx.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
-
-../../Inc/stm32g4xx_hal_conf.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h:
 
 ../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h:
 
@@ -148,41 +113,3 @@ C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Ap
 ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim.h:
 
 ../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_rcc.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_system.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_adc.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_tim.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_gpio.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_usart.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_dac.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_dma.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_dmamux.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_comp.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_opamp.h:
-
-../../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_cordic.h:
-
-../../Inc/mc_api.h:
-
-../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/mc_type.h:
-
-../../Inc/mc_interface.h:
-
-../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/state_machine.h:
-
-../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/speed_torq_ctrl.h:
-
-../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/pid_regulator.h:
-
-../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc/speed_pos_fdbk.h:

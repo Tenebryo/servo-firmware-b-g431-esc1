@@ -12,7 +12,7 @@ stm32g4xx_hal_msp.c:498:6:HAL_FDCAN_MspDeInit	8	static
 stm32g4xx_hal_msp.c:529:6:HAL_OPAMP_MspInit	48	static
 stm32g4xx_hal_msp.c:604:6:HAL_OPAMP_MspDeInit	0	static
 stm32g4xx_hal_msp.c:666:6:HAL_TIM_Base_MspInit	8	static
-stm32g4xx_hal_msp.c:688:6:HAL_TIM_Encoder_MspInit	48	static
-stm32g4xx_hal_msp.c:718:6:HAL_TIM_MspPostInit	64	static
-stm32g4xx_hal_msp.c:771:6:HAL_TIM_Base_MspDeInit	8	static
-stm32g4xx_hal_msp.c:797:6:HAL_TIM_Encoder_MspDeInit	8	static
+stm32g4xx_hal_msp.c:688:6:HAL_TIM_Encoder_MspInit	64	static
+stm32g4xx_hal_msp.c:750:6:HAL_TIM_MspPostInit	64	static
+stm32g4xx_hal_msp.c:803:6:HAL_TIM_Base_MspDeInit	8	static
+stm32g4xx_hal_msp.c:829:6:HAL_TIM_Encoder_MspDeInit	8	static

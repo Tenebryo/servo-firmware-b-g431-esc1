@@ -1,0 +1,36 @@
+{
+    "configurations": [
+      {
+        "name": "Win32",
+        // "intelliSenseMode": "clang-x64",
+        "includePath": [
+            "${workspaceFolder}/**",
+            "${workspaceFolder}/Drivers/CMSIS/Core/Include",
+            "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32G4xx/Include",
+            "${workspaceFolder}/Drivers/CMSIS/DSP/Include",
+            "${workspaceFolder}/Drivers/CMSIS/Include",
+            "${workspaceFolder}/Drivers/CMSIS/NN/Include",
+            "${workspaceFolder}/Drivers/CMSIS/RTOS2/Include",
+            "${workspaceFolder}/Drivers/STM32G4xx_HAL_Driver/Inc",
+            "${workspaceFolder}/Drivers/STM32G4xx_HAL_Driver/Inc/Legacy",
+            "${workspaceFolder}/Inc",
+            "${workspaceFolder}/MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc",
+            "${workspaceFolder}/MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc",
+            "${workspaceFolder}/STM32CubeIDE/Application/Include"
+        ]
+        // "macFrameworkPath": ["/System/Library/Frameworks"],
+        // "defines": ["FOO", "BAR=100"],
+        // "forcedInclude": ["${workspaceFolder}/Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h"],
+        // "compilerPath": "/usr/bin/clang",
+        // "cStandard": "c11",
+        // "cppStandard": "c++17"
+        // "compileCommands": "/path/to/compile_commands.json",
+        // "browse": {
+        //   "path": ["${workspaceFolder}"],
+        //   "limitSymbolsToIncludedHeaders": true,
+        //   "databaseFilename": ""
+        // }
+      }
+    ],
+    "version": 4
+  }

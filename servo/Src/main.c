@@ -24,6 +24,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "stm32g4xx_hal.h"
+#include "mc_config.h"
+#include "motorcontrol.h"
 #include "user_potentiometer.h"
 
 /* USER CODE END Includes */
@@ -163,19 +166,98 @@ int main(void)
   uint32_t last = HAL_GetTick();
   uint32_t now = last;
 
+  HAL_Delay(500);
+
+
+  // MC_ProgramTorqueRampMotor1(0, 0);
+  MC_ProgramSpeedRampMotor1(0, 0);
+
+
+  MC_StartMotor1();
+
+  // HAL_Delay(2000);
+  // MC_ProgramSpeedRampMotor1(50, 1000);
+  
+  // HAL_Delay(10000);
+  // MC_ProgramSpeedRampMotor1(0, 1000);
+
+  // HAL_Delay(1000);
+  // MC_StopMotor1();
+
+
   while (1)
   {
+    // POT_ReadValue(&pot_value);
 
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+    // int16_t tsp = pot_value>>2;
 
-    while (now < last + pot_value) {
-      HAL_Delay(1);
-      now = HAL_GetTick();
-      POT_ReadValue(&pot_value);
-      pot_value /= 128;
-      pot_value += 8;
-    }
-    last = now;
+    // if (tsp < 32) {
+    //   tsp = 0;
+    // }
+    
+    // MC_ProgramTorqueRampMotor1(tsp, 0);
+
+
+    // State_t state = MC_GetSTMStateMotor1();
+
+
+    // if (state == RUN) {
+    //   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
+
+    // } else {
+    //   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
+    // }
+
+
+
+    // uint8_t stateI = (uint8_t)state;
+
+    // for (int i = 0; i < 8; i++) {
+    //   if ((stateI & (0b1000000 >> i)) != 0) {
+    //     for (int j = 0; j < 5; j++) {
+    //       HAL_GPIO_TogglePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin);
+    //       HAL_Delay(100);
+    //     }
+    //   } else {
+    //     HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
+    //     HAL_Delay(500);
+    //   }
+
+    //   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
+    //   HAL_Delay(250);
+    // }
+    // HAL_Delay(2000);
+
+
+    // int16_t position = ENCODER_M1._Super.hMecAngle;
+    // int16_t position16 = position & ((1 << 12) - 1);
+
+    // if (position16 < (1<<6)) {
+    //   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
+    // } else {
+    //   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
+    // }
+
+    // POT_ReadValue(&pot_value);
+    // if (position > pot_value) {
+    //   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
+    // } else {
+    //   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
+    // }
+
+    // HAL_Delay(50);
+
+    // HAL_GPIO_TogglePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin);
+    // while (now < last + pot_value) {
+    //   HAL_Delay(5);
+    //   now = HAL_GetTick();
+      
+
+    //   POT_ReadValue(&pot_value);
+    //   pot_value /= 128;
+    //   pot_value += 8;
+    // }
+    // last = now;
 
     /* USER CODE END WHILE */
 

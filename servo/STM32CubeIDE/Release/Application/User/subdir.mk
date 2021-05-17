@@ -25,9 +25,13 @@ C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/Src/stm32g4xx_m
 ../Application/User/syscalls.c \
 ../Application/User/sysmem.c \
 C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/Src/usart_aspep_driver.c \
+../Application/User/user_calibration.c \
 ../Application/User/user_gpio_interrupt_handlers.c \
+../Application/User/user_motor_consts.c \
 ../Application/User/user_position_controller.c \
-../Application/User/user_potentiometer.c 
+../Application/User/user_potentiometer.c \
+../Application/User/user_state_machine.c \
+../Application/User/user_step_dir.c 
 
 OBJS += \
 ./Application/User/aspep.o \
@@ -50,9 +54,13 @@ OBJS += \
 ./Application/User/syscalls.o \
 ./Application/User/sysmem.o \
 ./Application/User/usart_aspep_driver.o \
+./Application/User/user_calibration.o \
 ./Application/User/user_gpio_interrupt_handlers.o \
+./Application/User/user_motor_consts.o \
 ./Application/User/user_position_controller.o \
-./Application/User/user_potentiometer.o 
+./Application/User/user_potentiometer.o \
+./Application/User/user_state_machine.o \
+./Application/User/user_step_dir.o 
 
 C_DEPS += \
 ./Application/User/aspep.d \
@@ -75,9 +83,13 @@ C_DEPS += \
 ./Application/User/syscalls.d \
 ./Application/User/sysmem.d \
 ./Application/User/usart_aspep_driver.d \
+./Application/User/user_calibration.d \
 ./Application/User/user_gpio_interrupt_handlers.d \
+./Application/User/user_motor_consts.d \
 ./Application/User/user_position_controller.d \
-./Application/User/user_potentiometer.d 
+./Application/User/user_potentiometer.d \
+./Application/User/user_state_machine.d \
+./Application/User/user_step_dir.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -121,10 +133,18 @@ Application/User/sysmem.o: ../Application/User/sysmem.c Application/User/subdir.
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/sysmem.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Application/User/usart_aspep_driver.o: C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/Src/usart_aspep_driver.c Application/User/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/usart_aspep_driver.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Application/User/user_calibration.o: ../Application/User/user_calibration.c Application/User/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/user_calibration.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Application/User/user_gpio_interrupt_handlers.o: ../Application/User/user_gpio_interrupt_handlers.c Application/User/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/user_gpio_interrupt_handlers.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Application/User/user_motor_consts.o: ../Application/User/user_motor_consts.c Application/User/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/user_motor_consts.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Application/User/user_position_controller.o: ../Application/User/user_position_controller.c Application/User/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/user_position_controller.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Application/User/user_potentiometer.o: ../Application/User/user_potentiometer.c Application/User/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/user_potentiometer.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Application/User/user_state_machine.o: ../Application/User/user_state_machine.c Application/User/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/user_state_machine.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Application/User/user_step_dir.o: ../Application/User/user_step_dir.c Application/User/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -DSTM32G431xx -DUSE_HAL_DRIVER -DARM_MATH_CM4 -c -I"C:/Users/sunbl/Projects/electronics/st-esc/workbench_files/servo/STM32CubeIDE/Application/Include" -I../../Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc -I../../MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I../../Drivers/CMSIS/DSP/Include -Ofast -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/user_step_dir.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 
