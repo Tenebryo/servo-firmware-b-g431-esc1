@@ -19,9 +19,9 @@ bool STEPDIR_ReadEnable(void) {
 }
 
 
-uint32_t STEPDIR_GetInputPosition(void) {
+int32_t STEPDIR_GetInputPosition(void) {
   // timer2
   uint32_t pos = TIM2->CNT;
 
-  return (pos);
+  return ((int32_t)pos);
 }
