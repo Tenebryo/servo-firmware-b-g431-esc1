@@ -1,6 +1,0 @@
-usart_aspep_driver.c:9:6:UASPEP_INIT	16	static
-usart_aspep_driver.c:16:6:UASPEP_DAMCONFIG_TX	12	static
-usart_aspep_driver.c:35:6:UASPEP_DAMCONFIG_RX	4	static
-usart_aspep_driver.c:54:6:UASPEP_SEND_PACKET	8	static
-usart_aspep_driver.c:71:6:UASPEP_RECEIVE_BUFFER	8	static
-usart_aspep_driver.c:80:6:UASPEP_IDLE_ENABLE	0	static

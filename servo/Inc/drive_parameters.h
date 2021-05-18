@@ -31,7 +31,7 @@
 /******** MAIN AND AUXILIARY SPEED/POSITION SENSOR(S) SETTINGS SECTION ********/
 
 /*** Speed measurement settings ***/
-#define MAX_APPLICATION_SPEED_RPM       1000 /*!< rpm, mechanical */
+#define MAX_APPLICATION_SPEED_RPM       10000 /*!< rpm, mechanical */
 #define MIN_APPLICATION_SPEED_RPM       0 /*!< rpm, mechanical,
                                                            absolute value */
 #define MEAS_ERRORS_BEFORE_FAULTS       3 /*!< Number of speed
@@ -58,7 +58,7 @@
 /**************************    DRIVE SETTINGS SECTION   **********************/
 /* PWM generation and current reading */
 
-#define PWM_FREQUENCY   30000
+#define PWM_FREQUENCY   20000
 #define PWM_FREQ_SCALING 1
 
 #define LOW_SIDE_SIGNALS_ENABLING        LS_PWM_TIMER
@@ -71,10 +71,10 @@
                                                            number of PWM cycles */
 /* Gains values for torque and flux control loops */
 #define PID_TORQUE_KP_DEFAULT         2711
-#define PID_TORQUE_KI_DEFAULT         55
+#define PID_TORQUE_KI_DEFAULT         822
 #define PID_TORQUE_KD_DEFAULT         100
 #define PID_FLUX_KP_DEFAULT           1643
-#define PID_FLUX_KI_DEFAULT           55
+#define PID_FLUX_KI_DEFAULT           822
 #define PID_FLUX_KD_DEFAULT           100
 
 /* Torque/Flux control loop gains dividers*/
@@ -86,18 +86,16 @@
 #define TF_KDDIV_LOG                  LOG2(8192)
 #define TFDIFFERENTIAL_TERM_ENABLING  DISABLE
 
-/* Speed control loop */
-#define SPEED_LOOP_FREQUENCY_HZ       2000 /*!<Execution rate of speed
-                                                      regulation loop (Hz) */
+#define POSITION_LOOP_FREQUENCY_HZ    2000 /*!<Execution rate of position control regulation loop (Hz) */
 
-#define PID_SPEED_KP_DEFAULT          3932/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
-#define PID_SPEED_KI_DEFAULT          705/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
+#define PID_SPEED_KP_DEFAULT          3707/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
+#define PID_SPEED_KI_DEFAULT          20/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
 #define PID_SPEED_KD_DEFAULT          0/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
 /* Speed PID parameter dividers */
-#define SP_KPDIV                      128
+#define SP_KPDIV                      1024
 #define SP_KIDIV                      16384
 #define SP_KDDIV                      16
-#define SP_KPDIV_LOG                  LOG2(128)
+#define SP_KPDIV_LOG                  LOG2(1024)
 #define SP_KIDIV_LOG                  LOG2(16384)
 #define SP_KDDIV_LOG                  LOG2(16)
 
@@ -106,15 +104,27 @@
 /* USER CODE END PID_SPEED_INTEGRAL_INIT_DIV */
 
 #define SPD_DIFFERENTIAL_TERM_ENABLING DISABLE
-#define IQMAX                          5445
+#define IQMAX                          21243
 
 /* Default settings */
-#define DEFAULT_CONTROL_MODE           STC_TORQUE_MODE /*!< STC_TORQUE_MODE or
+#define DEFAULT_CONTROL_MODE           STC_SPEED_MODE /*!< STC_TORQUE_MODE or
                                                         STC_SPEED_MODE */
-#define DEFAULT_TARGET_SPEED_RPM      1500
+#define DEFAULT_TARGET_SPEED_RPM      1423
 #define DEFAULT_TARGET_SPEED_UNIT      (DEFAULT_TARGET_SPEED_RPM*SPEED_UNIT/_RPM)
-#define DEFAULT_TORQUE_COMPONENT       0
+#define DEFAULT_TORQUE_COMPONENT       1633
 #define DEFAULT_FLUX_COMPONENT         0
+
+#define PID_POSITION_KP_GAIN			400
+#define PID_POSITION_KI_GAIN			0
+#define PID_POSITION_KD_GAIN			0
+#define PID_POSITION_KPDIV				1024
+#define PID_POSITION_KIDIV				32768
+#define PID_POSITION_KDDIV				16
+#define PID_POSITION_KPDIV_LOG			LOG2(1024)
+#define PID_POSITION_KIDIV_LOG			LOG2(32768)
+#define PID_POSITION_KDDIV_LOG			LOG2(16)
+#define PID_POSITION_ANGLE_STEP			10.0
+#define PID_POSITION_MOV_DURATION		10.0
 
 /**************************    FIRMWARE PROTECTIONS SECTION   *****************/
 #define OV_VOLTAGE_THRESHOLD_V          28 /*!< Over-voltage
@@ -144,9 +154,9 @@
 
 /******************************   START-UP PARAMETERS   **********************/
 /* Encoder alignment */
-#define ALIGNMENT_DURATION              1000 /*!< milliseconds */
-#define ALIGNMENT_ANGLE_DEG             270 /*!< degrees [0...359] */
-#define FINAL_I_ALIGNMENT               2178 /*!< s16A */
+#define ALIGNMENT_DURATION              4000 /*!< milliseconds */
+#define ALIGNMENT_ANGLE_DEG             0 /*!< degrees [0...359] */
+#define FINAL_I_ALIGNMENT               5445 /*!< s16A */
 // With ALIGNMENT_ANGLE_DEG equal to 90 degrees final alignment
 // phase current = (FINAL_I_ALIGNMENT * 1.65/ Av)/(32767 * Rshunt)
 // being Av the voltage gain between Rshunt and A/D input
@@ -161,11 +171,12 @@
 
 /******************************   ADDITIONAL FEATURES   **********************/
 
-/*  Feed-forward parameters */
-#define FEED_FORWARD_CURRENT_REG_ENABLING ENABLE
-#define CONSTANT1_Q                    178882
-#define CONSTANT1_D                    108413
-#define CONSTANT2_QD                   17559
+/*  Maximum Torque Per Ampere strategy parameters */
+
+#define MTPA_ENABLING
+#define SEGDIV                         2655
+#define ANGC                           {-975,-2912,-4823,-6701,-8488,-10206,-11831,-13378}
+#define OFST                           {0,157,466,923,1502,2198,2988,3866}
 
 /*** On the fly start-up ***/
 

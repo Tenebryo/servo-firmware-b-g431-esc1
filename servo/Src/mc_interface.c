@@ -55,11 +55,12 @@
   * @param  pFOCVars pointer to FOC vars to be used by MCI.
   * @retval none.
   */
-__weak void MCI_Init( MCI_Handle_t * pHandle, STM_Handle_t * pSTM, SpeednTorqCtrl_Handle_t * pSTC, pFOCVars_t pFOCVars )
+__weak void MCI_Init( MCI_Handle_t * pHandle, STM_Handle_t * pSTM, SpeednTorqCtrl_Handle_t * pSTC, pFOCVars_t pFOCVars, PosCtrl_Handle_t * pPosCtrl )
 {
   pHandle->pSTM = pSTM;
   pHandle->pSTC = pSTC;
   pHandle->pFOCVars = pFOCVars;
+  pHandle->pPosCtrl = pPosCtrl;
 
   /* Buffer related initialization */
   pHandle->lastCommand = MCI_NOCOMMANDSYET;
@@ -134,6 +135,29 @@ __weak void MCI_SetCurrentReferences( MCI_Handle_t * pHandle, qd_t Iqdref )
   pHandle->Iqdref.q = Iqdref.q;
   pHandle->Iqdref.d = Iqdref.d;
   pHandle->CommandState = MCI_COMMAND_NOT_ALREADY_EXECUTED;
+  pHandle->LastModalitySetByUser = STC_TORQUE_MODE;
+}
+
+/**
+  * @brief  This is a buffered command to set a mechanical position of rotor. This commands
+  *         don't become active as soon as it is called but it will be executed
+  *         when the pSTM state is START_RUN or RUN. User can check the status
+  *         of the command calling the MCI_IsCommandAcknowledged method.
+  * @param  pHandle Pointer on the component instance to work on.
+  * @param  FinalPosition is the desired rotor position asked.
+  * @param  Duration the duration of the movement to reach the final position.
+  * @retval none.
+  */
+__weak void MCI_ExecPositionCommand( MCI_Handle_t * pHandle, float FinalPosition, float Duration )
+{
+  pHandle->pFOCVars->bDriveInput = INTERNAL;
+  float currentPositionRad = (float)(SPD_GetMecAngle(STC_GetSpeedSensor(pHandle->pSTC))) / RADTOS16;
+  if (Duration > 0) {
+    TC_MoveCommand(pHandle->pPosCtrl, currentPositionRad, FinalPosition - currentPositionRad, Duration);
+  } else {
+    TC_FollowCommand(pHandle->pPosCtrl, FinalPosition);
+  }
+
   pHandle->LastModalitySetByUser = STC_TORQUE_MODE;
 }
 
@@ -312,6 +336,56 @@ __weak MCI_CommandState_t  MCI_IsCommandAcknowledged( MCI_Handle_t * pHandle )
 __weak State_t  MCI_GetSTMState( MCI_Handle_t * pHandle )
 {
   return STM_GetState( pHandle->pSTM );
+}
+
+/**
+  * @brief  It returns information about the state of the position control.
+  * @param  pHandle Pointer on the component instance to work on.
+  * @retval State_t It returns the current state position control execution.
+  */
+__weak PosCtrlStatus_t  MCI_GetCtrlPositionState( MCI_Handle_t * pHandle )
+{
+  return TC_GetControlPositionStatus( pHandle->pPosCtrl );
+}
+
+/**
+  * @brief  It returns information about the rotor alignment procedure.
+  * @param  pHandle Pointer on the component instance to work on.
+  * @retval State_t It returns the current state of the alignment.
+  */
+__weak AlignStatus_t  MCI_GetAlignmentStatus( MCI_Handle_t * pHandle )
+{
+  return TC_GetAlignmentStatus( pHandle->pPosCtrl );
+}
+
+/**
+  * @brief  It returns the current position of the rotor.
+  * @param  pHandle Pointer on the component instance to work on.
+  * @retval float It returns the current mechanical angular position of the rotor.
+  */
+__weak float MCI_GetCurrentPosition( MCI_Handle_t * pHandle )
+{
+  return TC_GetCurrentPosition( pHandle->pPosCtrl );
+}
+
+/**
+  * @brief  It returns the final position asked to the motor.
+  * @param  pHandle Pointer on the component instance to work on.
+  * @retval float It returns the target mechanical angular position of the rotor.
+  */
+__weak float MCI_GetTargetPosition( MCI_Handle_t * pHandle )
+{
+  return TC_GetTargetPosition( pHandle->pPosCtrl );
+}
+
+/**
+  * @brief  It returns the total movement duration to reach the final position.
+  * @param  pHandle Pointer on the component instance to work on.
+  * @retval float It returns the movement duration allowed to reach the target position.
+  */
+__weak float MCI_GetMoveDuration( MCI_Handle_t * pHandle )
+{
+  return TC_GetMoveDuration( pHandle->pPosCtrl );
 }
 
 /**

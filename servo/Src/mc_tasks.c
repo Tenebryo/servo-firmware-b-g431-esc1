@@ -69,6 +69,8 @@ DOUT_handle_t *pR_Brake[NBR_OF_MOTORS];
 DOUT_handle_t *pOCPDisabling[NBR_OF_MOTORS];
 CircleLimitation_Handle_t *pCLM[NBR_OF_MOTORS];
 
+MTPA_Handle_t *pMaxTorquePerAmpere[2] = {MC_NULL,MC_NULL};
+
 RampExtMngr_Handle_t *pREMNG[NBR_OF_MOTORS];   /*!< Ramp manager used to modify the Iq ref
                                                     during the start-up switch over.*/
 
@@ -119,6 +121,7 @@ __weak void MCboot( MCI_Handle_t* pMCIList[NBR_OF_MOTORS] )
   bMCBootCompleted = 0;
   pCLM[M1] = &CircleLimitationM1;
 
+  pMaxTorquePerAmpere[M1] = &MTPARegM1;
   /**********************************************************/
   /*    PWM and current sensing component initialization    */
   /**********************************************************/
@@ -152,6 +155,12 @@ __weak void MCboot( MCI_Handle_t* pMCIList[NBR_OF_MOTORS] )
   pEAC[M1] = &EncAlignCtrlM1;
 
   /******************************************************/
+  /*   Position Control component initialization        */
+  /******************************************************/
+  PID_HandleInit(&PID_PosParamsM1);
+  TC_Init(&PosCtrlM1, &PID_PosParamsM1, &SpeednTorqCtrlM1, &ENCODER_M1);
+
+  /******************************************************/
   /*   Speed & torque component initialization          */
   /******************************************************/
   STC_Init(pSTC[M1],&PIDSpeedHandle_M1, &ENCODER_M1._Super);
@@ -183,11 +192,6 @@ __weak void MCboot( MCI_Handle_t* pMCIList[NBR_OF_MOTORS] )
   /*******************************************************/
   NTC_Init(&TempSensor_M1);
 
-  /*******************************************************/
-  /*   Feed forward component initialization             */
-  /*******************************************************/
-  FF_Init(pFF[M1],&(BusVoltageSensor_M1._Super),pPIDId[M1],pPIDIq[M1]);
-
   pREMNG[M1] = &RampExtMngrHFParamsM1;
   REMNG_Init(pREMNG[M1]);
 
@@ -195,7 +199,7 @@ __weak void MCboot( MCI_Handle_t* pMCIList[NBR_OF_MOTORS] )
   FOCVars[M1].bDriveInput = EXTERNAL;
   FOCVars[M1].Iqdref = STC_GetDefaultIqdref(pSTC[M1]);
   FOCVars[M1].UserIdref = STC_GetDefaultIqdref(pSTC[M1]).d;
-  MCI_Init(&Mci[M1], &STM[M1], pSTC[M1], &FOCVars[M1] );
+  MCI_Init(&Mci[M1], &STM[M1], pSTC[M1], &FOCVars[M1], pPosCtrl[M1]);
   MCI_ExecSpeedRamp(&Mci[M1],
   STC_GetMecSpeedRefUnitDefault(pSTC[M1]),0); /*First command to STC*/
   pMCIList[M1] = &Mci[M1];
@@ -422,6 +426,7 @@ __weak void TSK_MediumFrequencyTaskM1(void)
 
   case START:
     {
+        TC_EncAlignmentCommand(pPosCtrl[M1]);
         STM_NextState( &STM[M1], START_RUN ); /* only for sensored*/
     }
     break;
@@ -466,6 +471,8 @@ __weak void TSK_MediumFrequencyTaskM1(void)
     /* USER CODE BEGIN MediumFrequencyTask M1 2 */
 
     /* USER CODE END MediumFrequencyTask M1 2 */
+
+    TC_PositionRegulation(pPosCtrl[M1]);
 
     MCI_ExecBufferedCommands( &Mci[M1] );
     FOC_CalcCurrRef( M1 );
@@ -545,11 +552,6 @@ __weak void FOC_Clear(uint8_t bMotor)
 
   PWMC_SwitchOffPWM(pwmcHandle[bMotor]);
 
-  if (pFF[bMotor])
-  {
-    FF_Clear(pFF[bMotor]);
-  }
-
   /* USER CODE BEGIN FOC_Clear 1 */
 
   /* USER CODE END FOC_Clear 1 */
@@ -563,10 +565,6 @@ __weak void FOC_Clear(uint8_t bMotor)
   */
 __weak void FOC_InitAdditionalMethods(uint8_t bMotor)
 {
-    if (pFF[bMotor])
-    {
-      FF_InitFOCAdditionalMethods(pFF[bMotor]);
-    }
   /* USER CODE BEGIN FOC_InitAdditionalMethods 0 */
 
   /* USER CODE END FOC_InitAdditionalMethods 0 */
@@ -592,11 +590,11 @@ __weak void FOC_CalcCurrRef(uint8_t bMotor)
   {
     FOCVars[bMotor].hTeref = STC_CalcTorqueReference(pSTC[bMotor]);
     FOCVars[bMotor].Iqdref.q = FOCVars[bMotor].hTeref;
-
-    if (pFF[bMotor])
+    if (pMaxTorquePerAmpere[bMotor])
     {
-      FF_VqdffComputation(pFF[bMotor], FOCVars[bMotor].Iqdref, pSTC[bMotor]);
+      MTPA_CalcCurrRefFromIq(pMaxTorquePerAmpere[bMotor], &FOCVars[bMotor].Iqdref);
     }
+
   }
   /* USER CODE BEGIN FOC_CalcCurrRef 1 */
 
@@ -752,7 +750,6 @@ inline uint16_t FOC_CurrControllerM1(void)
 
   Vqd.d = PI_Controller(pPIDId[M1],
             (int32_t)(FOCVars[M1].Iqdref.d) - Iqd.d);
-  Vqd = FF_VqdConditioning(pFF[M1],Vqd);
 
   Vqd = Circle_Limitation(pCLM[M1], Vqd);
   hElAngle += SPD_GetInstElSpeedDpp(speedHandle)*REV_PARK_ANGLE_COMPENSATION_FACTOR;
@@ -766,7 +763,6 @@ inline uint16_t FOC_CurrControllerM1(void)
   FOCVars[M1].Valphabeta = Valphabeta;
   FOCVars[M1].hElAngle = hElAngle;
 
-  FF_DataProcess(pFF[M1]);
   return(hCodeError);
 }
 

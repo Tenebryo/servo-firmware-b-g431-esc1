@@ -1,3 +1,0 @@
-user_gpio_interrupt_handlers.c:20:6:HAL_GPIO_EXTI_Callback	0	static
-user_gpio_interrupt_handlers.c:44:6:step_pin_interrupt	0	static
-user_gpio_interrupt_handlers.c:57:6:button_interrupt	0	static

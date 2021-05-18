@@ -8,6 +8,8 @@
  */
 
 #include "stm32g4xx.h"
+#include "user_button.h"
+#include "mc_api.h"
 
 void step_pin_interrupt(void);
 void button_interrupt(void);
@@ -22,8 +24,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   switch (GPIO_Pin) {
   case GPIO_PIN_10:
     button_interrupt();
-  case GPIO_PIN_15:
-    step_pin_interrupt();
     break;
   default:
     break;
@@ -41,13 +41,6 @@ typedef struct {
  * @param None
  * @retval None
  */
-void step_pin_interrupt(void) {
-  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) {
-
-  } else {
-
-  }
-}
 
 /*
  * @brief This interrupt is triggered when the daughter board button is pressed
@@ -55,5 +48,6 @@ void step_pin_interrupt(void) {
  * @retval None
  */
 void button_interrupt(void) {
-
+  // emergency stop using the button
+  MC_StopMotor1();
 }

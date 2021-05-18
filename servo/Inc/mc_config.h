@@ -30,10 +30,11 @@
 #include "mc_interface.h"
 #include "r_divider_bus_voltage_sensor.h"
 #include "virtual_bus_voltage_sensor.h"
-#include "feed_forward_ctrl.h"
+#include "trajectory_ctrl.h"
 #include "pqd_motor_power_measurement.h"
 #include "r3_2_g4xx_pwm_curr_fdbk.h"
 
+#include "max_torque_per_ampere.h"
 #include "encoder_speed_pos_fdbk.h"
 #include "enc_align_ctrl.h"
 #include "ramp_ext_mngr.h"
@@ -46,6 +47,8 @@ extern PID_Handle_t PIDSpeedHandle_M1;
 extern PID_Handle_t PIDIqHandle_M1;
 extern PID_Handle_t PIDIdHandle_M1;
 extern NTC_Handle_t TempSensor_M1;
+extern PID_Handle_t PID_PosParamsM1;
+extern PosCtrl_Handle_t PosCtrlM1;
 extern PWMC_R3_2_Handle_t PWM_Handle_M1;
 extern SpeednTorqCtrl_Handle_t SpeednTorqCtrlM1;
 extern PQD_MotorPowMeas_Handle_t PQD_MotorPowMeasM1;
@@ -56,7 +59,7 @@ extern EncAlign_Handle_t EncAlignCtrlM1;
 extern RDivider_Handle_t BusVoltageSensor_M1;
 extern CircleLimitation_Handle_t CircleLimitationM1;
 extern RampExtMngr_Handle_t RampExtMngrHFParamsM1;
-extern FF_Handle_t FF_M1;
+extern MTPA_Handle_t MTPARegM1;
 
 #define NBR_OF_MOTORS 1
 extern MCI_Handle_t Mci[NBR_OF_MOTORS];
@@ -66,7 +69,7 @@ extern PID_Handle_t *pPIDIq[NBR_OF_MOTORS];
 extern PID_Handle_t *pPIDId[NBR_OF_MOTORS];
 extern NTC_Handle_t *pTemperatureSensor[NBR_OF_MOTORS];
 extern PQD_MotorPowMeas_Handle_t *pMPM[NBR_OF_MOTORS];
-extern FF_Handle_t *pFF[NBR_OF_MOTORS];
+extern PosCtrl_Handle_t *pPosCtrl[NBR_OF_MOTORS];
 /* USER CODE BEGIN Additional extern */
 
 /* USER CODE END Additional extern */

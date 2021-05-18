@@ -26,17 +26,17 @@
 							</items>
 						</var>
 						<var version="1.0" type="MC_Int" name="Pole Pairs" enable="true" visible="true" readonly="false" value="11" />
-						<var version="1.0" type="MC_Int" name="Max Rated Speed" enable="true" visible="true" readonly="false" value="1000" />
-						<var version="1.0" type="MC_Double" name="Nominal Current" enable="true" visible="true" readonly="false" value="10" />
-						<var version="1.0" type="MC_Double" name="Nominal DC Voltage" enable="true" visible="true" readonly="false" value="24" />
-						<var version="1.0" type="MC_Double" name="Rs" enable="true" visible="true" readonly="false" value="0.01" />
+						<var version="1.0" type="MC_Int" name="Max Rated Speed" enable="true" visible="true" readonly="false" value="10000" />
+						<var version="1.0" type="MC_Double" name="Nominal Current" enable="true" visible="true" readonly="false" value="40" />
+						<var version="1.0" type="MC_Double" name="Nominal DC Voltage" enable="true" visible="true" readonly="false" value="12" />
+						<var version="1.0" type="MC_Double" name="Rs" enable="true" visible="true" readonly="false" value="0.1" />
 						<var version="1.0" type="MC_Double" name="Ld" enable="true" visible="true" readonly="false" value="0.02" />
 						<var version="1.0" type="MC_Double" name="Lq" enable="true" visible="true" readonly="false" value="0.033" />
 						<var version="1.0" type="MC_Double" name="Ls" enable="true" visible="true" readonly="false" value="0.6" />
 						<var version="1.0" type="MC_Double" name="ld_lq_ratio" enable="true" visible="true" readonly="false" value="0.6" />
-						<var version="1.0" type="MC_Double" name="B-EmfConstant" enable="true" visible="true" readonly="false" value="2.2" />
-						<var version="1.0" type="MC_Double" name="inertia" enable="true" visible="true" readonly="false" value="5" />
-						<var version="1.0" type="MC_Double" name="friction" enable="true" visible="true" readonly="false" value="14" />
+						<var version="1.0" type="MC_Double" name="B-EmfConstant" enable="true" visible="true" readonly="false" value="3" />
+						<var version="1.0" type="MC_Double" name="inertia" enable="true" visible="true" readonly="false" value="3.2800000000000002" />
+						<var version="1.0" type="MC_Double" name="friction" enable="true" visible="true" readonly="false" value="2.25" />
 						<var version="1.0" type="MC_Bool" name="Hall sensors" enable="true" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_List" name="Sensors displacement" enable="false" visible="true" readonly="false" value="1">
 							<items>
@@ -272,7 +272,7 @@
 								<item tag="3" text="Hall sensors" />
 							</items>
 						</var>
-						<var version="1.0" type="MC_Int" name="Main - Max allowed speed" enable="false" visible="false" readonly="false" value="1000" />
+						<var version="1.0" type="MC_Int" name="Main - Max allowed speed" enable="false" visible="false" readonly="false" value="10000" />
 						<var version="1.0" type="MC_Int" name="Main - Min allowed speed" enable="false" visible="false" readonly="false" value="0" />
 						<var version="1.0" type="MC_Int" name="Main - Max measurement errors number before fault" enable="true" visible="true" readonly="false" value="3" />
 						<var version="1.0" type="MC_Int" name="Main - Hall Sensors - Average speed FIFO depth" enable="false" visible="true" readonly="false" value="6" />
@@ -280,22 +280,22 @@
 						<var version="1.0" type="MC_Bool" name="Main_ObsPLL_Use_MTPA" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="Main - Encoder - Average speed FIFO depth" enable="true" visible="true" readonly="false" value="16" />
 						<var version="1.0" type="MC_Double" name="Main - Encoder - Input Capture filter duration" enable="true" visible="true" readonly="false" value="0.75" />
-						<var version="1.0" type="MC_Bool" name="Main - Encoder - Reverse counting direction" enable="true" visible="true" readonly="false" value="false" />
+						<var version="1.0" type="MC_Bool" name="Main - Encoder - Reverse counting direction" enable="true" visible="true" readonly="false" value="true" />
 						<var version="1.0" type="MC_Double" name="Main - ObsPLL - Variance threshold" enable="false" visible="true" readonly="false" value="10" />
 						<var version="1.0" type="MC_Double" name="Main - ObsPLL - B-emf consistency tolerance" enable="false" visible="true" readonly="false" value="100" />
 						<var version="1.0" type="MC_Double" name="Main - ObsPLL - B-emf consistency gain" enable="false" visible="true" readonly="false" value="100" />
 						<var version="1.0" type="MC_Bool" name="Main - ObsPLL - Manual editing enabled" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Bool" name="Main - ObsPLL - Back compatibility" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="Main - ObsPLL - F1" enable="false" visible="true" readonly="false" value="16384" />
-						<var version="1.0" type="MC_Int" name="Main - ObsPLL - F2" enable="false" visible="true" readonly="false" value="1024" />
-						<var version="1.0" type="MC_Int" name="Main - ObsPLL - G1" enable="false" visible="true" readonly="false" value="-24452" />
-						<var version="1.0" type="MC_Int" name="Main - ObsPLL - G2" enable="false" visible="true" readonly="false" value="17214" />
-						<var version="1.0" type="MC_Int" name="Main - ObsPLL - K1" enable="false" visible="true" readonly="false" value="-44773" />
-						<var version="1.0" type="MC_Int" name="Main - ObsPLL - K2" enable="false" visible="true" readonly="false" value="16762" />
+						<var version="1.0" type="MC_Int" name="Main - ObsPLL - F2" enable="false" visible="true" readonly="false" value="16384" />
+						<var version="1.0" type="MC_Int" name="Main - ObsPLL - G1" enable="false" visible="true" readonly="false" value="-22714" />
+						<var version="1.0" type="MC_Int" name="Main - ObsPLL - G2" enable="false" visible="true" readonly="false" value="13259" />
+						<var version="1.0" type="MC_Int" name="Main - ObsPLL - K1" enable="false" visible="true" readonly="false" value="-27727" />
+						<var version="1.0" type="MC_Int" name="Main - ObsPLL - K2" enable="false" visible="true" readonly="false" value="7800" />
 						<var version="1.0" type="MC_Int" name="Main - ObsPLL - Average speed FIFO depth for speed loop" enable="false" visible="true" readonly="false" value="64" />
 						<var version="1.0" type="MC_Int" name="Main - ObsPLL - Average speed FIFO depth for observer equations" enable="false" visible="true" readonly="false" value="64" />
-						<var version="1.0" type="MC_Int" name="Main - ObsPLL - P dividend" enable="false" visible="true" readonly="false" value="195" />
-						<var version="1.0" type="MC_Int" name="Main - ObsPLL - I dividend" enable="false" visible="true" readonly="false" value="4" />
+						<var version="1.0" type="MC_Int" name="Main - ObsPLL - P dividend" enable="false" visible="true" readonly="false" value="2926" />
+						<var version="1.0" type="MC_Int" name="Main - ObsPLL - I dividend" enable="false" visible="true" readonly="false" value="103" />
 						<var version="1.0" type="MC_Int" name="Main - ObsPLL - P divisor" enable="false" visible="true" readonly="false" value="16384" />
 						<var version="1.0" type="MC_Int" name="Main - ObsPLL - I divisor" enable="false" visible="true" readonly="false" value="65536" />
 						<var version="1.0" type="MC_Double" name="Main - ObsCRD - Variance threshold" enable="false" visible="true" readonly="false" value="400" />
@@ -304,11 +304,11 @@
 						<var version="1.0" type="MC_Bool" name="Main - ObsCRD - Manual editing enabled" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Bool" name="Main - ObsCRD - Back compatibility" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="Main - ObsCRD - F1" enable="false" visible="true" readonly="false" value="16384" />
-						<var version="1.0" type="MC_Int" name="Main - ObsCRD - F2" enable="false" visible="true" readonly="false" value="1024" />
-						<var version="1.0" type="MC_Int" name="Main - ObsCRD - G1" enable="false" visible="true" readonly="false" value="-24452" />
-						<var version="1.0" type="MC_Int" name="Main - ObsCRD - G2" enable="false" visible="true" readonly="false" value="17214" />
-						<var version="1.0" type="MC_Int" name="Main - ObsCRD - K1" enable="false" visible="true" readonly="false" value="-44773" />
-						<var version="1.0" type="MC_Int" name="Main - ObsCRD - K2" enable="false" visible="true" readonly="false" value="16762" />
+						<var version="1.0" type="MC_Int" name="Main - ObsCRD - F2" enable="false" visible="true" readonly="false" value="16384" />
+						<var version="1.0" type="MC_Int" name="Main - ObsCRD - G1" enable="false" visible="true" readonly="false" value="-22714" />
+						<var version="1.0" type="MC_Int" name="Main - ObsCRD - G2" enable="false" visible="true" readonly="false" value="13259" />
+						<var version="1.0" type="MC_Int" name="Main - ObsCRD - K1" enable="false" visible="true" readonly="false" value="-27727" />
+						<var version="1.0" type="MC_Int" name="Main - ObsCRD - K2" enable="false" visible="true" readonly="false" value="7800" />
 						<var version="1.0" type="MC_Int" name="Main - ObsCRD - Average speed FIFO depth for speed loop" enable="false" visible="true" readonly="false" value="64" />
 						<var version="1.0" type="MC_Int" name="Main - ObsCRD - Average speed FIFO depth for observer equations" enable="false" visible="true" readonly="false" value="64" />
 						<var version="1.0" type="MC_Int" name="Main - ObsCRD - Maximum application acceleration" enable="false" visible="true" readonly="false" value="6000" />
@@ -346,7 +346,7 @@
 								<item tag="3" text="Hall sensors" />
 							</items>
 						</var>
-						<var version="1.0" type="MC_Int" name="Aux - Max allowed speed" enable="false" visible="false" readonly="false" value="1000" />
+						<var version="1.0" type="MC_Int" name="Aux - Max allowed speed" enable="false" visible="false" readonly="false" value="10000" />
 						<var version="1.0" type="MC_Int" name="Aux - Min allowed speed" enable="false" visible="false" readonly="false" value="0" />
 						<var version="1.0" type="MC_Int" name="Aux - Max measurement errors number before fault" enable="false" visible="true" readonly="false" value="3" />
 						<var version="1.0" type="MC_Int" name="Aux - Hall Sensors - Average speed FIFO depth" enable="false" visible="true" readonly="false" value="6" />
@@ -361,15 +361,15 @@
 						<var version="1.0" type="MC_Bool" name="Aux - ObsPLL - Manual editing enabled" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Bool" name="Aux - ObsPLL - Back compatibility" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - F1" enable="false" visible="true" readonly="false" value="16384" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - F2" enable="false" visible="true" readonly="false" value="1024" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - G1" enable="false" visible="true" readonly="false" value="-24452" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - G2" enable="false" visible="true" readonly="false" value="17214" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - K1" enable="false" visible="true" readonly="false" value="-44773" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - K2" enable="false" visible="true" readonly="false" value="16762" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - F2" enable="false" visible="true" readonly="false" value="16384" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - G1" enable="false" visible="true" readonly="false" value="-22714" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - G2" enable="false" visible="true" readonly="false" value="13259" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - K1" enable="false" visible="true" readonly="false" value="-27727" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - K2" enable="false" visible="true" readonly="false" value="7800" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - Average speed FIFO depth for speed loop" enable="false" visible="true" readonly="false" value="64" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - Average speed FIFO depth for observer equations" enable="false" visible="true" readonly="false" value="64" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - P dividend" enable="false" visible="true" readonly="false" value="195" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - I dividend" enable="false" visible="true" readonly="false" value="4" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - P dividend" enable="false" visible="true" readonly="false" value="2926" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - I dividend" enable="false" visible="true" readonly="false" value="103" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - P divisor" enable="false" visible="true" readonly="false" value="16384" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsPLL - I divisor" enable="false" visible="true" readonly="false" value="65536" />
 						<var version="1.0" type="MC_Double" name="Aux - ObsCRD - Variance threshold" enable="true" visible="true" readonly="false" value="400" />
@@ -378,16 +378,16 @@
 						<var version="1.0" type="MC_Bool" name="Aux - ObsCRD - Manual editing enabled" enable="true" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Bool" name="Aux - ObsCRD - Back compatibility" enable="true" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - F1" enable="false" visible="true" readonly="false" value="16384" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - F2" enable="false" visible="true" readonly="false" value="1024" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - G1" enable="false" visible="true" readonly="false" value="-24452" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - G2" enable="false" visible="true" readonly="false" value="17214" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - K1" enable="false" visible="true" readonly="false" value="-44773" />
-						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - K2" enable="false" visible="true" readonly="false" value="16762" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - F2" enable="false" visible="true" readonly="false" value="16384" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - G1" enable="false" visible="true" readonly="false" value="-22714" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - G2" enable="false" visible="true" readonly="false" value="13259" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - K1" enable="false" visible="true" readonly="false" value="-27727" />
+						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - K2" enable="false" visible="true" readonly="false" value="7800" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - Average speed FIFO depth for speed loop" enable="true" visible="true" readonly="false" value="64" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - Average speed FIFO depth for observer equations" enable="true" visible="true" readonly="false" value="64" />
 						<var version="1.0" type="MC_Int" name="Aux - ObsCRD - Maximum application acceleration" enable="true" visible="true" readonly="false" value="6000" />
 						<var version="1.0" type="MC_Double" name="Aux - ObsCRD - B-emf quality factor" enable="true" visible="true" readonly="false" value="0.017" />
-						<var version="1.0" type="MC_Int" name="PWM frequency" enable="true" visible="true" readonly="false" value="30000" />
+						<var version="1.0" type="MC_Int" name="PWM frequency" enable="true" visible="true" readonly="false" value="20000" />
 						<var version="1.0" type="MC_List" name="High sides PWM idle state" enable="true" visible="true" readonly="false" value="1">
 							<items>
 								<item tag="0" text="Turn-on" />
@@ -401,16 +401,16 @@
 								<item tag="1" text="Turn-off" />
 							</items>
 						</var>
-						<var version="1.0" type="MC_List" name="Control mode" enable="true" visible="true" readonly="false" value="0">
+						<var version="1.0" type="MC_List" name="Control mode" enable="true" visible="true" readonly="false" value="2">
 							<items>
 								<item tag="0" text="Torque control" />
 								<item tag="1" text="Speed control" />
 								<item tag="2" text="Position control" />
 							</items>
 						</var>
-						<var version="1.0" type="MC_Int" name="Target speed" enable="false" visible="true" readonly="false" value="1500" />
-						<var version="1.0" type="MC_Double" name="Target stator current flux component" enable="true" visible="true" readonly="false" value="0" />
-						<var version="1.0" type="MC_Double" name="Target stator current torque component" enable="true" visible="true" readonly="false" value="0" />
+						<var version="1.0" type="MC_Int" name="Target speed" enable="false" visible="true" readonly="false" value="1423" />
+						<var version="1.0" type="MC_Double" name="Target stator current flux component" enable="false" visible="true" readonly="false" value="0" />
+						<var version="1.0" type="MC_Double" name="Target stator current torque component" enable="false" visible="true" readonly="false" value="3" />
 						<var version="1.0" type="MC_List" name="Torque&amp;Flux - Execution rate" enable="true" visible="true" readonly="false" value="0">
 							<items>
 								<item tag="1" text="1" />
@@ -424,32 +424,32 @@
 						<var version="1.0" type="MC_Bool" name="Torque&amp;Flux - Manual editing enabled" enable="true" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="Torque - P dividend" enable="false" visible="true" readonly="false" value="2711" />
 						<var version="1.0" type="MC_Int" name="Torque - P divisor" enable="false" visible="true" readonly="false" value="8192" />
-						<var version="1.0" type="MC_Int" name="Torque - I dividend" enable="false" visible="true" readonly="false" value="55" />
+						<var version="1.0" type="MC_Int" name="Torque - I dividend" enable="false" visible="true" readonly="false" value="822" />
 						<var version="1.0" type="MC_Int" name="Torque - I divisor" enable="false" visible="true" readonly="false" value="16384" />
 						<var version="1.0" type="MC_Bool" name="Torque - Enable differential term" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="Torque - D dividend" enable="false" visible="true" readonly="false" value="100" />
 						<var version="1.0" type="MC_Int" name="Torque - D divisor" enable="false" visible="true" readonly="true" value="8192" />
 						<var version="1.0" type="MC_Int" name="Flux - P dividend" enable="false" visible="true" readonly="false" value="1643" />
 						<var version="1.0" type="MC_Int" name="Flux - P divisor" enable="false" visible="true" readonly="false" value="8192" />
-						<var version="1.0" type="MC_Int" name="Flux - I dividend" enable="false" visible="true" readonly="false" value="55" />
+						<var version="1.0" type="MC_Int" name="Flux - I dividend" enable="false" visible="true" readonly="false" value="822" />
 						<var version="1.0" type="MC_Int" name="Flux - I divisor" enable="false" visible="true" readonly="false" value="16384" />
 						<var version="1.0" type="MC_Bool" name="Flux - Enable differential term" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="Flux - D dividend" enable="false" visible="true" readonly="false" value="100" />
 						<var version="1.0" type="MC_Int" name="Flux - D divisor" enable="false" visible="true" readonly="true" value="8192" />
 						<var version="1.0" type="MC_Bool" name="SpeedCtrl_Manual_editing" enable="true" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Double" name="SpeedCtrl - Execution rate" enable="true" visible="true" readonly="false" value="0.5" />
-						<var version="1.0" type="MC_Int" name="SpeedCtrl - P dividend" enable="true" visible="true" readonly="false" value="3932" />
-						<var version="1.0" type="MC_Int" name="SpeedCtrl - P divisor" enable="true" visible="true" readonly="false" value="128" />
-						<var version="1.0" type="MC_Int" name="SpeedCtrl - I dividend" enable="true" visible="true" readonly="false" value="705" />
+						<var version="1.0" type="MC_Int" name="SpeedCtrl - P dividend" enable="true" visible="true" readonly="false" value="3707" />
+						<var version="1.0" type="MC_Int" name="SpeedCtrl - P divisor" enable="true" visible="true" readonly="false" value="1024" />
+						<var version="1.0" type="MC_Int" name="SpeedCtrl - I dividend" enable="true" visible="true" readonly="false" value="20" />
 						<var version="1.0" type="MC_Int" name="SpeedCtrl - I divisor" enable="true" visible="true" readonly="false" value="16384" />
 						<var version="1.0" type="MC_Bool" name="SpeedCtrl - Enable differential term" enable="false" visible="true" readonly="false" value="false" />
 						<var version="1.0" type="MC_Int" name="SpeedCtrl - D dividend" enable="false" visible="true" readonly="false" value="0" />
 						<var version="1.0" type="MC_Int" name="SpeedCtrl - D divisor" enable="true" visible="true" readonly="true" value="16" />
-						<var version="1.0" type="MC_Int" name="PositionControl_P_dividend" enable="true" visible="true" readonly="false" value="10000" />
+						<var version="1.0" type="MC_Int" name="PositionControl_P_dividend" enable="true" visible="true" readonly="false" value="400" />
 						<var version="1.0" type="MC_Int" name="PositionControl_P_divisor" enable="true" visible="true" readonly="false" value="1024" />
-						<var version="1.0" type="MC_Int" name="PositionControl_I_dividend" enable="true" visible="true" readonly="false" value="1000" />
+						<var version="1.0" type="MC_Int" name="PositionControl_I_dividend" enable="true" visible="true" readonly="false" value="0" />
 						<var version="1.0" type="MC_Int" name="PositionControl_I_divisor" enable="true" visible="true" readonly="false" value="32768" />
-						<var version="1.0" type="MC_Int" name="PositionControl_D_dividend" enable="true" visible="true" readonly="false" value="1000" />
+						<var version="1.0" type="MC_Int" name="PositionControl_D_dividend" enable="true" visible="true" readonly="false" value="0" />
 						<var version="1.0" type="MC_Int" name="PositionControl_D_divisor" enable="true" visible="true" readonly="false" value="16" />
 						<var version="1.0" type="MC_Bool" name="Bus voltage sensing" enable="true" visible="true" readonly="false" value="true" />
 						<var version="1.0" type="MC_Bool" name="Over-voltage" enable="true" visible="true" readonly="false" value="true" />
@@ -468,9 +468,9 @@
 						<var version="1.0" type="MC_Bool" name="Set intervention threshold to power stage min rated voltage" enable="true" visible="true" readonly="false" value="true" />
 						<var version="1.0" type="MC_Int" name="Under-voltage threshold" enable="false" visible="true" readonly="false" value="8" />
 						<var version="1.0" type="MC_Bool" name="speed_feedback_check" enable="true" visible="true" readonly="false" value="false" />
-						<var version="1.0" type="MC_Int" name="Enc - Duration" enable="true" visible="true" readonly="false" value="1000" />
-						<var version="1.0" type="MC_Int" name="Enc - Alignment electrical angle" enable="true" visible="true" readonly="false" value="270" />
-						<var version="1.0" type="MC_Double" name="Enc - Final current ramp value" enable="true" visible="true" readonly="false" value="4" />
+						<var version="1.0" type="MC_Int" name="Enc - Duration" enable="true" visible="true" readonly="false" value="4000" />
+						<var version="1.0" type="MC_Int" name="Enc - Alignment electrical angle" enable="true" visible="true" readonly="false" value="0" />
+						<var version="1.0" type="MC_Double" name="Enc - Final current ramp value" enable="true" visible="true" readonly="false" value="10" />
 						<var version="1.0" type="MC_Bool" name="SL - Basic profile" enable="false" visible="true" readonly="false" value="true" />
 						<var version="1.0" type="MC_Int" name="SL - BP - Speed ramp duration" enable="false" visible="true" readonly="false" value="1500" />
 						<var version="1.0" type="MC_Int" name="SL - BP - Speed ramp final value" enable="false" visible="true" readonly="false" value="2700" />
@@ -592,12 +592,12 @@
 						</flux_weakening>
 						<mtpa version="1.0">
 							<vars>
-								<var version="1.0" type="MC_Bool" name="AF_MTPA" enable="true" visible="true" readonly="false" value="false" />
+								<var version="1.0" type="MC_Bool" name="AF_MTPA" enable="true" visible="true" readonly="false" value="true" />
 							</vars>
 						</mtpa>
 						<feed_forward version="1.0">
 							<vars>
-								<var version="1.0" type="MC_Bool" name="AF_Feed_Forward" enable="true" visible="true" readonly="false" value="true" />
+								<var version="1.0" type="MC_Bool" name="AF_Feed_Forward" enable="true" visible="true" readonly="false" value="false" />
 							</vars>
 						</feed_forward>
 						<overmodulation version="1.0">
@@ -1129,7 +1129,7 @@
 								<item tag="6405" text="640.5" />
 							</items>
 						</var>
-						<var version="1.0" type="MC_Int" name="AI - PCF - Sens - Setting - MMI" enable="true" visible="true" readonly="true" value="85" />
+						<var version="1.0" type="MC_Int" name="AI - PCF - Sens - Setting - MMI" enable="true" visible="true" readonly="true" value="95" />
 						<var version="1.0" type="MC_Int" name="AI - PCF - Sens - Setting - Sampling Time Converted" enable="true" visible="true" readonly="true" value="153" />
 						<var version="1.0" type="MC_List" name="AI - PCF - Sens - Setting - ADC Peripheral selection" enable="true" visible="true" readonly="true" value="0">
 							<items>
@@ -1949,7 +1949,7 @@
 					</start_stop_button>
 					<serial_communication version="1.0">
 						<vars>
-							<var version="1.0" type="MC_Bool" name="serial_communication_onBoard" enable="true" visible="true" readonly="false" value="true" />
+							<var version="1.0" type="MC_Bool" name="serial_communication_onBoard" enable="true" visible="true" readonly="false" value="false" />
 						</vars>
 					</serial_communication>
 					<mcu_info version="1.0">

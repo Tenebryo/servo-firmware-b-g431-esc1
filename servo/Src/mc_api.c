@@ -164,6 +164,33 @@ __weak void MC_ProgramTorqueRampMotor1( int16_t hFinalTorque, uint16_t hDuration
 }
 
 /**
+  * @brief Programs a position command for Motor 1 for later or immediate execution.
+  *
+  *  A position command allows to program a specific movement from current position to
+  *  the @p fTargetPosition target mechanical angle reference in the given @p fDuration time.
+  *
+  *  Invoking the MC_ProgramPositionCommandMotor1() function programs a target position
+  * with the provided parameters. The programmed position is executed immediately if
+  * there is no movement ongoing.
+  *
+  *  The Application can check the status of the control with the MC_GetControlPositionStatusMotor1()
+  * to know whether the motor is ready to execute a new command or not.
+  *
+  * @note when the duration is set to 0, the input target position is immediately executed.
+  * By calling repeatedly the command with an update of input target angle, the control will be in follow mode.
+  *
+  *
+  * @param  fTargetPosition Target mechanical angle reference at the end of the movement.
+  *         This value represents the final position expressed in radian.
+  * @param  fDuration Duration of the movement expressed in seconds.
+  *         It is possible to set 0 to perform an instantaneous angular change (follow mode).
+  */
+__weak void MC_ProgramPositionCommandMotor1( float fTargetPosition, float fDuration )
+{
+	MCI_ExecPositionCommand( pMCI[M1], fTargetPosition, fDuration );
+}
+
+/**
   * @brief Programs the current reference to Motor 1 for later or immediate execution.
   *
   *  The current reference to consider is made of the Id and Iq current components.
@@ -473,5 +500,45 @@ __weak uint16_t MC_GetCurrentFaultsMotor1(void)
 __weak State_t  MC_GetSTMStateMotor1(void)
 {
 	return MCI_GetSTMState( pMCI[M1] );
+}
+
+/**
+ * @brief returns the current control position state of Motor 1.
+ *   */
+__weak PosCtrlStatus_t  MC_GetControlPositionStatusMotor1( void )
+{
+	return MCI_GetCtrlPositionState( pMCI[M1] );
+}
+
+/**
+ * @brief returns the alignment state of Motor 1.
+ *   */
+__weak AlignStatus_t  MC_GetAlignmentStatusMotor1( void )
+{
+	return MCI_GetAlignmentStatus( pMCI[M1] );
+}
+
+/**
+ * @brief returns the current position of Motor 1.
+ *   */
+__weak float MC_GetCurrentPosition1( void )
+{
+	return MCI_GetCurrentPosition( pMCI[M1] );
+}
+
+/**
+ * @brief returns the target position of Motor 1.
+ *   */
+__weak float MC_GetTargetPosition1( void )
+{
+	return MCI_GetTargetPosition( pMCI[M1] );
+}
+
+/**
+ * @brief returns the total movement duration to reach the target position of Motor 1.
+ *   */
+__weak float MC_GetMoveDuration1( void )
+{
+	return MCI_GetMoveDuration( pMCI[M1] );
 }
 

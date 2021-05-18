@@ -352,6 +352,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Src/state_machine.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/MotorControl/trajectory_ctrl.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Src/trajectory_ctrl.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/MotorControl/virtual_speed_sensor.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Src/virtual_speed_sensor.c</locationURI>

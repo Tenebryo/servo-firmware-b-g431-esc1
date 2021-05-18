@@ -77,7 +77,7 @@ typedef enum
 #define MCP_OVER_UARTB_FLAG (1<< 4)
 #define MCPA_OVER_UARTB_FLAG (1<< 5)
 
-#define configurationFlag1_M1 (0|FEED_FORWARD_FLAG|VBUS_SENSING_FLAG|TEMP_SENSING_FLAG)
+#define configurationFlag1_M1 (0|MTPA_FLAG|POSITION_CTRL_FLAG|VBUS_SENSING_FLAG|TEMP_SENSING_FLAG)
 #define configurationFlag2_M1 (0|MCP_OVER_UARTA_FLAG|MCPA_OVER_UARTA_FLAG)
 #define NBR_OF_MOTORS  1
 #define DRIVE_TYPE_M1  0
@@ -85,7 +85,7 @@ typedef enum
 #define AUX_SENSOR_M1  eNO_SENSOR
 #define TOPOLOGY_M1 0
 #define FOC_RATE_M1 1
-#define PWM_FREQ_M1 30000
+#define PWM_FREQ_M1 20000
 
 extern char CTL_BOARD[];
 extern char* PWR_BOARD_NAME[NBR_OF_MOTORS];

@@ -11,6 +11,7 @@
 BusVoltageSensor_Handle_t* BusVoltageSensor[NBR_OF_MOTORS]={ &BusVoltageSensor_M1._Super};
 SpeednPosFdbk_Handle_t * SpeedSensor [NBR_OF_MOTORS] = {(SpeednPosFdbk_Handle_t *) &ENCODER_M1 };
 PID_Handle_t *pPIDSpeed[NBR_OF_MOTORS] = { &PIDSpeedHandle_M1 };
+PID_Handle_t *pPIDPosCtrl[NBR_OF_MOTORS] = { &PID_PosParamsM1 };
 ENCODER_Handle_t *pEncoder[NBR_OF_MOTORS] = {&ENCODER_M1};
 
 static uint8_t RI_SetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t maxSize);
@@ -141,6 +142,10 @@ uint8_t RI_SetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
         }
       }
       break;
+    case MC_REG_POSITION_CTRL_STATE:
+    case MC_REG_POSITION_ALIGN_STATE:
+      retVal = MCP_ERROR_RO_REG;
+      break;
     default:
       retVal = MCP_ERROR_UNKNOWN_REG;
     }
@@ -224,11 +229,14 @@ uint8_t RI_SetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
      break;
     case MC_REG_DAC_USER2:
      break;
-    case MC_REG_FF_VQ:
-    case MC_REG_FF_VD:
-    case MC_REG_FF_VQ_PIOUT:
-    case MC_REG_FF_VD_PIOUT:
-      retVal = MCP_ERROR_RO_REG;
+    case MC_REG_POSITION_KP:
+      PID_SetKP(pPIDPosCtrl[motorID], regdata16);
+     break;
+    case MC_REG_POSITION_KI:
+      PID_SetKI(pPIDPosCtrl[motorID], regdata16);
+     break;
+    case MC_REG_POSITION_KD:
+      PID_SetKD(pPIDPosCtrl[motorID], regdata16);
      break;
     case MC_REG_SPEED_KP_DIV:
       PID_SetKPDivisorPOW2(pPIDSpeed[motorID], regdata16);
@@ -257,6 +265,15 @@ uint8_t RI_SetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
     case MC_REG_I_Q_KD_DIV:
       PID_SetKDDivisorPOW2(pPIDIq[motorID], regdata16);
       break;
+    case MC_REG_POSITION_KP_DIV:
+      PID_SetKPDivisorPOW2(pPIDPosCtrl[motorID], regdata16);
+      break;
+    case MC_REG_POSITION_KI_DIV:
+      PID_SetKIDivisorPOW2(pPIDPosCtrl[motorID], regdata16);
+      break;
+    case MC_REG_POSITION_KD_DIV:
+      PID_SetKDDivisorPOW2(pPIDPosCtrl[motorID], regdata16);
+      break;
 
     default:
       retVal = MCP_ERROR_UNKNOWN_REG;
@@ -284,15 +301,6 @@ uint8_t RI_SetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
     case MC_REG_STOCORDIC_EST_BEMF:
     case MC_REG_STOCORDIC_OBS_BEMF:
       retVal = MCP_ERROR_RO_REG;
-      break;
-    case MC_REG_FF_1Q:
-      pFF[motorID]->wConstant_1Q = regdata32;
-      break;
-    case MC_REG_FF_1D:
-      pFF[motorID]->wConstant_1D = regdata32;
-      break;
-    case MC_REG_FF_2:
-      pFF[motorID]->wConstant_2 = regdata32;
       break;
     default:
       retVal = MCP_ERROR_UNKNOWN_REG;
@@ -348,6 +356,15 @@ uint8_t RI_SetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
           }
           break;
 
+        case MC_REG_POSITION_RAMP:
+          {
+            FloatToU32 Position;
+            FloatToU32 Duration;
+            Position.U32_Val = *(int32_t *)rawData;
+            Duration.U32_Val = *(int32_t *)&rawData[4];
+            MCI_ExecPositionCommand(pMCI, Position.Float_Val, Duration.Float_Val);
+          }
+          break;
         case MC_REG_ASYNC_UARTA:
           {
            retVal =  MCPA_cfgLog ( &MCPA_UART_A, rawData );
@@ -395,6 +412,12 @@ uint8_t RI_GetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
           break;
         case MC_REG_CONTROL_MODE:
           *data =  MCI_GetControlMode(pMCI);
+          break;
+        case MC_REG_POSITION_CTRL_STATE:
+          *data = (uint8_t) TC_GetControlPositionStatus(pPosCtrl[motorID]);
+          break;
+        case MC_REG_POSITION_ALIGN_STATE:
+          *data = (uint8_t) TC_GetAlignmentStatus(pPosCtrl[motorID]);
           break;
         default:
           retVal = MCP_ERROR_UNKNOWN_REG;
@@ -497,19 +520,16 @@ uint8_t RI_GetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
          break;
         case MC_REG_DAC_USER2:
          break;
-        case MC_REG_FF_VQ:
-          *regdata16 = FF_GetVqdff(pFF[motorID]).q;
-         break;
-        case MC_REG_FF_VD:
-          *regdata16 = FF_GetVqdff(pFF[motorID]).d;
-         break;
-        case MC_REG_FF_VQ_PIOUT:
-          *regdata16 = FF_GetVqdAvPIout(pFF[motorID]).q;
-         break;
-        case MC_REG_FF_VD_PIOUT:
-          *regdata16 = FF_GetVqdAvPIout(pFF[motorID]).d;
-         break;
 
+        case MC_REG_POSITION_KP:
+          *regdata16 = PID_GetKP( pPIDPosCtrl[motorID]);
+          break;
+        case MC_REG_POSITION_KI:
+          *regdata16 = PID_GetKI( pPIDPosCtrl[motorID]);
+          break;
+        case MC_REG_POSITION_KD:
+          *regdata16 = PID_GetKD( pPIDPosCtrl[motorID]);
+          break;
         case MC_REG_SPEED_KP_DIV:
           *regdataU16 = PID_GetKPDivisor(pPIDSpeed[motorID]);
          break;
@@ -536,6 +556,15 @@ uint8_t RI_GetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
           break;
         case MC_REG_I_Q_KD_DIV:
           *regdataU16 = PID_GetKDDivisor(pPIDIq[motorID]);
+          break;
+        case MC_REG_POSITION_KP_DIV:
+          *regdataU16 = PID_GetKPDivisor(pPIDPosCtrl[motorID]);
+          break;
+        case MC_REG_POSITION_KI_DIV:
+          *regdataU16 = PID_GetKIDivisor(pPIDPosCtrl[motorID]);
+          break;
+        case MC_REG_POSITION_KD_DIV:
+          *regdataU16 = PID_GetKDDivisor(pPIDPosCtrl[motorID]);
           break;
 
         default:
@@ -566,14 +595,12 @@ uint8_t RI_GetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
         case MC_REG_SPEED_REF:
           *regdata32 = (((int32_t)MCI_GetMecSpeedRefUnit(pMCI)*_RPM)/SPEED_UNIT);
           break;
-        case MC_REG_FF_1Q:
-          *regdata32 = pFF[motorID]->wConstant_1Q;
-          break;
-        case MC_REG_FF_1D:
-          *regdata32 = pFF[motorID]->wConstant_1D;
-          break;
-        case MC_REG_FF_2:
-          *regdata32 = pFF[motorID]->wConstant_2;
+        case MC_REG_CURRENT_POSITION:
+          {
+            FloatToU32 ReadVal;
+            ReadVal.Float_Val = MCI_GetCurrentPosition(pMCI);
+            *regdataU32 = ReadVal.U32_Val;
+		  }
           break;
         default:
           retVal = MCP_ERROR_UNKNOWN_REG;
@@ -677,6 +704,17 @@ uint8_t RI_GetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
         *idref = MCI_GetIqdref(pMCI).d;
       }
         break;
+      case MC_REG_POSITION_RAMP:
+          {
+            float Position;
+            float Duration;
+            *rawSize = 8;
+            Position = TC_GetMoveDuration(pPosCtrl[motorID]);   /* Does this duration make sense ? */
+            Duration = TC_GetTargetPosition(pPosCtrl[motorID]);
+            memcpy(rawData, &Position, 4 );
+            memcpy(&rawData[4], &Duration, 4 );
+          }
+      break;
       case MC_REG_ASYNC_UARTA:
       case MC_REG_ASYNC_UARTB:
       case MC_REG_ASYNC_STLNK:
