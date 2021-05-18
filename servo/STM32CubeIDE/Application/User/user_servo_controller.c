@@ -27,11 +27,11 @@ void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle
   self->VelSetpoint = 0.0f;
   self->TorSetpoint = 0.0f;
 
-  int32_t EncoderOffset, StepDirOffset;
-
-  ENCODER_Handle_t *Encoder;
-  SpeednTorqCtrl_Handle_t *TorqueController;
-  PID_Handle_t *PIDPosRegulator, *PIDVelRegulator;
+//  int32_t EncoderOffset, StepDirOffset;
+//
+//  ENCODER_Handle_t *Encoder;
+//  SpeednTorqCtrl_Handle_t *TorqueController;
+//  PID_Handle_t *PIDPosRegulator, *PIDVelRegulator;
 }
 
 /// This is the main servo control loop. It uses the input position (from the Step/Dir interface) to command a torque.
@@ -44,19 +44,19 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
   switch (self->State) {
   case DISABLED:
     // command 0 torque when the controller is disabled (coasting)
-    self->TorqueSetpoint = 0;
+    self->TorSetpoint = 0;
     break;
   case ALIGNING:
     // command a constant speed during alignment, which is set when alignment starts.
-    VelActual = SPD_GetAvrgMecSpeedUnit(self->Encoder);
+    VelActual = SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
 
-    self->TorqueSetpoint = PID_Controller(self->PIDVelRegulator, ((int32_t)self->VelSetpoint) - VelActual);
+    self->TorSetpoint = (float)PID_Controller(self->PIDVelRegulator, ((int32_t)self->VelSetpoint) - VelActual);
 
     break;
   case ENABLED:
     // get current state and inputs
-    PosActual = SPD_GetMecAngle(self->Encoder) + self->EncoderOffset;
-    VelActual = SPD_GetAvrgMecSpeedUnit(self->Encoder);
+    PosActual = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
+    VelActual = SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
 
     PosInput = self->Config.StepAngle * (float)(STEPDIR_GetInputPosition() + self->StepDirOffset);
 
@@ -91,7 +91,7 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   // actually send the desired torque to the torque controller.
   STC_SetControlMode( self->TorqueController, STC_TORQUE_MODE );
-  STC_ExecRamp( self->TorqueController, self->TorqueSetpoint, 0 );
+  STC_ExecRamp( self->TorqueController, (int32_t)(self->TorSetpoint), 0 );
 }
 
 /// Callback that is called when the encoder index pin is triggered.
@@ -109,8 +109,8 @@ void SERVO_ResetEncoder(Servo_t * self) {
 void SERVO_Disable(Servo_t * self) {
   self->State = DISABLED;
 
-  int32_t PosActual = SPD_GetMecAngle(self->Encoder) + self->EncoderOffset;
-  int32_t VelActual = SPD_GetAvrgMecSpeedUnit(self->Encoder);
+  int32_t PosActual = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
+  int32_t VelActual = SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
 
   self->PosSetpoint = PosActual;
   self->VelSetpoint = VelActual;
@@ -126,7 +126,7 @@ void SERVO_Align(Servo_t * self) {
     self->Aligned = false;
 
     // use the current position and scan velocity as setpoints
-    int32_t PosActual = SPD_GetMecAngle(self->Encoder) + self->EncoderOffset;
+    int32_t PosActual = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
 
     self->PosSetpoint = PosActual;
     self->VelSetpoint = self->Config.IndexScanSpeed;
@@ -142,8 +142,8 @@ void SERVO_Enable(Servo_t * self) {
   if (self->Aligned && self->State == DISABLED) {
     // use the current position, velocity, and input pos as the initial set points
 
-    int32_t PosActual = SPD_GetMecAngle(self->Encoder) + self->EncoderOffset;
-    int32_t VelActual = SPD_GetAvrgMecSpeedUnit(self->Encoder);
+    int32_t PosActual = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
+    int32_t VelActual = SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
     int32_t InputPos = STEPDIR_GetInputPosition();
 
     self->PosSetpoint = PosActual;

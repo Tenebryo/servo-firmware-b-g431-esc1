@@ -8,7 +8,6 @@
  */
 
 #include "stm32g4xx.h"
-#include "user_button.h"
 #include "mc_api.h"
 
 void step_pin_interrupt(void);

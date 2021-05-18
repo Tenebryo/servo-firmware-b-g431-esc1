@@ -41,7 +41,7 @@ extern "C" {
 #endif
 
 #define Z_ALIGNMENT_DURATION	2	                    /* 2 seconds */
-#define Z_ALIGNMENT_NB_ROTATION	(3.0f * M_PI)	        /* 1 turn in 2 seconds allowed to find the "Z" signal  */
+#define Z_ALIGNMENT_NB_ROTATION	(2.0f * M_PI)	        /* 1 turn in 2 seconds allowed to find the "Z" signal  */
 
 /** @addtogroup MCSDK
   * @{

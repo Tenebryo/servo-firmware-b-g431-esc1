@@ -11,6 +11,10 @@
 #include "stdbool.h"
 #include "stdint.h"
 
+#include "mc_api.h"
+#include "speed_pos_fdbk.h"
+#include "user_step_dir.h"
+
 typedef struct {
   float IndexScanSpeed;
   float StepAngle;
@@ -35,6 +39,8 @@ typedef struct {
 
   float PosSetpoint, VelSetpoint, TorSetpoint;
 
+  bool Aligned;
+
   int32_t EncoderOffset, StepDirOffset;
 
   ENCODER_Handle_t *Encoder;
@@ -43,12 +49,12 @@ typedef struct {
 } Servo_t;
 
 
-void SERVO_Init(PosCtrl_Handle_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t * TorqueController, ServoConfig_t Config);
-void SERVO_ControlPosition(PosCtrl_Handle_t * self);
-void SERVO_SetEncoderOffset(PosCtrl_Handle_t * self);
-void SERVO_Disable(PosCtrl_Handle_t * self);
-void SERVO_Align(PosCtrl_Handle_t * self);
-void SERVO_Enable(PosCtrl_Handle_t * self);
-bool SERVO_IsAlignmentComplete(PosCtrl_Handle_t * self);
+void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t * TorqueController, ServoConfig_t Config);
+void SERVO_ControlPosition(Servo_t * self, float DeltaTime);
+void SERVO_SetEncoderOffset(Servo_t * self);
+void SERVO_Disable(Servo_t * self);
+void SERVO_Align(Servo_t * self);
+void SERVO_Enable(Servo_t * self);
+bool SERVO_IsAlignmentComplete(Servo_t * self);
 
 #endif /* APPLICATION_INCLUDE_USER_SERVO_CONTROLLER_H_ */
