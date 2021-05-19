@@ -99,7 +99,7 @@ void SERVO_ControlPositionFromStepDir(Servo_t * self, float DeltaTime) {
 }
 
 /// Callback that is called when the encoder index pin is triggered.
-void SERVO_ResetEncoder(Servo_t * self) {
+void SERVO_ResetEncoderOffset(Servo_t * self) {
 
   int32_t PosActual = SPD_GetMecAngle(&self->Encoder->_Super);
 

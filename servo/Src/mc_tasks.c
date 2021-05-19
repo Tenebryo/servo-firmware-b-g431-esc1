@@ -308,6 +308,7 @@ __weak void TSK_MediumFrequencyTaskM1(void)
 {
   /* USER CODE BEGIN MediumFrequencyTask M1 0 */
 
+  uint16_t potentiometer_value = 0;
   /* USER CODE END MediumFrequencyTask M1 0 */
 
   State_t StateM1;
@@ -469,9 +470,8 @@ __weak void TSK_MediumFrequencyTaskM1(void)
   case RUN:
     /* USER CODE BEGIN MediumFrequencyTask M1 2 */
 
-    float potentiometer_value = 0.0;
     POT_ReadValue(&potentiometer_value);
-    SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ, potentiometer_value);
+    SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ, (float)potentiometer_value);
 
     /* USER CODE END MediumFrequencyTask M1 2 */
 

@@ -53,7 +53,7 @@ typedef struct {
 void SERVO_Init(Servo_t *self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t *TorqueController, FPID_Handle_t *PIDPosRegulator, FPID_Handle_t *PIDVelRegulator);
 void SERVO_ControlPosition(Servo_t * self, float DeltaTime, float InputPos);
 void SERVO_ControlPositionFromStepDir(Servo_t * self, float DeltaTime);
-void SERVO_SetEncoderOffset(Servo_t * self);
+void SERVO_ResetEncoderOffset(Servo_t * self);
 void SERVO_Disable(Servo_t * self);
 void SERVO_Align(Servo_t * self);
 void SERVO_Enable(Servo_t * self);

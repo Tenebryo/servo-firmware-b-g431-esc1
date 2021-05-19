@@ -205,7 +205,7 @@ float FPID_Controller( FPID_Handle_t * pHandle, float wProcessVarError )
 
     pHandle->wPrevProcessVarError = wProcessVarError;
 
-    wTemp_output = PI_Controller( pHandle, wProcessVarError ) + wDifferential_Term;
+    wTemp_output = FPI_Controller( pHandle, wProcessVarError ) + wDifferential_Term;
 
     if ( wTemp_output > pHandle->hUpperOutputLimit )
     {
@@ -220,7 +220,7 @@ float FPID_Controller( FPID_Handle_t * pHandle, float wProcessVarError )
   }
   else
   {
-    wTemp_output = PI_Controller( pHandle, wProcessVarError );
+    wTemp_output = FPI_Controller( pHandle, wProcessVarError );
   }
   return ( wTemp_output );
 }

@@ -34,7 +34,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void EXTI9_5_IRQHandler(void)
 {
-  SERVO_SetEncoderOffset(&ServoHandle_M1);
+  SERVO_ResetEncoderOffset(&ServoHandle_M1);
 }
 
 /*
