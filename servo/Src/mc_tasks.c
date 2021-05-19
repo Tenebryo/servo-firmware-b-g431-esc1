@@ -36,6 +36,8 @@
 
 /* USER CODE BEGIN Includes */
 
+#include "user_potentiometer.h"
+
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private define */
@@ -199,6 +201,10 @@ __weak void MCboot( MCI_Handle_t* pMCIList[NBR_OF_MOTORS] )
   pMCIList[M1] = &Mci[M1];
 
   /* USER CODE BEGIN MCboot 2 */
+  
+  FPID_HandleInit(&PIDPosHandle_M1);
+  FPID_HandleInit(&PIDVelHandle_M1);
+  SERVO_Init(&ServoHandle_M1, &ENCODER_M1, &SpeednTorqCtrlM1, &PIDPosHandle_M1, &PIDVelHandle_M1);
 
   /* USER CODE END MCboot 2 */
 
@@ -462,6 +468,10 @@ __weak void TSK_MediumFrequencyTaskM1(void)
 
   case RUN:
     /* USER CODE BEGIN MediumFrequencyTask M1 2 */
+
+    float potentiometer_value = 0.0;
+    POT_ReadValue(&potentiometer_value);
+    SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ, potentiometer_value);
 
     /* USER CODE END MediumFrequencyTask M1 2 */
 

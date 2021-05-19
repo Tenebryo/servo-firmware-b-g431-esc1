@@ -2,7 +2,7 @@
  * user_main.c
  *
  *  Created on: May 18, 2021
- *      Author: sunbl
+ *      Author: Sam Blazes
  */
 
 #include "main.h"
@@ -19,5 +19,4 @@ void MAIN_Init(void) {
 }
 
 void MAIN_Loop(void) {
-
 }

@@ -41,6 +41,9 @@
 
 /* USER CODE BEGIN Additional include */
 
+#include "user_servo_controller.h"
+#include "user_fpid_regulator.h"
+
 /* USER CODE END Additional include */
 extern PID_Handle_t PIDSpeedHandle_M1;
 extern PID_Handle_t PIDIqHandle_M1;
@@ -67,6 +70,10 @@ extern PID_Handle_t *pPIDId[NBR_OF_MOTORS];
 extern NTC_Handle_t *pTemperatureSensor[NBR_OF_MOTORS];
 extern PQD_MotorPowMeas_Handle_t *pMPM[NBR_OF_MOTORS];
 /* USER CODE BEGIN Additional extern */
+
+extern FPID_Handle_t PIDPosHandle_M1;
+extern FPID_Handle_t PIDVelHandle_M1;
+extern Servo_t ServoHandle_M1;
 
 /* USER CODE END Additional extern */
 

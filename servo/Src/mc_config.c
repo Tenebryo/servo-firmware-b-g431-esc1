@@ -298,13 +298,44 @@ NTC_Handle_t *pTemperatureSensor[NBR_OF_MOTORS] = {&TempSensor_M1};
 PQD_MotorPowMeas_Handle_t *pMPM[NBR_OF_MOTORS] = {&PQD_MotorPowMeasM1};
 
 /* USER CODE BEGIN Additional configuration */
+
+FPID_Handle_t PIDPosHandle_M1 = {
+  
+  .hDefKpGain          = PID_SERVO_POS_KP_DEFAULT,
+  .hDefKiGain          = PID_SERVO_POS_KI_DEFAULT,
+  .wUpperIntegralLimit = MAX_APPLICATION_SPEED_UNIT * TF_KIDIV,
+  .wLowerIntegralLimit = -MAX_APPLICATION_SPEED_UNIT * TF_KIDIV,
+  .hUpperOutputLimit   = MAX_APPLICATION_SPEED_UNIT,
+  .hLowerOutputLimit   = -MAX_APPLICATION_SPEED_UNIT,
+  .hDefKdGain           = PID_SERVO_POS_KD_DEFAULT,
+};
+
+FPID_Handle_t PIDVelHandle_M1 = {
+  
+  .hDefKpGain          = (int16_t)PID_SERVO_POS_KP_DEFAULT,
+  .hDefKiGain          = (int16_t)PID_SERVO_POS_KI_DEFAULT,
+  .wUpperIntegralLimit = (int32_t)MAX_APPLICATION_SPEED_UNIT * TF_KIDIV,
+  .wLowerIntegralLimit = (int32_t)-MAX_APPLICATION_SPEED_UNIT * TF_KIDIV,
+  .hUpperOutputLimit   = MAX_APPLICATION_SPEED_UNIT,
+  .hLowerOutputLimit   = -MAX_APPLICATION_SPEED_UNIT,
+  .hDefKdGain           = 0x0000U,
+};
+
 Servo_t ServoHandle_M1 =
 {
+    .Config = {
+      .IndexScanSpeed = 50.0,
+      .StepAngle = 1.0,
+      .VelMaxAbs = 20.0,
+      .TorMaxAbs = 10.0,
+      .Inertia = 1.0,
+      .TorqueBandwidth = 1.0,
+    },
     .State = UNINIT,
     .PosSetpoint = 0.0f,
     .VelSetpoint = 0.0f,
     .TorSetpoint = 0.0f,
-    .Aligned = false
+    .Aligned = false,
     .EncoderOffset = 0,
     .StepDirOffset = 0,
 };

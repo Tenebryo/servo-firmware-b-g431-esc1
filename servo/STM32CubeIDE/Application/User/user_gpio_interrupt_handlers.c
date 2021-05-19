@@ -9,6 +9,9 @@
 
 #include "stm32g4xx.h"
 #include "mc_api.h"
+#include "main.h"
+#include "mc_config.h"
+#include "user_servo_controller.h"
 
 void step_pin_interrupt(void);
 void button_interrupt(void);
@@ -21,7 +24,7 @@ void button_interrupt(void);
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   switch (GPIO_Pin) {
-  case GPIO_PIN_10:
+  case USER_BUTTON_EXTI_IRQn:
     button_interrupt();
     break;
   default:
@@ -29,11 +32,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   }
 }
 
-
-typedef struct {
-
-} step_dir_filter;
-
+void EXTI9_5_IRQHandler(void)
+{
+  SERVO_SetEncoderOffset(&ServoHandle_M1);
+}
 
 /*
  * @brief This interrupt is triggered when the step pin is activated.

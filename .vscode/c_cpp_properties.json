@@ -1,0 +1,36 @@
+{
+    "configurations": [
+      {
+        "name": "Win32",
+        // "intelliSenseMode": "clang-x64",
+        "includePath": [
+            // "${workspaceFolder}/servo/**",
+            "${workspaceFolder}/servo/Drivers/CMSIS/Core/Include",
+            "${workspaceFolder}/servo/Drivers/CMSIS/Device/ST/STM32G4xx/Include",
+            "${workspaceFolder}/servo/Drivers/CMSIS/DSP/Include",
+            "${workspaceFolder}/servo/Drivers/CMSIS/Include",
+            "${workspaceFolder}/servo/Drivers/CMSIS/NN/Include",
+            "${workspaceFolder}/servo/Drivers/CMSIS/RTOS2/Include",
+            "${workspaceFolder}/servo/Drivers/STM32G4xx_HAL_Driver/Inc",
+            "${workspaceFolder}/servo/Drivers/STM32G4xx_HAL_Driver/Inc/Legacy",
+            "${workspaceFolder}/servo/Inc",
+            "${workspaceFolder}/servo/MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/Any/Inc",
+            "${workspaceFolder}/servo/MCSDK_v5.Y.0/MotorControl/MCSDK/MCLib/G4xx/Inc",
+            "${workspaceFolder}/servo/STM32CubeIDE/Application/Include"
+        ],
+        // "macFrameworkPath": ["/System/Library/Frameworks"],
+        "defines": ["STM32G431xx"],
+        // "forcedInclude": ["${workspaceFolder}/Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h"],
+        "compilerPath": "C:/Program Files (x86)/GNU Arm Embedded Toolchain/9 2020-q2-update/bin/arm-none-eabi-gcc.exe"
+        // "cStandard": "c11"
+        // "cppStandard": "c++17"
+        // "compileCommands": "/path/to/compile_commands.json",
+        // "browse": {
+        //   "path": ["${workspaceFolder}"],
+        //   "limitSymbolsToIncludedHeaders": true,
+        //   "databaseFilename": ""
+        // }
+      }
+    ],
+    "version": 4
+  }

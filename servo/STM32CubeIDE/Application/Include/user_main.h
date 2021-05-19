@@ -2,7 +2,7 @@
  * user_main.h
  *
  *  Created on: May 18, 2021
- *      Author: sunbl
+ *      Author: Sam Blazes
  */
 
 #ifndef APPLICATION_INCLUDE_USER_MAIN_H_

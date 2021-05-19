@@ -15,12 +15,20 @@ typedef struct {
     uint32_t ls;
 } motorCharacteristics_t;
 
-typedef struct {
+#define COGGING_TORQUE_STEPS
 
+typedef struct {
+  uint16_t PhaseResistance;
+  uint16_t PhaseInductanceQ;
+  uint16_t PhaseInductanceD;
+  int16_t CoggingTorque[COGGING_TORQUE_STEPS];
 } calibration_t;
 
-bool CALIBRATION_WindingResistance(calibration_t *calib);
-bool CALIBRATION_WindingInductance(calibration_t *calib);
 
+bool CALIBRATION_MeasureWindingResistance(calibration_t *calib);
+bool CALIBRATION_MeasureWindingInductance(calibration_t *calib);
+bool CALIBRATION_MeasureCoggingTorque(calibration_t *calib);
+
+void CALIBRATION_UpdateIqdPIGains(float cc_bandwidth, float phase_r, float phase_lq, float phase_ld);
 
 #endif /* APPLICATION_INCLUDE_USER_CALIBRATION_H_ */

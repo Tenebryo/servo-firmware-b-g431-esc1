@@ -2,84 +2,82 @@
  * user_servo_controller.c
  *
  *  Created on: May 18, 2021
- *      Author: sunbl
+ *      Author: Sam Blazes
  */
 
 #include "user_servo_controller.h"
 
 #include "mc_api.h"
-#include "speed_pos_fdbk.h"
 #include "user_step_dir.h"
 
-#define RADTOS16 10430.378350470452725f
-#define S16TORAD (1.0f/10430.378350470452725f)
+/// This initializes the servo given its current configuration data.
+void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t * TorqueController, FPID_Handle_t *PIDPosRegulator, FPID_Handle_t *PIDVelRegulator) {
 
-#define TO_S16(theta) (int32_t)((theta) * RADTOS16)
+  if (self->State == UNINIT) {
 
-/// This initializes the servo given the configuration struct.
-void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t * TorqueController, ServoConfig_t Config) {
+    self->Config.InputFiltKi = 2.0f * self->Config.TorqueBandwidth;
+    self->Config.InputFiltKp = self->Config.TorqueBandwidth * self->Config.TorqueBandwidth;
 
-  self->Config = Config;
+    self->Encoder = Encoder;
+    self->TorqueController = TorqueController;
+    self->PIDPosRegulator = PIDPosRegulator;
+    self->PIDVelRegulator = PIDVelRegulator;
 
-  self->State = DISABLED;
+    self->PIDPosRegulator = PIDPosRegulator;
+    self->PIDVelRegulator = PIDVelRegulator;
 
-  self->PosSetpoint = 0.0f;
-  self->VelSetpoint = 0.0f;
-  self->TorSetpoint = 0.0f;
-
-//  int32_t EncoderOffset, StepDirOffset;
-//
-//  ENCODER_Handle_t *Encoder;
-//  SpeednTorqCtrl_Handle_t *TorqueController;
-//  PID_Handle_t *PIDPosRegulator, *PIDVelRegulator;
+    self->State = DISABLED;
+  }
 }
 
 /// This is the main servo control loop. It uses the input position (from the Step/Dir interface) to command a torque.
-void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
+void SERVO_ControlPosition(Servo_t * self, float DeltaTime, float PosInput) {
 
-  int32_t PosActual, VelActual;
-  float PosInput;
+  float PosActual, VelActual;
   float PosDelta, VelDelta, Accel;
 
   switch (self->State) {
+  case UNINIT:
+    // command 0 torque when the controller is uninitialized (coasting)
+    self->TorSetpoint = 0;
+    break;
   case DISABLED:
     // command 0 torque when the controller is disabled (coasting)
     self->TorSetpoint = 0;
     break;
   case ALIGNING:
     // command a constant speed during alignment, which is set when alignment starts.
-    VelActual = SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
+    VelActual = (float)SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
 
-    self->TorSetpoint = (float)PID_Controller(self->PIDVelRegulator, ((int32_t)self->VelSetpoint) - VelActual);
+    self->TorSetpoint = FPI_Controller(self->PIDVelRegulator, self->VelSetpoint - VelActual);
 
     break;
   case ENABLED:
     // get current state and inputs
-    PosActual = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
-    VelActual = SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
+    PosActual = (float)SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
+    VelActual = (float)SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
 
-    PosInput = self->Config.StepAngle * (float)(STEPDIR_GetInputPosition() + self->StepDirOffset);
 
     // filter stepped input position
     PosDelta = PosInput - self->PosSetpoint;
-    PosDelta = 0.0f     - self->VelSetpoint;
+    VelDelta = 0.0f     - self->VelSetpoint;
 
     Accel = (self->Config.InputFiltKp * PosDelta) + (self->Config.InputFiltKi * VelDelta);
 
     // calculate the feedforward motion terms
     self->TorSetpoint = self->Config.Inertia * Accel;
-    self->VelSetpoint = DeltaTime * Accel;
-    self->PosSetpoint = DeltaTime * self->VelSetpoint;
+    self->VelSetpoint += DeltaTime * Accel;
+    self->PosSetpoint += DeltaTime * self->VelSetpoint;
 
     // control position with velocity, then velocity with torque, adding in the feedforward terms
 
-    self->VelSetpoint += (float)PID_Controller(self->PIDPosRegulator, ((int32_t)self->PosSetpoint) - PosActual);
+    self->VelSetpoint += FPID_Controller(self->PIDPosRegulator, (self->PosSetpoint) - PosActual);
 
     // clamp commanded velocity to range based on config
     if (self->VelSetpoint >  self->Config.VelMaxAbs) {self->VelSetpoint =  self->Config.VelMaxAbs;}
     if (self->VelSetpoint < -self->Config.VelMaxAbs) {self->VelSetpoint = -self->Config.VelMaxAbs;}
 
-    self->TorSetpoint += (float)PID_Controller(self->PIDVelRegulator, ((int32_t)self->VelSetpoint) - VelActual);
+    self->TorSetpoint += FPI_Controller(self->PIDVelRegulator, (self->VelSetpoint) - VelActual);
 
 
     break;
@@ -94,10 +92,16 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
   STC_ExecRamp( self->TorqueController, (int32_t)(self->TorSetpoint), 0 );
 }
 
+/// Helper function to drive the
+void SERVO_ControlPositionFromStepDir(Servo_t * self, float DeltaTime) {
+  float PosInput = self->Config.StepAngle * (float)(STEPDIR_GetInputPosition() + self->StepDirOffset);
+  SERVO_ControlPosition(self, DeltaTime, PosInput);
+}
+
 /// Callback that is called when the encoder index pin is triggered.
 void SERVO_ResetEncoder(Servo_t * self) {
 
-  int32_t PosActual = SPD_GetMecAngle(self->Encoder);
+  int32_t PosActual = SPD_GetMecAngle(&self->Encoder->_Super);
 
   self->EncoderOffset = -PosActual;
 
