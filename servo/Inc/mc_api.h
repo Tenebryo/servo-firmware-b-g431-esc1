@@ -50,9 +50,6 @@ void MC_ProgramSpeedRampMotor1( int16_t hFinalSpeed, uint16_t hDurationms );
 /* Programs a Torque ramp for Motor 1 */
 void MC_ProgramTorqueRampMotor1( int16_t hFinalTorque, uint16_t hDurationms );
 
-/* Programs a target position for Motor 1 */
-void MC_ProgramPositionCommandMotor1( float fTargetPosition, float fDuration );
-
 /* Programs a current reference for Motor 1 */
 void MC_SetCurrentReferenceMotor1( qd_t Iqdref );
 
@@ -138,21 +135,6 @@ uint16_t MC_GetCurrentFaultsMotor1(void);
 
 /* returns the current state of Motor 1 state machine */
 State_t  MC_GetSTMStateMotor1(void);
-
-/* returns the current control position state of Motor 1 */
-PosCtrlStatus_t  MC_GetControlPositionStatusMotor1( void );
-
-/* returns the alignment state of Motor 1 */
-AlignStatus_t  MC_GetAlignmentStatusMotor1( void );
-
-/* returns the current position of Motor 1. */
-float MC_GetCurrentPosition1( void );
-
-/* returns the target position of Motor 1. */
-float MC_GetTargetPosition1( void );
-
-/* returns the total movement duration to reach the target position of Motor 1. */
-float MC_GetMoveDuration1( void );
 
 /**
   * @}

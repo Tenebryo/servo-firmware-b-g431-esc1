@@ -155,12 +155,6 @@ __weak void MCboot( MCI_Handle_t* pMCIList[NBR_OF_MOTORS] )
   pEAC[M1] = &EncAlignCtrlM1;
 
   /******************************************************/
-  /*   Position Control component initialization        */
-  /******************************************************/
-  PID_HandleInit(&PID_PosParamsM1);
-  TC_Init(&PosCtrlM1, &PID_PosParamsM1, &SpeednTorqCtrlM1, &ENCODER_M1);
-
-  /******************************************************/
   /*   Speed & torque component initialization          */
   /******************************************************/
   STC_Init(pSTC[M1],&PIDSpeedHandle_M1, &ENCODER_M1._Super);
@@ -199,7 +193,7 @@ __weak void MCboot( MCI_Handle_t* pMCIList[NBR_OF_MOTORS] )
   FOCVars[M1].bDriveInput = EXTERNAL;
   FOCVars[M1].Iqdref = STC_GetDefaultIqdref(pSTC[M1]);
   FOCVars[M1].UserIdref = STC_GetDefaultIqdref(pSTC[M1]).d;
-  MCI_Init(&Mci[M1], &STM[M1], pSTC[M1], &FOCVars[M1], pPosCtrl[M1]);
+  MCI_Init(&Mci[M1], &STM[M1], pSTC[M1], &FOCVars[M1] );
   MCI_ExecSpeedRamp(&Mci[M1],
   STC_GetMecSpeedRefUnitDefault(pSTC[M1]),0); /*First command to STC*/
   pMCIList[M1] = &Mci[M1];
@@ -426,7 +420,6 @@ __weak void TSK_MediumFrequencyTaskM1(void)
 
   case START:
     {
-        TC_EncAlignmentCommand(pPosCtrl[M1]);
         STM_NextState( &STM[M1], START_RUN ); /* only for sensored*/
     }
     break;
@@ -471,8 +464,6 @@ __weak void TSK_MediumFrequencyTaskM1(void)
     /* USER CODE BEGIN MediumFrequencyTask M1 2 */
 
     /* USER CODE END MediumFrequencyTask M1 2 */
-
-    TC_PositionRegulation(pPosCtrl[M1]);
 
     MCI_ExecBufferedCommands( &Mci[M1] );
     FOC_CalcCurrRef( M1 );

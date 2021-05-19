@@ -86,7 +86,9 @@
 #define TF_KDDIV_LOG                  LOG2(8192)
 #define TFDIFFERENTIAL_TERM_ENABLING  DISABLE
 
-#define POSITION_LOOP_FREQUENCY_HZ    2000 /*!<Execution rate of position control regulation loop (Hz) */
+/* Speed control loop */
+#define SPEED_LOOP_FREQUENCY_HZ       2000 /*!<Execution rate of speed
+                                                      regulation loop (Hz) */
 
 #define PID_SPEED_KP_DEFAULT          3707/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
 #define PID_SPEED_KI_DEFAULT          20/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
@@ -107,24 +109,12 @@
 #define IQMAX                          21243
 
 /* Default settings */
-#define DEFAULT_CONTROL_MODE           STC_SPEED_MODE /*!< STC_TORQUE_MODE or
+#define DEFAULT_CONTROL_MODE           STC_TORQUE_MODE /*!< STC_TORQUE_MODE or
                                                         STC_SPEED_MODE */
 #define DEFAULT_TARGET_SPEED_RPM      1423
 #define DEFAULT_TARGET_SPEED_UNIT      (DEFAULT_TARGET_SPEED_RPM*SPEED_UNIT/_RPM)
-#define DEFAULT_TORQUE_COMPONENT       1633
+#define DEFAULT_TORQUE_COMPONENT       0
 #define DEFAULT_FLUX_COMPONENT         0
-
-#define PID_POSITION_KP_GAIN			400
-#define PID_POSITION_KI_GAIN			0
-#define PID_POSITION_KD_GAIN			0
-#define PID_POSITION_KPDIV				1024
-#define PID_POSITION_KIDIV				32768
-#define PID_POSITION_KDDIV				16
-#define PID_POSITION_KPDIV_LOG			LOG2(1024)
-#define PID_POSITION_KIDIV_LOG			LOG2(32768)
-#define PID_POSITION_KDDIV_LOG			LOG2(16)
-#define PID_POSITION_ANGLE_STEP			10.0
-#define PID_POSITION_MOV_DURATION		10.0
 
 /**************************    FIRMWARE PROTECTIONS SECTION   *****************/
 #define OV_VOLTAGE_THRESHOLD_V          28 /*!< Over-voltage

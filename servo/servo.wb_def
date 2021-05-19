@@ -143,7 +143,7 @@
 		<define key="TF_KIDIV" value="16384" />
 		<define key="TF_KDDIV" value="8192" />
 		<define key="TFDIFFERENTIAL_TERM_ENABLING" value="DISABLE" />
-		<define key="POSITION_LOOP_FREQUENCY_HZ" value="2000" />
+		<define key="SPEED_LOOP_FREQUENCY_HZ" value="2000" />
 		<define key="PID_SPEED_KP_DEFAULT" value="3707" />
 		<define key="PID_SPEED_KI_DEFAULT" value="20" />
 		<define key="PID_SPEED_KD_DEFAULT" value="0" />
@@ -151,17 +151,11 @@
 		<define key="SP_KIDIV" value="16384" />
 		<define key="SP_KDDIV" value="16" />
 		<define key="SPD_DIFFERENTIAL_TERM_ENABLING" value="DISABLE" />
-		<define key="DEFAULT_CONTROL_MODE" value="STC_SPEED_MODE" />
+		<define key="DEFAULT_CONTROL_MODE" value="STC_TORQUE_MODE" />
 		<define key="DEFAULT_TARGET_SPEED_RPM" value="1423" />
-		<define key="DEFAULT_TORQUE_COMPONENT" value="1633" />
+		<define key="DEFAULT_TORQUE_COMPONENT" value="0" />
 		<define key="DEFAULT_FLUX_COMPONENT" value="0" />
-		<define key="POSITION_CTRL_ENABLING" value="ENABLE" />
-		<define key="POSITION_CTRL_KP_GAIN" value="400" />
-		<define key="POSITION_CTRL_KI_GAIN" value="0" />
-		<define key="POSITION_CTRL_KD_GAIN" value="0" />
-		<define key="POSITION_CTRL_KPDIV" value="1024" />
-		<define key="POSITION_CTRL_KIDIV" value="32768" />
-		<define key="POSITION_CTRL_KDDIV" value="16" />
+		<define key="POSITION_CTRL_ENABLING" value="DISABLE" />
 		<define key="OV_VOLTAGE_PROT_ENABLING" value="ENABLE" />
 		<define key="UV_VOLTAGE_PROT_ENABLING" value="ENABLE" />
 		<define key="OV_VOLTAGE_THRESHOLD_V" value="28" />
@@ -285,9 +279,7 @@
 		<define key="ENC_A_GPIO_PIN" value="GPIO_Pin_6" />
 		<define key="ENC_B_GPIO_PORT" value="GPIOB" />
 		<define key="ENC_B_GPIO_PIN" value="GPIO_Pin_7" />
-		<define key="ENC_Z_GPIO_PORT" value="GPIOB" />
-		<define key="ENC_Z_GPIO_PIN" value="GPIO_Pin_8" />
-		<define key="ENC_USE_CH3" value="TRUE" />
+		<define key="ENC_USE_CH3" value="FALSE" />
 		<define key="R_BRAKE_GPIO_PORT" value="GPIOD" />
 		<define key="R_BRAKE_GPIO_PIN" value="GPIO_Pin_5" />
 		<define key="OV_CURR_BYPASS_GPIO_PORT" value="GPIOD" />
