@@ -17,7 +17,8 @@ typedef struct FPID_Handle
   float   wIntegralTerm;        
   float   wUpperIntegralLimit;  
 
-  float   wLowerIntegralLimit;  
+  float   wLowerIntegralLimit;
+  float   aIntegratorDecay;
   
   float   hUpperOutputLimit;    
   float   hLowerOutputLimit;    
@@ -79,10 +80,10 @@ float FPID_GetKD( FPID_Handle_t * pHandle );
 
 /// This function compute the output of a PI regulator sum of its
 /// proportional and integralterms
-float FPI_Controller( FPID_Handle_t * pHandle, float wProcessVarError );
+float FPI_Controller( FPID_Handle_t * pHandle, float wProcessVarError, float dt  );
 
 /// This function compute the output of a FPID regulator sum of its
 ///  proportional, integral and derivative terms
-float FPID_Controller( FPID_Handle_t * pHandle, float wProcessVarError );
+float FPID_Controller( FPID_Handle_t * pHandle, float wProcessVarError, float dt );
 
 #endif /* APPLICATION_INCLUDE_USER_FPID_REGULATOR_H_ */

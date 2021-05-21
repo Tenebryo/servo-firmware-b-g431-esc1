@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "user_main.h"
+#include "user_potentiometer.h"
 
 /* USER CODE END Includes */
 
@@ -148,6 +149,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+  RegConv_t rc;
+  rc.channel = 11;
+  rc.regADC = ADC1;
+  rc.samplingTime = 47;
+  POT_Init(&rc);
+
   MAIN_Init();
 
   while (1)
@@ -234,9 +241,6 @@ static void MX_NVIC_Init(void)
   /* TIM4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(TIM4_IRQn, 3, 0);
   HAL_NVIC_EnableIRQ(TIM4_IRQn);
-  /* EXTI9_5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 3, 0);
-  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 /**
@@ -997,6 +1001,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(M1_ENCODER_Z_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 3, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 

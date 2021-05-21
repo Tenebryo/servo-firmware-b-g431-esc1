@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "main.h": "c",
+        "mc_api.h": "c",
+        "mc_interface.h": "c",
+        "user_servo_controller.h": "c"
+    }
+}

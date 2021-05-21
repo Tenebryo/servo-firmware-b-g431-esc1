@@ -24,31 +24,12 @@ void button_interrupt(void);
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   switch (GPIO_Pin) {
-  case USER_BUTTON_EXTI_IRQn:
-    button_interrupt();
+  case USER_BUTTON_Pin:
+    MC_StopMotor1();
     break;
+  case M1_ENCODER_Z_Pin:
+    SERVO_ResetEncoderOffset(&ServoHandle_M1);
   default:
     break;
   }
-}
-
-void EXTI9_5_IRQHandler(void)
-{
-  SERVO_ResetEncoderOffset(&ServoHandle_M1);
-}
-
-/*
- * @brief This interrupt is triggered when the step pin is activated.
- * @param None
- * @retval None
- */
-
-/*
- * @brief This interrupt is triggered when the daughter board button is pressed
- * @param None
- * @retval None
- */
-void button_interrupt(void) {
-  // emergency stop using the button
-  MC_StopMotor1();
 }

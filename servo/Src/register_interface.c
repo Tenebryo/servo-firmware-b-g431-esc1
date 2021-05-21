@@ -224,6 +224,12 @@ uint8_t RI_SetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
      break;
     case MC_REG_DAC_USER2:
      break;
+    case MC_REG_FF_VQ:
+    case MC_REG_FF_VD:
+    case MC_REG_FF_VQ_PIOUT:
+    case MC_REG_FF_VD_PIOUT:
+      retVal = MCP_ERROR_RO_REG;
+     break;
     case MC_REG_SPEED_KP_DIV:
       PID_SetKPDivisorPOW2(pPIDSpeed[motorID], regdata16);
      break;
@@ -278,6 +284,15 @@ uint8_t RI_SetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
     case MC_REG_STOCORDIC_EST_BEMF:
     case MC_REG_STOCORDIC_OBS_BEMF:
       retVal = MCP_ERROR_RO_REG;
+      break;
+    case MC_REG_FF_1Q:
+      pFF[motorID]->wConstant_1Q = regdata32;
+      break;
+    case MC_REG_FF_1D:
+      pFF[motorID]->wConstant_1D = regdata32;
+      break;
+    case MC_REG_FF_2:
+      pFF[motorID]->wConstant_2 = regdata32;
       break;
     default:
       retVal = MCP_ERROR_UNKNOWN_REG;
@@ -482,6 +497,18 @@ uint8_t RI_GetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
          break;
         case MC_REG_DAC_USER2:
          break;
+        case MC_REG_FF_VQ:
+          *regdata16 = FF_GetVqdff(pFF[motorID]).q;
+         break;
+        case MC_REG_FF_VD:
+          *regdata16 = FF_GetVqdff(pFF[motorID]).d;
+         break;
+        case MC_REG_FF_VQ_PIOUT:
+          *regdata16 = FF_GetVqdAvPIout(pFF[motorID]).q;
+         break;
+        case MC_REG_FF_VD_PIOUT:
+          *regdata16 = FF_GetVqdAvPIout(pFF[motorID]).d;
+         break;
 
         case MC_REG_SPEED_KP_DIV:
           *regdataU16 = PID_GetKPDivisor(pPIDSpeed[motorID]);
@@ -538,6 +565,15 @@ uint8_t RI_GetReg (uint16_t dataID, uint8_t * data, uint16_t *size, uint16_t fre
           break;
         case MC_REG_SPEED_REF:
           *regdata32 = (((int32_t)MCI_GetMecSpeedRefUnit(pMCI)*_RPM)/SPEED_UNIT);
+          break;
+        case MC_REG_FF_1Q:
+          *regdata32 = pFF[motorID]->wConstant_1Q;
+          break;
+        case MC_REG_FF_1D:
+          *regdata32 = pFF[motorID]->wConstant_1D;
+          break;
+        case MC_REG_FF_2:
+          *regdata32 = pFF[motorID]->wConstant_2;
           break;
         default:
           retVal = MCP_ERROR_UNKNOWN_REG;

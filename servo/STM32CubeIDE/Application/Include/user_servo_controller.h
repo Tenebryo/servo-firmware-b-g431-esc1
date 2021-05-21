@@ -14,15 +14,24 @@
 #include "user_step_dir.h"
 #include "user_fpid_regulator.h"
 
+extern int16_t LastTorqueApplied;
+extern float ServoTempInputPos;
+
+// #define COGGING_TORQUE_POINTS 128
+// #define COG_INDEX(step) (((step) * COGGING_TORQUE_POINTS) / (4 * M1_ENCODER_PPR))
+// #define COG_STEP(step) (((step) * (4 * M1_ENCODER_PPR)) / COGGING_TORQUE_POINTS)
+
 typedef struct {
   float IndexScanSpeed;
-  float StepAngle;
+  float TurnsPerStep;
   float VelMaxAbs;
   float TorMaxAbs;
   float InputFiltKp;
   float InputFiltKi;
   float Inertia;
   float TorqueBandwidth;
+  bool EncoderDirectionFlipped;
+  // float CoggingTorque[COGGING_TORQUE_POINTS];
 } ServoConfig_t;
 
 typedef enum {
@@ -43,6 +52,8 @@ typedef struct {
   bool Aligned;
 
   int32_t EncoderOffset, StepDirOffset;
+  uint32_t LastEncoderCount;
+  int32_t EncoderPosition;
 
   ENCODER_Handle_t *Encoder;
   SpeednTorqCtrl_Handle_t *TorqueController;

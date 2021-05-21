@@ -16,7 +16,7 @@ GlobalConfig_reg_t globalConfig_reg =
 
 MotorConfig_reg_t M1_MotorConfig_reg =
 {
-  .maxMechanicalSpeed = 10000,
+  .maxMechanicalSpeed = 1800,
   .maxMotorCurrent = 0xA, /* Information not available yet */
   .maxVoltageSupply = 28,
   .minVoltageSupply = 8,

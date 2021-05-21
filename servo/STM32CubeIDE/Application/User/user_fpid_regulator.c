@@ -18,8 +18,8 @@ void FPID_HandleInit( FPID_Handle_t * pHandle )
   pHandle->hKpGain =  pHandle->hDefKpGain;
   pHandle->hKiGain =  pHandle->hDefKiGain;
   pHandle->hKdGain =  pHandle->hDefKdGain;
-  pHandle->wIntegralTerm = 0x00000000UL;
-  pHandle->wPrevProcessVarError = 0x00000000UL;
+  pHandle->wIntegralTerm = 0.0;
+  pHandle->wPrevProcessVarError = 0.0;
 }
 
 void FPID_SetKP( FPID_Handle_t * pHandle, float hKpGain )
@@ -109,7 +109,7 @@ float FPID_GetKD( FPID_Handle_t * pHandle )
 __attribute__( ( section ( ".ccmram" ) ) )
 #endif
 #endif
-float FPI_Controller( FPID_Handle_t * pHandle, float wProcessVarError )
+float FPI_Controller( FPID_Handle_t * pHandle, float wProcessVarError, float dt)
 {
   float wProportional_Term, wIntegral_Term, wOutput_32, wIntegral_sum_temp;
   float wDischarge = 0;
@@ -127,7 +127,7 @@ float FPI_Controller( FPID_Handle_t * pHandle, float wProcessVarError )
   else
   {
     wIntegral_Term = pHandle->hKiGain * wProcessVarError;
-    wIntegral_sum_temp = pHandle->wIntegralTerm + wIntegral_Term;
+    wIntegral_sum_temp = pHandle->wIntegralTerm + wIntegral_Term;// * dt;
 
     if ( wIntegral_sum_temp < 0.0f )
     {
@@ -192,7 +192,7 @@ float FPI_Controller( FPID_Handle_t * pHandle, float wProcessVarError )
 __attribute__( ( section ( ".ccmram" ) ) )
 #endif
 #endif
-float FPID_Controller( FPID_Handle_t * pHandle, float wProcessVarError )
+float FPID_Controller( FPID_Handle_t * pHandle, float wProcessVarError, float dt )
 {
   float wDifferential_Term;
   float wDeltaError;
@@ -205,7 +205,7 @@ float FPID_Controller( FPID_Handle_t * pHandle, float wProcessVarError )
 
     pHandle->wPrevProcessVarError = wProcessVarError;
 
-    wTemp_output = FPI_Controller( pHandle, wProcessVarError ) + wDifferential_Term;
+    wTemp_output = FPI_Controller( pHandle, wProcessVarError, dt ) + wDifferential_Term;
 
     if ( wTemp_output > pHandle->hUpperOutputLimit )
     {
@@ -220,7 +220,7 @@ float FPID_Controller( FPID_Handle_t * pHandle, float wProcessVarError )
   }
   else
   {
-    wTemp_output = FPI_Controller( pHandle, wProcessVarError );
+    wTemp_output = FPI_Controller( pHandle, wProcessVarError, dt );
   }
   return ( wTemp_output );
 }

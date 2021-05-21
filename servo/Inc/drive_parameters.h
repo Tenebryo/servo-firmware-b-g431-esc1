@@ -31,7 +31,7 @@
 /******** MAIN AND AUXILIARY SPEED/POSITION SENSOR(S) SETTINGS SECTION ********/
 
 /*** Speed measurement settings ***/
-#define MAX_APPLICATION_SPEED_RPM       10000 /*!< rpm, mechanical */
+#define MAX_APPLICATION_SPEED_RPM       1800 /*!< rpm, mechanical */
 #define MIN_APPLICATION_SPEED_RPM       0 /*!< rpm, mechanical,
                                                            absolute value */
 #define MEAS_ERRORS_BEFORE_FAULTS       3 /*!< Number of speed
@@ -70,28 +70,28 @@
 #define REGULATION_EXECUTION_RATE     1    /*!< FOC execution rate in
                                                            number of PWM cycles */
 /* Gains values for torque and flux control loops */
-#define PID_TORQUE_KP_DEFAULT         2711
+#define PID_TORQUE_KP_DEFAULT         2793
 #define PID_TORQUE_KI_DEFAULT         822
 #define PID_TORQUE_KD_DEFAULT         100
-#define PID_FLUX_KP_DEFAULT           1643
+#define PID_FLUX_KP_DEFAULT           1849
 #define PID_FLUX_KI_DEFAULT           822
 #define PID_FLUX_KD_DEFAULT           100
 
 /* Torque/Flux control loop gains dividers*/
-#define TF_KPDIV                      8192
+#define TF_KPDIV                      4096
 #define TF_KIDIV                      16384
 #define TF_KDDIV                      8192
-#define TF_KPDIV_LOG                  LOG2(8192)
+#define TF_KPDIV_LOG                  LOG2(4096)
 #define TF_KIDIV_LOG                  LOG2(16384)
 #define TF_KDDIV_LOG                  LOG2(8192)
 #define TFDIFFERENTIAL_TERM_ENABLING  DISABLE
 
 /* Speed control loop */
-#define SPEED_LOOP_FREQUENCY_HZ       2000 /*!<Execution rate of speed
+#define SPEED_LOOP_FREQUENCY_HZ       1000 /*!<Execution rate of speed
                                                       regulation loop (Hz) */
 
-#define PID_SPEED_KP_DEFAULT          3707/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
-#define PID_SPEED_KI_DEFAULT          20/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
+#define PID_SPEED_KP_DEFAULT          3226/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
+#define PID_SPEED_KI_DEFAULT          10/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
 #define PID_SPEED_KD_DEFAULT          0/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/
 /* Speed PID parameter dividers */
 #define SP_KPDIV                      1024
@@ -103,18 +103,12 @@
 
 /* USER CODE BEGIN PID_SPEED_INTEGRAL_INIT_DIV */
 
-#define PID_SERVO_POS_KP_DEFAULT  100.0f
-#define PID_SERVO_POS_KI_DEFAULT  0.0f
-#define PID_SERVO_POS_KD_DEFAULT  0.0f
-#define PID_SERVO_VEL_KP_DEFAULT  3707.0f/(SPEED_UNIT/10)
-#define PID_SERVO_VEL_KI_DEFAULT  20.0f  /(SPEED_UNIT/10)
-#define PID_SERVO_VEL_KD_DEFAULT  0.0f
 
 #define PID_SPEED_INTEGRAL_INIT_DIV 1 /*  */
 /* USER CODE END PID_SPEED_INTEGRAL_INIT_DIV */
 
 #define SPD_DIFFERENTIAL_TERM_ENABLING DISABLE
-#define IQMAX                          21243
+#define IQMAX                          21781
 
 /* Default settings */
 #define DEFAULT_CONTROL_MODE           STC_TORQUE_MODE /*!< STC_TORQUE_MODE or
@@ -153,8 +147,8 @@
 /******************************   START-UP PARAMETERS   **********************/
 /* Encoder alignment */
 #define ALIGNMENT_DURATION              4000 /*!< milliseconds */
-#define ALIGNMENT_ANGLE_DEG             0 /*!< degrees [0...359] */
-#define FINAL_I_ALIGNMENT               5445 /*!< s16A */
+#define ALIGNMENT_ANGLE_DEG             45 /*!< degrees [0...359] */
+#define FINAL_I_ALIGNMENT               6534 /*!< s16A */
 // With ALIGNMENT_ANGLE_DEG equal to 90 degrees final alignment
 // phase current = (FINAL_I_ALIGNMENT * 1.65/ Av)/(32767 * Rshunt)
 // being Av the voltage gain between Rshunt and A/D input
@@ -169,12 +163,11 @@
 
 /******************************   ADDITIONAL FEATURES   **********************/
 
-/*  Maximum Torque Per Ampere strategy parameters */
-
-#define MTPA_ENABLING
-#define SEGDIV                         2655
-#define ANGC                           {-975,-2912,-4823,-6701,-8488,-10206,-11831,-13378}
-#define OFST                           {0,157,466,923,1502,2198,2988,3866}
+/*  Feed-forward parameters */
+#define FEED_FORWARD_CURRENT_REG_ENABLING ENABLE
+#define CONSTANT1_Q                    245737
+#define CONSTANT1_D                    162620
+#define CONSTANT2_QD                   32609
 
 /*** On the fly start-up ***/
 
