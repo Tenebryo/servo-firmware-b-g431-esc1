@@ -43,6 +43,7 @@
 
 #include "user_servo_controller.h"
 #include "user_fpid_regulator.h"
+#include "user_oscilloscope.h"
 
 /* USER CODE END Additional include */
 extern PID_Handle_t PIDSpeedHandle_M1;
@@ -76,6 +77,7 @@ extern FPID_Handle_t PIDPosHandle_M1;
 extern FPID_Handle_t PIVPosHandle_M1;
 extern FPID_Handle_t PIVVelHandle_M1;
 extern Servo_t ServoHandle_M1;
+extern Oscilloscope_t OscilloscopeHandle_M1;
 
 /* USER CODE END Additional extern */
 

@@ -34,7 +34,8 @@ void MAIN_Init(void) {
   // SERVO_Align(&ServoHandle_M1);
 
   // SERVO_EnablePID(&ServoHandle_M1);
-  SERVO_EnablePIV(&ServoHandle_M1);
+  // SERVO_EnablePIV(&ServoHandle_M1);
+  SERVO_EnablePositionFilter(&ServoHandle_M1);
 }
 
 State_t state;

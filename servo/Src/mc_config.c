@@ -344,8 +344,8 @@ Servo_t ServoHandle_M1 =
     .Config = {
       .IndexScanSpeed = 0.5,
       .TurnsPerStep = 0.001,
-      .Inertia = 1.0,
-      .TorqueBandwidth = 1.0,
+      .Inertia = 0.01,
+      .TorqueBandwidth = 100.0,
       .VelMaxAbs = 2000.0,
       .TorMaxAbs = 8000.0,
     },
@@ -356,6 +356,11 @@ Servo_t ServoHandle_M1 =
     .Aligned = false,
     .EncoderOffset = 0,
     .StepDirOffset = 0,
+};
+
+Oscilloscope_t OscilloscopeHandle_M1 = {
+  .Index = 0,
+  .Interval = 0,
 };
 /* USER CODE END Additional configuration */
 

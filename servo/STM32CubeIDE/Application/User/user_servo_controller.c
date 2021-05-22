@@ -64,6 +64,7 @@ void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle
 void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   float PosActual, VelActual;
+  float PosCmd, VelCmd, TorCmd;
   float PosDelta, VelDelta, Accel;
 
   // some control modes only add to the torque setpoint, so we need to clear it here.
@@ -113,6 +114,10 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     self->TorSetpoint = self->Config.Inertia * Accel;
     self->VelSetpoint += DeltaTime * Accel;
     self->PosSetpoint += DeltaTime * self->VelSetpoint;
+
+    self->VelSetpoint = clamp(self->VelSetpoint, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
+    self->TorSetpoint = clamp(self->TorSetpoint, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
+
     // cascade into PIV control with the calculated feedforward setpoints
 
   case ENABLED_PIV:
@@ -125,20 +130,26 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
       self->TorSetpoint = self->TorInput;
     }
 
+    PosCmd = self->PosSetpoint;
+    VelCmd = self->VelSetpoint;
+    TorCmd = self->TorSetpoint;
+
     // control position with velocity, then velocity with torque, adding in the feedforward terms
 
-    self->VelSetpoint += FPID_Controller(self->PIVPosRegulator, (self->PosSetpoint) - PosActual, DeltaTime);
+    VelCmd += FPID_Controller(self->PIVPosRegulator, PosCmd - PosActual, DeltaTime);
     
     // limit the set velocity
-    self->VelSetpoint = clamp(self->VelSetpoint, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
+    VelCmd = clamp(VelCmd, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
 
-    self->TorSetpoint += FPID_Controller(self->PIVVelRegulator, (self->VelSetpoint) - VelActual, DeltaTime);
+    TorCmd += FPID_Controller(self->PIVVelRegulator, VelCmd - VelActual, DeltaTime);
 
     // limit the set torque
-    self->TorSetpoint = clamp(self->TorSetpoint, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
+    TorCmd = clamp(TorCmd, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
 
     break;
   }
+  // this is safe because the TorSetpoint is never integrated.
+  self->TorSetpoint = TorCmd;
 
   // actually send the desired torque to the torque controller.
   MC_ProgramTorqueRampMotor1((int32_t)(self->TorSetpoint), 0);
@@ -209,10 +220,14 @@ void SERVO_Enable(Servo_t * self) {
 
     float PosActual = TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
 
-    self->PosSetpoint = PosActual;
     self->StepDirOffset = PosActual;
+    self->PosSetpoint = PosActual;
     self->VelSetpoint = 0.0;
     self->TorSetpoint = 0.0;
+
+    self->PosInput = self->PosSetpoint;
+    self->VelInput = self->VelSetpoint;
+    self->TorInput = self->TorSetpoint;
 }
 
 /// ==================================================================================================================

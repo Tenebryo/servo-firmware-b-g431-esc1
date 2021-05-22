@@ -312,6 +312,13 @@ __weak void TSK_MediumFrequencyTaskM1(void)
   /* USER CODE BEGIN MediumFrequencyTask M1 0 */
 
   uint16_t potentiometer_value = 0;
+
+  if (OSC_CheckInterval(&OscilloscopeHandle_M1)) {
+
+    // get configured data point
+
+  }
+
   /* USER CODE END MediumFrequencyTask M1 0 */
 
   State_t StateM1;
