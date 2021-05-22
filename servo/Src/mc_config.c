@@ -317,38 +317,27 @@ FPID_Handle_t PIDPosHandle_M1 = {
   .hLowerOutputLimit   = -6000.0,
 };
 
-FPID_Handle_t PIDVelHandle_M1 = {
+FPID_Handle_t PIVPosHandle_M1 = {
   
-  .hDefKpGain          = 100.0,
-  .hDefKiGain          = 1.0,
+  .hDefKpGain          =    0.1,
+  .hDefKiGain          =     0.0,
+  .hDefKdGain          =     0.0,
+  .wUpperIntegralLimit =  20.0,
+  .wLowerIntegralLimit = -20.0,
+  .hUpperOutputLimit   =  100.0,
+  .hLowerOutputLimit   = -100.0,
+};
+
+FPID_Handle_t PIVVelHandle_M1 = {
+  
+  .hDefKpGain          =   4.0,
+  .hDefKiGain          = 0.0,
+  .hDefKdGain          = 0.0,
   .wUpperIntegralLimit = 1000.0,
   .wLowerIntegralLimit = -1000.0,
   .hUpperOutputLimit   = 4000.0,
   .hLowerOutputLimit   = -4000.0,
-  .hDefKdGain           = 0.0,
 };
-
-// FPID_Handle_t PIDPosHandle_M1 = {
-  
-//   .hDefKpGain          =    0.1,
-//   .hDefKiGain          =     0.0,
-//   .hDefKdGain          =     0.0,
-//   .wUpperIntegralLimit =  20.0,
-//   .wLowerIntegralLimit = -20.0,
-//   .hUpperOutputLimit   =  100.0,
-//   .hLowerOutputLimit   = -100.0,
-// };
-
-// FPID_Handle_t PIDVelHandle_M1 = {
-  
-//   .hDefKpGain          =   4.0,
-//   .hDefKiGain          = 0.0,
-//   .hDefKdGain          = 0.0,
-//   .wUpperIntegralLimit = 1000.0,
-//   .wLowerIntegralLimit = -1000.0,
-//   .hUpperOutputLimit   = 4000.0,
-//   .hLowerOutputLimit   = -4000.0,
-// };
 
 Servo_t ServoHandle_M1 =
 {

@@ -32,7 +32,7 @@ void MAIN_Init(void) {
 
   SERVO_ResetEncoderOffset(&ServoHandle_M1);
   // SERVO_Align(&ServoHandle_M1);
-  SERVO_Enable(&ServoHandle_M1);
+  SERVO_EnablePID(&ServoHandle_M1);
   // MC_ProgramSpeedRampMotor1(10, 10);
   // MC_ProgramTorqueRampMotor1(1000, 10);
 

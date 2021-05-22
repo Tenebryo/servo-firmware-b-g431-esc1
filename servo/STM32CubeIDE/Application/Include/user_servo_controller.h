@@ -38,7 +38,10 @@ typedef enum {
   UNINIT,
   DISABLED,
   ALIGNING,
-  ENABLED
+  ENABLED_STEP_DIRECTION,
+  ENABLED_POSITION_FILTER,
+  ENABLED_PID,
+  ENABLED_PIV,
 } ServoState_t ;
 
 typedef struct {
@@ -47,6 +50,7 @@ typedef struct {
 
   ServoState_t State;
 
+  float PosInput, VelInput, TorInput;
   float PosSetpoint, VelSetpoint, TorSetpoint;
 
   bool Aligned;
@@ -57,17 +61,19 @@ typedef struct {
 
   ENCODER_Handle_t *Encoder;
   SpeednTorqCtrl_Handle_t *TorqueController;
-  FPID_Handle_t *PIDPosRegulator, *PIDVelRegulator;
+  FPID_Handle_t *PIDPosRegulator, *PIVPosRegulator, *PIVVelRegulator;
 } Servo_t;
 
 
-void SERVO_Init(Servo_t *self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t *TorqueController, FPID_Handle_t *PIDPosRegulator, FPID_Handle_t *PIDVelRegulator);
-void SERVO_ControlPosition(Servo_t * self, float DeltaTime, float InputPos);
-void SERVO_ControlPositionFromStepDir(Servo_t * self, float DeltaTime);
+void SERVO_Init(Servo_t *self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t *TorqueController, FPID_Handle_t *PIDPosRegulator, FPID_Handle_t *PIVPosRegulator, FPID_Handle_t *PIVVelRegulator);
+void SERVO_ControlPosition(Servo_t * self, float DeltaTime);
 void SERVO_ResetEncoderOffset(Servo_t * self);
 void SERVO_Disable(Servo_t * self);
 void SERVO_Align(Servo_t * self);
-void SERVO_Enable(Servo_t * self);
+void SERVO_EnablePID(Servo_t * self);
+void SERVO_EnablePIV(Servo_t * self);
+void SERVO_EnablePositionFilter(Servo_t * self);
+void SERVO_EnableStepDirection(Servo_t * self);
 bool SERVO_IsAlignmentComplete(Servo_t * self);
 
 #endif /* APPLICATION_INCLUDE_USER_SERVO_CONTROLLER_H_ */

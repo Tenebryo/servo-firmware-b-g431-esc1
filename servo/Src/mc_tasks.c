@@ -205,8 +205,9 @@ __weak void MCboot( MCI_Handle_t* pMCIList[NBR_OF_MOTORS] )
   /* USER CODE BEGIN MCboot 2 */
   
   FPID_HandleInit(&PIDPosHandle_M1);
-  FPID_HandleInit(&PIDVelHandle_M1);
-  SERVO_Init(&ServoHandle_M1, &ENCODER_M1, &SpeednTorqCtrlM1, &PIDPosHandle_M1, &PIDVelHandle_M1);
+  FPID_HandleInit(&PIVPosHandle_M1);
+  FPID_HandleInit(&PIVVelHandle_M1);
+  SERVO_Init(&ServoHandle_M1, &ENCODER_M1, &SpeednTorqCtrlM1, &PIDPosHandle_M1, &PIVPosHandle_M1, &PIVVelHandle_M1);
 
   /* USER CODE END MCboot 2 */
 
@@ -473,8 +474,10 @@ __weak void TSK_MediumFrequencyTaskM1(void)
     /* USER CODE BEGIN MediumFrequencyTask M1 2 */
 
     POT_ReadValue(&potentiometer_value);
-    SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ, (0.0004) * (float)potentiometer_value);
-    // SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ, 0.0);
+    ServoHandle_M1.PosSetpoint = (0.0004) * (float)potentiometer_value;
+    SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
+    // ServoHandle_M1->PosSetpoint = 0.0;
+    // SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
     // SERVO_ControlPositionFromStepDir(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
 
     /* USER CODE END MediumFrequencyTask M1 2 */
