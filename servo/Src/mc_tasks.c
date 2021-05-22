@@ -474,9 +474,9 @@ __weak void TSK_MediumFrequencyTaskM1(void)
     /* USER CODE BEGIN MediumFrequencyTask M1 2 */
 
     POT_ReadValue(&potentiometer_value);
-    ServoHandle_M1.PosSetpoint = (0.0004) * (float)potentiometer_value;
+    ServoHandle_M1.PosInput = (0.00004) * (float)potentiometer_value;
     SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
-    // ServoHandle_M1->PosSetpoint = 0.0;
+    // ServoHandle_M1->PosInput = 0.0;
     // SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
     // SERVO_ControlPositionFromStepDir(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
 

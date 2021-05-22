@@ -308,47 +308,46 @@ FF_Handle_t *pFF[NBR_OF_MOTORS] = {&FF_M1};
 
 FPID_Handle_t PIDPosHandle_M1 = {
   
-  .hDefKpGain          =  2000.0,
-  .hDefKiGain          =    50.0,
-  .hDefKdGain          = 32000.0,
+  .hDefKpGain          =  4000.0,
+  .hDefKiGain          =     0.0,
+  .hDefKdGain          = 16000.0,
   .wUpperIntegralLimit =  2000.0,
   .wLowerIntegralLimit = -2000.0,
-  .hUpperOutputLimit   =  6000.0,
-  .hLowerOutputLimit   = -6000.0,
+  .hUpperOutputLimit   =  8000.0,
+  .hLowerOutputLimit   = -8000.0,
 };
 
 FPID_Handle_t PIVPosHandle_M1 = {
   
-  .hDefKpGain          =    0.1,
+  .hDefKpGain          =    32.0,
   .hDefKiGain          =     0.0,
   .hDefKdGain          =     0.0,
-  .wUpperIntegralLimit =  20.0,
-  .wLowerIntegralLimit = -20.0,
-  .hUpperOutputLimit   =  100.0,
-  .hLowerOutputLimit   = -100.0,
+  .wUpperIntegralLimit =    20.0,
+  .wLowerIntegralLimit =   -20.0,
+  .hUpperOutputLimit   =  1000.0,
+  .hLowerOutputLimit   = -1000.0,
 };
 
 FPID_Handle_t PIVVelHandle_M1 = {
   
-  .hDefKpGain          =   4.0,
-  .hDefKiGain          = 0.0,
-  .hDefKdGain          = 0.0,
-  .wUpperIntegralLimit = 1000.0,
-  .wLowerIntegralLimit = -1000.0,
-  .hUpperOutputLimit   = 4000.0,
-  .hLowerOutputLimit   = -4000.0,
+  .hDefKpGain          =    1600.0,
+  .hDefKiGain          =       0.0,
+  .hDefKdGain          =       0.0,
+  .wUpperIntegralLimit =     100.0,
+  .wLowerIntegralLimit =    -100.0,
+  .hUpperOutputLimit   =    6000.0,
+  .hLowerOutputLimit   =   -6000.0,
 };
 
 Servo_t ServoHandle_M1 =
 {
     .Config = {
-      .IndexScanSpeed = 10.0,
+      .IndexScanSpeed = 0.5,
       .TurnsPerStep = 0.001,
-      .VelMaxAbs = 500.0,
-      .TorMaxAbs = 16000.0,
-      .Inertia = 0.01,
-      .TorqueBandwidth = 0.5,
-      .EncoderDirectionFlipped = false,
+      .Inertia = 1.0,
+      .TorqueBandwidth = 1.0,
+      .VelMaxAbs = 2000.0,
+      .TorMaxAbs = 8000.0,
     },
     .State = UNINIT,
     .PosSetpoint = 0.0f,

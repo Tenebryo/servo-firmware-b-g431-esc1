@@ -17,6 +17,18 @@
 #define TURNS_PER_ENCODER_STEP (1.0f / (float)U16MAX)
 #define HZ_PER_SPEED_UNIT      (1.0f / (float)SPEED_UNIT)
 
+
+float clamp(float x, float min, float max) {
+  if (x < min) {
+    return min;
+  } else if (x > max) {
+    return max;
+  } else {
+    return x;
+  }
+}
+
+
 /// ==================================================================================================================
 /// This initializes the servo given its current configuration data.
 /// ==================================================================================================================
@@ -104,11 +116,26 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     // cascade into PIV control with the calculated feedforward setpoints
 
   case ENABLED_PIV:
+
+    if (self->State == ENABLED_PIV) {
+      // in the ENABLED_PIV state, we must zero the set points otherwise they will act like integrators
+      // this needs to be in an if statement so that the feedforward terms above remain.
+      self->PosSetpoint = self->PosInput;
+      self->VelSetpoint = self->VelInput;
+      self->TorSetpoint = self->TorInput;
+    }
+
     // control position with velocity, then velocity with torque, adding in the feedforward terms
 
     self->VelSetpoint += FPID_Controller(self->PIVPosRegulator, (self->PosSetpoint) - PosActual, DeltaTime);
     
+    // limit the set velocity
+    self->VelSetpoint = clamp(self->VelSetpoint, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
+
     self->TorSetpoint += FPID_Controller(self->PIVVelRegulator, (self->VelSetpoint) - VelActual, DeltaTime);
+
+    // limit the set torque
+    self->TorSetpoint = clamp(self->TorSetpoint, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
 
     break;
   }
@@ -228,7 +255,7 @@ void SERVO_EnableStepDirection(Servo_t * self) {
     float PosInput = self->Config.TurnsPerStep * (float) (STEPDIR_GetInputPosition() + self->StepDirOffset);
 
     self->StepDirOffset -= PosInput;
-    self->State = ENABLED_POSITION_FILTER;
+    self->State = ENABLED_STEP_DIRECTION;
   }
 }
 

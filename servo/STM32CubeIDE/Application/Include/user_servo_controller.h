@@ -30,7 +30,7 @@ typedef struct {
   float InputFiltKi;
   float Inertia;
   float TorqueBandwidth;
-  bool EncoderDirectionFlipped;
+  float VelPLLKi;
   // float CoggingTorque[COGGING_TORQUE_POINTS];
 } ServoConfig_t;
 

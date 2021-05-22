@@ -32,28 +32,16 @@ void MAIN_Init(void) {
 
   SERVO_ResetEncoderOffset(&ServoHandle_M1);
   // SERVO_Align(&ServoHandle_M1);
-  SERVO_EnablePID(&ServoHandle_M1);
-  // MC_ProgramSpeedRampMotor1(10, 10);
-  // MC_ProgramTorqueRampMotor1(1000, 10);
 
+  // SERVO_EnablePID(&ServoHandle_M1);
+  SERVO_EnablePIV(&ServoHandle_M1);
 }
 
-uint32_t encoder_count_position = 0;
-int32_t encoder_mec_position = 0;
-int32_t spd_mec_position = 0;
-int32_t spd_mec_speed = 0;
 State_t state;
 
 void MAIN_Loop(void) {
 
   HAL_Delay(10);
-  // MC_ProgramTorqueRampMotor1(0, 0);
-  // HAL_Delay(90);
-  
-  // encoder_count_position = TIM4->CNT;
-  // encoder_mec_position = ServoHandle_M1.EncoderPosition;
-  spd_mec_position = SPD_GetMecAngle(&ENCODER_M1._Super);
-  spd_mec_speed = SPD_GetAvrgMecSpeedUnit(&ENCODER_M1._Super);
 
   state = MC_GetSTMStateMotor1();
 
