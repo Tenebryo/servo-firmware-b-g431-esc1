@@ -202,7 +202,7 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
       // add anticogging feedforward term. The actual torque feedforward term is interpolated between the two
       // nearest cogging torque sample points.
       CogPointIndex = COG_INDEX(PosActual);
-      TorCmd += 0.8 * (
+      TorCmd += (
         (PosActual - COG_POS(CogPointIndex))     * COG_POSITION_ERR_EPS * self->Config.AntcoggingTorque[(CogPointIndex    ) % COGGING_TORQUE_POINTS] + 
         (COG_POS(CogPointIndex + 1) - PosActual) * COG_POSITION_ERR_EPS * self->Config.AntcoggingTorque[(CogPointIndex + 1) % COGGING_TORQUE_POINTS]
       );
