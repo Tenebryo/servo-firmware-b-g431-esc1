@@ -33,6 +33,10 @@ void MAIN_Init(void) {
   SERVO_ResetEncoderOffset(&ServoHandle_M1);
   // SERVO_Align(&ServoHandle_M1);
 
+  SERVO_CalibrateAnticogging(&ServoHandle_M1);
+
+  while (!SERVO_IsAnticoggingCalibrationComplete(&ServoHandle_M1)) {}
+
   // SERVO_EnablePID(&ServoHandle_M1);
   // SERVO_EnablePIV(&ServoHandle_M1);
   SERVO_EnablePositionFilter(&ServoHandle_M1);

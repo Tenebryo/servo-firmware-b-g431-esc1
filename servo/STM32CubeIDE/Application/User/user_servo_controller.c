@@ -18,7 +18,7 @@
 #define HZ_PER_SPEED_UNIT      (1.0f / (float)SPEED_UNIT)
 
 
-float clamp(float x, float min, float max) {
+float clamp_f(float x, float min, float max) {
   if (x < min) {
     return min;
   } else if (x > max) {
@@ -29,12 +29,19 @@ float clamp(float x, float min, float max) {
 }
 
 
+float abs_f(float x) {
+  return (x < 0) ? (-x) : (x);
+}
+
+
 /// ==================================================================================================================
 /// This initializes the servo given its current configuration data.
 /// ==================================================================================================================
 void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t * TorqueController, FPID_Handle_t *PIDPosRegulator, FPID_Handle_t *PIVPosRegulator, FPID_Handle_t *PIVVelRegulator) {
 
   if (self->State == UNINIT) {
+
+    self->AnticoggingCalibrated = false;
 
     self->Config.InputFiltKi = 2.0f * self->Config.TorqueBandwidth;
     self->Config.InputFiltKp = self->Config.TorqueBandwidth * self->Config.TorqueBandwidth;
@@ -66,9 +73,15 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
   float PosActual, VelActual;
   float PosCmd, VelCmd, TorCmd;
   float PosDelta, VelDelta, Accel;
+  float PrevTorCmd;
+  uint16_t CogPointIndex;
+
+  TorCmd = 0.0f;
+
+  PrevTorCmd = self->TorSetpoint;
 
   // some control modes only add to the torque setpoint, so we need to clear it here.
-  self->TorSetpoint = 0;
+  self->TorSetpoint = 0.0f;
 
   self->EncoderPosition = SPD_GetMecAngle(&ENCODER_M1._Super) + self->EncoderOffset;
   PosActual = TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
@@ -77,26 +90,26 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
   switch (self->State) {
   case UNINIT:
     // command 0 torque when the controller is uninitialized (coasting)
-    self->TorSetpoint = 0;
+    TorCmd = 0;
     break;
 
   case DISABLED:
     // command 0 torque when the controller is disabled (coasting)
-    self->TorSetpoint = 0;
+    TorCmd = 0;
     break;
 
   case ALIGNING:
     // command a constant speed during alignment, which is set when alignment starts.
     // this expression does a gradual ramp up to the final speed.
-    self->VelSetpoint = self->VelSetpoint * 0.9 + self->Config.IndexScanSpeed * 0.1;
+    self->VelSetpoint = self->VelSetpoint * 0.9f + self->Config.IndexScanSpeed * 0.1f;
 
-    self->TorSetpoint = FPI_Controller(self->PIVVelRegulator, self->VelSetpoint - VelActual, DeltaTime);
+    TorCmd = FPI_Controller(self->PIVVelRegulator, self->VelSetpoint - VelActual, DeltaTime);
 
     break;
 
   case ENABLED_PID:
     self->PosSetpoint = self->PosInput;
-    self->TorSetpoint = FPID_Controller(self->PIDPosRegulator, (self->PosSetpoint) - PosActual, DeltaTime);
+    TorCmd = FPID_Controller(self->PIDPosRegulator, (self->PosSetpoint) - PosActual, DeltaTime);
     break;
 
   case ENABLED_STEP_DIRECTION:
@@ -115,10 +128,51 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     self->VelSetpoint += DeltaTime * Accel;
     self->PosSetpoint += DeltaTime * self->VelSetpoint;
 
-    self->VelSetpoint = clamp(self->VelSetpoint, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
-    self->TorSetpoint = clamp(self->TorSetpoint, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
+    self->VelSetpoint = clamp_f(self->VelSetpoint, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
+    self->TorSetpoint = clamp_f(self->TorSetpoint, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
 
     // cascade into PIV control with the calculated feedforward setpoints
+
+  case ANTICOGGING_CALIBRATION:
+    if (self->State == ANTICOGGING_CALIBRATION) {
+      if (abs_f(PosActual - COG_POS(self->AnticoggingIndex)) < COG_POSITION_ERR_EPS && abs_f(VelActual) < COG_VELOCITY_ERR_EPS) {
+        // the position is within the cog range.
+
+        if (self->AnticoggingSamples < COG_POSITION_SAMPLES) {
+          // the position has been stable, so take a sample
+          self->AnticoggingSum += PrevTorCmd;
+        }
+        self->AnticoggingSamples--;
+
+        if (self->AnticoggingSamples == 0) {
+          // store the average torque (average of samples from moving forward and backward)
+          self->Config.AntcoggingTorque[self->AnticoggingIndex] += 0.5 * self->AnticoggingSum / (float)COG_POSITION_SAMPLES;
+
+          // advance to the next cog sample position
+          self->AnticoggingSum = 0.0f;
+          self->AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;
+          if (self->AnticoggingReturning) {
+            self->AnticoggingIndex--;
+          } else {
+            self->AnticoggingIndex++;
+          }
+
+          // check if we are done, at the turn-around point, or carrying on
+          if (self->AnticoggingIndex == 0 && self->AnticoggingReturning) {
+            // we are done
+            self->AnticoggingCalibrated = true;
+            SERVO_Disable(self);
+          } else if (self->AnticoggingIndex == COGGING_TORQUE_POINTS) {
+            self->AnticoggingReturning = true;
+            self->AnticoggingIndex--;
+          } else {
+            // initialize the next sample point.
+            self->PosSetpoint = COG_POS(self->AnticoggingIndex);
+          }
+        }
+      }
+    }
+    // cascade into PIV control
 
   case ENABLED_PIV:
 
@@ -139,20 +193,59 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     VelCmd += FPID_Controller(self->PIVPosRegulator, PosCmd - PosActual, DeltaTime);
     
     // limit the set velocity
-    VelCmd = clamp(VelCmd, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
+    VelCmd = clamp_f(VelCmd, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
 
     TorCmd += FPID_Controller(self->PIVVelRegulator, VelCmd - VelActual, DeltaTime);
 
-    // limit the set torque
-    TorCmd = clamp(TorCmd, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
+    // only add anticogging compensation when were aren't calibrating it
+    if (self->State != ANTICOGGING_CALIBRATION && self->AnticoggingCalibrated) {
+      // add anticogging feedforward term. The actual torque feedforward term is interpolated between the two
+      // nearest cogging torque sample points.
+      CogPointIndex = COG_INDEX(PosActual);
+      TorCmd += 0.8 * (
+        (PosActual - COG_POS(CogPointIndex))     * COG_POSITION_ERR_EPS * self->Config.AntcoggingTorque[(CogPointIndex    ) % COGGING_TORQUE_POINTS] + 
+        (COG_POS(CogPointIndex + 1) - PosActual) * COG_POSITION_ERR_EPS * self->Config.AntcoggingTorque[(CogPointIndex + 1) % COGGING_TORQUE_POINTS]
+      );
+    }
+
 
     break;
   }
+
+  // limit the set torque
+  TorCmd = clamp_f(TorCmd, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
   // this is safe because the TorSetpoint is never integrated.
   self->TorSetpoint = TorCmd;
 
   // actually send the desired torque to the torque controller.
   MC_ProgramTorqueRampMotor1((int32_t)(self->TorSetpoint), 0);
+}
+
+/// ==================================================================================================================
+/// Helper function for various enable routines
+/// ==================================================================================================================
+void SERVO_Enable(Servo_t * self) {
+
+  // we can only enable the servo if the servo is currently disabled and aligned.
+    // use the current position, velocity, and input pos as the initial set points
+
+    self->EncoderPosition = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
+
+    // clear any windup in the PID integrators
+    FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0f);
+    FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0f);
+    FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0f);
+
+    float PosActual = TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
+
+    self->StepDirOffset = PosActual;
+    self->PosSetpoint = PosActual;
+    self->VelSetpoint = 0.0f;
+    self->TorSetpoint = 0.0f;
+
+    self->PosInput = self->PosSetpoint;
+    self->VelInput = self->VelSetpoint;
+    self->TorInput = self->TorSetpoint;
 }
 
 /// ==================================================================================================================
@@ -188,9 +281,9 @@ void SERVO_Align(Servo_t * self) {
     self->VelSetpoint = HZ_PER_SPEED_UNIT      * VelActual;
 
     // clear integrator windup
-    FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0);
-    FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0);
-    FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0);
+    FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0f);
+    FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0f);
+    FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0f);
 
     self->State = ALIGNING;
   }
@@ -203,31 +296,36 @@ bool SERVO_IsAlignmentComplete(Servo_t * self) {
   return self->Aligned;
 }
 
+
 /// ==================================================================================================================
-/// Call this function to start the servo loop
+/// Call this function to start the anticogging proceedure
 /// ==================================================================================================================
-void SERVO_Enable(Servo_t * self) {
+void SERVO_CalibrateAnticogging(Servo_t * self) {
+  if (self->Aligned && self->State == DISABLED) {
 
-  // we can only enable the servo if the servo is currently disabled and aligned.
-    // use the current position, velocity, and input pos as the initial set points
+    // Clear the cogging torque buffer.
+    for (int i = 0; i < COGGING_TORQUE_POINTS; i++) {
+      self->Config.AntcoggingTorque[i] = 0.0;
+    }
 
-    self->EncoderPosition = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
+    // initialize anticogging calibration state variables
+    self->AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;
+    self->AnticoggingIndex = 0;
+    self->AnticoggingSum = 0.0f;
+    self->PosSetpoint = 0.0f;
+    self->VelSetpoint = 0.0f;
+    self->TorSetpoint = 0.0f;
+    self->AnticoggingReturning = false;
+    SERVO_Enable(self);
+    self->State = ANTICOGGING_CALIBRATION;
+  }
+}
 
-    // clear any windup in the PID integrators
-    FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0);
-    FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0);
-    FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0);
-
-    float PosActual = TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
-
-    self->StepDirOffset = PosActual;
-    self->PosSetpoint = PosActual;
-    self->VelSetpoint = 0.0;
-    self->TorSetpoint = 0.0;
-
-    self->PosInput = self->PosSetpoint;
-    self->VelInput = self->VelSetpoint;
-    self->TorInput = self->TorSetpoint;
+/// ==================================================================================================================
+/// Helper function to poll whether the anticogging calibration proceedure has finished.
+/// ==================================================================================================================
+bool SERVO_IsAnticoggingCalibrationComplete(Servo_t * self) {
+  return self->AnticoggingCalibrated;
 }
 
 /// ==================================================================================================================
