@@ -6,3 +6,8 @@
  */
 
 
+
+
+  // todo: estimate resistance and inductance (these functions might be useful)
+  // MC_GetPhaseCurrentAmplitudeMotor1();
+  // MC_GetPhaseVoltageAmplitudeMotor1();

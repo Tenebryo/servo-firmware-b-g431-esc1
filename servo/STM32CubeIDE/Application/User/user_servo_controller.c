@@ -29,9 +29,9 @@ float clamp_f(float x, float min, float max) {
 }
 
 
-float abs_f(float x) {
-  return (x < 0) ? (-x) : (x);
-}
+// float abs_f(float x) {
+//   return (x < 0) ? (-x) : (x);
+// }
 
 
 /// ==================================================================================================================
@@ -71,7 +71,7 @@ void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle
 void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   float PosActual, VelActual;
-  float PosCmd, VelCmd, TorCmd;
+  float PosCmd = 0.0f, VelCmd = 0.0f, TorCmd = 0.0f;
   float PosDelta, VelDelta, Accel;
   float PrevTorCmd;
   uint16_t CogPointIndex;
@@ -134,45 +134,46 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     // cascade into PIV control with the calculated feedforward setpoints
 
   case ANTICOGGING_CALIBRATION:
-    if (self->State == ANTICOGGING_CALIBRATION) {
-      if (abs_f(PosActual - COG_POS(self->AnticoggingIndex)) < COG_POSITION_ERR_EPS && abs_f(VelActual) < COG_VELOCITY_ERR_EPS) {
-        // the position is within the cog range.
+    // // todo: do this externally
+    // if (self->State == ANTICOGGING_CALIBRATION) {
+    //   if (abs_f(PosActual - COG_POS(self->AnticoggingIndex)) < COG_POSITION_ERR_EPS && abs_f(VelActual) < COG_VELOCITY_ERR_EPS) {
+    //     // the position is within the cog range.
 
-        if (self->AnticoggingSamples < COG_POSITION_SAMPLES) {
-          // the position has been stable, so take a sample
-          self->AnticoggingSum += PrevTorCmd;
-        }
-        self->AnticoggingSamples--;
+    //     if (self->AnticoggingSamples < COG_POSITION_SAMPLES) {
+    //       // the position has been stable, so take a sample
+    //       self->AnticoggingSum += PrevTorCmd;
+    //     }
+    //     self->AnticoggingSamples--;
 
-        if (self->AnticoggingSamples == 0) {
-          // store the average torque (average of samples from moving forward and backward)
-          self->Config.AntcoggingTorque[self->AnticoggingIndex] += 0.5 * self->AnticoggingSum / (float)COG_POSITION_SAMPLES;
+    //     if (self->AnticoggingSamples == 0) {
+    //       // store the average torque (average of samples from moving forward and backward)
+    //       self->Config.AntcoggingTorque[self->AnticoggingIndex] += 0.5 * self->AnticoggingSum / (float)COG_POSITION_SAMPLES;
 
-          // advance to the next cog sample position
-          self->AnticoggingSum = 0.0f;
-          self->AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;
-          if (self->AnticoggingReturning) {
-            self->AnticoggingIndex--;
-          } else {
-            self->AnticoggingIndex++;
-          }
+    //       // advance to the next cog sample position
+    //       self->AnticoggingSum = 0.0f;
+    //       self->AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;
+    //       if (self->AnticoggingReturning) {
+    //         self->AnticoggingIndex--;
+    //       } else {
+    //         self->AnticoggingIndex++;
+    //       }
 
-          // check if we are done, at the turn-around point, or carrying on
-          if (self->AnticoggingIndex == 0 && self->AnticoggingReturning) {
-            // we are done
-            self->AnticoggingCalibrated = true;
-            SERVO_Disable(self);
-          } else if (self->AnticoggingIndex == COGGING_TORQUE_POINTS) {
-            self->AnticoggingReturning = true;
-            self->AnticoggingIndex--;
-          } else {
-            // initialize the next sample point.
-            self->PosSetpoint = COG_POS(self->AnticoggingIndex);
-          }
-        }
-      }
-    }
-    // cascade into PIV control
+    //       // check if we are done, at the turn-around point, or carrying on
+    //       if (self->AnticoggingIndex == 0 && self->AnticoggingReturning) {
+    //         // we are done
+    //         self->AnticoggingCalibrated = true;
+    //         SERVO_Disable(self);
+    //       } else if (self->AnticoggingIndex == COGGING_TORQUE_POINTS) {
+    //         self->AnticoggingReturning = true;
+    //         self->AnticoggingIndex--;
+    //       } else {
+    //         // initialize the next sample point.
+    //         self->PosSetpoint = COG_POS(self->AnticoggingIndex);
+    //       }
+    //     }
+    //   }
+    // }
+    // // cascade into PIV control
 
   case ENABLED_PIV:
 
@@ -185,17 +186,32 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     }
 
     PosCmd = self->PosSetpoint;
-    VelCmd = self->VelSetpoint;
-    TorCmd = self->TorSetpoint;
-
     // control position with velocity, then velocity with torque, adding in the feedforward terms
 
     VelCmd += FPID_Controller(self->PIVPosRegulator, PosCmd - PosActual, DeltaTime);
     
+
+  case ENABLED_VELOCITY:
+
+    if (self->State == ENABLED_VELOCITY) {
+      self->VelSetpoint = self->VelInput;
+      self->TorSetpoint = self->TorInput;
+    }
+
+    VelCmd += self->VelSetpoint;
+
     // limit the set velocity
     VelCmd = clamp_f(VelCmd, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
 
     TorCmd += FPID_Controller(self->PIVVelRegulator, VelCmd - VelActual, DeltaTime);
+
+  case ENABLED_TORQUE:
+
+    if (self->State == ENABLED_TORQUE) {
+      self->TorSetpoint = self->TorInput;
+    }
+
+    TorCmd += self->TorSetpoint;
 
     // only add anticogging compensation when were aren't calibrating it
     if (self->State != ANTICOGGING_CALIBRATION && self->AnticoggingCalibrated) {
@@ -266,7 +282,7 @@ void SERVO_ResetEncoderOffset(Servo_t * self) {
 /// ==================================================================================================================
 /// Call this function to start the servo aligning process
 /// ==================================================================================================================
-void SERVO_Align(Servo_t * self) {
+void SERVO_FindEncoderIndex(Servo_t * self) {
 
   if (self->State == DISABLED) {
     // set revoke any previous alignment
@@ -341,6 +357,26 @@ void SERVO_EnablePID(Servo_t * self) {
 /// ==================================================================================================================
 /// Enable the servo control loop in the PIV control mode
 /// ==================================================================================================================
+void SERVO_EnableTorque(Servo_t * self) {
+  if (self->Aligned && self->State == DISABLED) {
+    SERVO_Enable(self);
+    self->State = ENABLED_TORQUE;
+  }
+}
+
+/// ==================================================================================================================
+/// Enable the servo control loop in the PIV control mode
+/// ==================================================================================================================
+void SERVO_EnableVelocity(Servo_t * self) {
+  if (self->Aligned && self->State == DISABLED) {
+    SERVO_Enable(self);
+    self->State = ENABLED_VELOCITY;
+  }
+}
+
+/// ==================================================================================================================
+/// Enable the servo control loop in the PIV control mode
+/// ==================================================================================================================
 void SERVO_EnablePIV(Servo_t * self) {
   if (self->Aligned && self->State == DISABLED) {
     SERVO_Enable(self);
@@ -381,4 +417,25 @@ void SERVO_Disable(Servo_t * self) {
   self->PosSetpoint = 0.0f;
   self->VelSetpoint = 0.0f;
   self->TorSetpoint = 0.0f;
+}
+
+/// ==================================================================================================================
+/// Get the current position the servo thinks it is in
+/// ==================================================================================================================
+float SERVO_GetPosition(Servo_t *self) {
+  return TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
+}
+
+/// ==================================================================================================================
+/// Get the current position the servo thinks it is in
+/// ==================================================================================================================
+float SERVO_GetVelocity(Servo_t *self) {
+  return HZ_PER_SPEED_UNIT      * (float)SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);;
+}
+
+/// ==================================================================================================================
+/// Get the current position the servo thinks it is in
+/// ==================================================================================================================
+float SERVO_GetTorque(Servo_t *self) {
+  return self->TorSetpoint;
 }

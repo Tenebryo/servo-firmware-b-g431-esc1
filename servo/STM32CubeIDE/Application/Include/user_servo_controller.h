@@ -17,14 +17,14 @@
 extern int16_t LastTorqueApplied;
 extern float ServoTempInputPos;
 
-#define COGGING_TORQUE_POINTS (1024)
+#define COGGING_TORQUE_POINTS (512)
 #define COG_INDEX(step) ((uint16_t) ((step) * COGGING_TORQUE_POINTS))
 #define COG_POS(step) (((float)step) / (float)COGGING_TORQUE_POINTS)
 
-#define COG_POSITION_ERR_EPS (1.0 / COGGING_TORQUE_POINTS)
+#define COG_POSITION_ERR_EPS (0.25 / COGGING_TORQUE_POINTS)
 #define COG_VELOCITY_ERR_EPS (1.0 / SPEED_UNIT)
-#define COG_POSITION_SAMPLES (64)
-#define COG_POSITION_STABILITY_WAIT (64)
+#define COG_POSITION_SAMPLES (128)
+#define COG_POSITION_STABILITY_WAIT (128)
 
 typedef struct {
   float IndexScanSpeed;
@@ -48,6 +48,8 @@ typedef enum {
   ENABLED_POSITION_FILTER,
   ENABLED_PID,
   ENABLED_PIV,
+  ENABLED_VELOCITY,
+  ENABLED_TORQUE,
 } ServoState_t ;
 
 typedef struct {
@@ -81,13 +83,18 @@ void SERVO_Init(Servo_t *self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_
 void SERVO_ControlPosition(Servo_t * self, float DeltaTime);
 void SERVO_ResetEncoderOffset(Servo_t * self);
 void SERVO_Disable(Servo_t * self);
-void SERVO_Align(Servo_t * self);
+void SERVO_FindEncoderIndex(Servo_t * self);
 bool SERVO_IsAlignmentComplete(Servo_t * self);
 void SERVO_CalibrateAnticogging(Servo_t * self);
 bool SERVO_IsAnticoggingCalibrationComplete(Servo_t * self);
 void SERVO_EnablePID(Servo_t * self);
 void SERVO_EnablePIV(Servo_t * self);
+void SERVO_EnableVelocity(Servo_t * self);
+void SERVO_EnableTorque(Servo_t * self);
 void SERVO_EnablePositionFilter(Servo_t * self);
 void SERVO_EnableStepDirection(Servo_t * self);
+float SERVO_GetPosition(Servo_t* self);
+float SERVO_GetVelocity(Servo_t* self);
+float SERVO_GetTorque(Servo_t* self);
 
 #endif /* APPLICATION_INCLUDE_USER_SERVO_CONTROLLER_H_ */

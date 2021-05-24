@@ -96,6 +96,9 @@ __STATIC_INLINE uint32_t LL_DMA_IsActiveFlag_HT(DMA_TypeDef *DMAx, uint32_t Chan
  *       of the symbols predefined for that purpose such as #_RPM, #_01HZ,... See @ref SpeedUnit for
  *       more details.
  */
+
+#define _0001HZ 1000
+
 #define SPEED_UNIT _001HZ
 
 /**

@@ -10,25 +10,40 @@
 
 #include "mc_interface.h"
 
-typedef struct {
-    uint32_t rs;
-    uint32_t ls;
-} motorCharacteristics_t;
-
-#define COGGING_TORQUE_STEPS
+#define COGGING_TORQUE_STEPS (1)
+#define MOTION_CALIBRATION_STEPS (1)
 
 typedef struct {
-  uint16_t PhaseResistance;
-  uint16_t PhaseInductanceQ;
-  uint16_t PhaseInductanceD;
-  int16_t CoggingTorque[COGGING_TORQUE_STEPS];
-} calibration_t;
+  float PhaseResistance;
+  float PhaseInductanceQ;
+  float PhaseInductanceD;
+  float AnticoggingTorque[COGGING_TORQUE_STEPS];
+} MotorCalibration_t;
 
+typedef struct {
+  float LowerPositionLimit;
+  float UpperPositionLimit;
+  float StaticTorque[MOTION_CALIBRATION_STEPS];
+  float Inertia;
+  float AccelerationBandwidth;
+} MotionCalibration_t;
 
-bool CALIBRATION_MeasureWindingResistance(calibration_t *calib);
-bool CALIBRATION_MeasureWindingInductance(calibration_t *calib);
-bool CALIBRATION_MeasureCoggingTorque(calibration_t *calib);
+typedef struct {
 
-void CALIBRATION_UpdateIqdPIGains(float cc_bandwidth, float phase_r, float phase_lq, float phase_ld);
+  MotorCalibration_t MotorCalib;
+  MotionCalibration_t MotionCalib;
+} Calibration_t;
+
+extern Calibration_t CalibrationHandle_M1;
+
+bool CALIB_MeasureElectricCharacteristics(float Current);
+
+void CALIB_UpdateIqdPIGains(float CurrentBandwidth);
+
+bool CALIB_MeasureAnticoggingTorque(float CalibrationMaxTime, float MaxPositionErr, float MaxVelocityErr, uint32_t StableSamples, uint32_t IgnoredStabilizingSamples);
+
+void CALIB_MeasurePositionMinimum(float SearchTime, float SearchSpeed);
+void CALIB_MeasurePositionMaximum(float SearchTime, float SearchSpeed);
+void CALIB_MeasureInertia(float Torque, float AccelTime);
 
 #endif /* APPLICATION_INCLUDE_USER_CALIBRATION_H_ */

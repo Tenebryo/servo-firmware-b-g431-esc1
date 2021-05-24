@@ -10,6 +10,7 @@
 #include "mc_config.h"
 #include "user_servo_controller.h"
 #include "trajectory_ctrl.h"
+#include "user_calibration.h"
 
 void MAIN_Init(void) {
 
@@ -26,20 +27,28 @@ void MAIN_Init(void) {
   // while (!SERVO_IsAlignmentComplete(&ServoHandle_M1)) {}
   while (MC_GetSTMStateMotor1() != RUN) {}
 
-  HAL_Delay(2000);
+  HAL_Delay(500);
 
   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
 
   SERVO_ResetEncoderOffset(&ServoHandle_M1);
-  // SERVO_Align(&ServoHandle_M1);
 
-  SERVO_CalibrateAnticogging(&ServoHandle_M1);
+  CALIB_MeasurePositionMinimum(20000.0f, 0.5f);
+  CALIB_MeasurePositionMaximum(20000.0f, 0.5f);
 
-  while (!SERVO_IsAnticoggingCalibrationComplete(&ServoHandle_M1)) {}
+  HAL_Delay(2000);
+
+  CALIB_MeasureInertia(2000.0, 50.0);
+
+  // SERVO_FindEncoderIndex(&ServoHandle_M1);
+
+  // SERVO_CalibrateAnticogging(&ServoHandle_M1);
+
+  // while (!SERVO_IsAnticoggingCalibrationComplete(&ServoHandle_M1)) {}
 
   // SERVO_EnablePID(&ServoHandle_M1);
   // SERVO_EnablePIV(&ServoHandle_M1);
-  SERVO_EnablePositionFilter(&ServoHandle_M1);
+  // SERVO_EnablePositionFilter(&ServoHandle_M1);
 }
 
 State_t state;

@@ -319,7 +319,7 @@ FPID_Handle_t PIDPosHandle_M1 = {
 
 FPID_Handle_t PIVPosHandle_M1 = {
   
-  .hDefKpGain          =   100.0,
+  .hDefKpGain          =   150.0,
   .hDefKiGain          =     0.0,
   .hDefKdGain          =     0.0,
   .wUpperIntegralLimit =   100.0,
@@ -330,13 +330,13 @@ FPID_Handle_t PIVPosHandle_M1 = {
 
 FPID_Handle_t PIVVelHandle_M1 = {
   
-  .hDefKpGain          =    1000.0,
-  .hDefKiGain          =       2.0,
+  .hDefKpGain          =     800.0,
+  .hDefKiGain          =       4.0,
   .hDefKdGain          =       0.0,
   .wUpperIntegralLimit =    1000.0,
   .wLowerIntegralLimit =   -1000.0,
-  .hUpperOutputLimit   =    6000.0,
-  .hLowerOutputLimit   =   -6000.0,
+  .hUpperOutputLimit   =    4000.0,
+  .hLowerOutputLimit   =   -4000.0,
 };
 
 Servo_t ServoHandle_M1 =
@@ -344,10 +344,10 @@ Servo_t ServoHandle_M1 =
     .Config = {
       .IndexScanSpeed  =    0.5,
       .TurnsPerStep    =    0.001,
-      .Inertia         =    0.01,
-      .TorqueBandwidth =  100.0,
-      .VelMaxAbs       =   90.0,
-      .TorMaxAbs       = 6000.0,
+      .Inertia         =    0.9,
+      .TorqueBandwidth =   75.0,
+      .VelMaxAbs       =   80.0,
+      .TorMaxAbs       = 4000.0,
     },
     .State = UNINIT,
     .PosSetpoint = 0.0f,
