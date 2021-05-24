@@ -58,7 +58,7 @@
 /**************************    DRIVE SETTINGS SECTION   **********************/
 /* PWM generation and current reading */
 
-#define PWM_FREQUENCY   20000
+#define PWM_FREQUENCY   30000
 #define PWM_FREQ_SCALING 1
 
 #define LOW_SIDE_SIGNALS_ENABLING        LS_PWM_TIMER
@@ -71,10 +71,10 @@
                                                            number of PWM cycles */
 /* Gains values for torque and flux control loops */
 #define PID_TORQUE_KP_DEFAULT         2054
-#define PID_TORQUE_KI_DEFAULT         3286
+#define PID_TORQUE_KI_DEFAULT         2191
 #define PID_TORQUE_KD_DEFAULT         100
 #define PID_FLUX_KP_DEFAULT           2054
-#define PID_FLUX_KI_DEFAULT           3286
+#define PID_FLUX_KI_DEFAULT           2191
 #define PID_FLUX_KD_DEFAULT           100
 
 /* Torque/Flux control loop gains dividers*/
@@ -108,7 +108,7 @@
 /* USER CODE END PID_SPEED_INTEGRAL_INIT_DIV */
 
 #define SPD_DIFFERENTIAL_TERM_ENABLING DISABLE
-#define IQMAX                          21781
+#define IQMAX                          24503
 
 /* Default settings */
 #define DEFAULT_CONTROL_MODE           STC_TORQUE_MODE /*!< STC_TORQUE_MODE or
@@ -165,9 +165,9 @@
 
 /*  Feed-forward parameters */
 #define FEED_FORWARD_CURRENT_REG_ENABLING ENABLE
-#define CONSTANT1_Q                    90344
-#define CONSTANT1_D                    90344
-#define CONSTANT2_QD                   228269
+#define CONSTANT1_Q                    135517
+#define CONSTANT1_D                    135517
+#define CONSTANT2_QD                   342403
 
 /*** On the fly start-up ***/
 

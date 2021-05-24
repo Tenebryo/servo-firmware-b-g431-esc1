@@ -346,7 +346,7 @@ Servo_t ServoHandle_M1 =
       .TurnsPerStep    =    0.001,
       .Inertia         =    0.9,
       .TorqueBandwidth =   75.0,
-      .VelMaxAbs       =   80.0,
+      .VelMaxAbs       =  100.0,
       .TorMaxAbs       = 4000.0,
     },
     .State = UNINIT,

@@ -4,10 +4,10 @@
 		<define key="POLE_PAIR_NUM" value="1" />
 		<define key="RS" value="1.60" />
 		<define key="LS" value="0.000025" />
-		<define key="NOMINAL_CURRENT" value="21781" />
+		<define key="NOMINAL_CURRENT" value="24503" />
 		<define key="MOTOR_MAX_SPEED_RPM" value="1000" />
 		<define key="MOTOR_VOLTAGE_CONSTANT" value="3.9" />
-		<define key="ID_DEMAG" value="-21781" />
+		<define key="ID_DEMAG" value="-24503" />
 		<define key="HALL_SENSORS_PLACEMENT" value="DEGREES_120" />
 		<define key="HALL_PHASE_SHIFT" value="300" />
 		<define key="ENCODER_PPR" value="15000" />
@@ -15,7 +15,7 @@
 		<define key="ENCODER_AVAILABLE" value="TRUE" />
 		<define key="MOTOR_TYPE" value="PMSM" />
 		<define key="LDLQ_RATIO" value="1.000" />
-		<define key="DC_CURRENT_RS_MEAS" value="40.00" />
+		<define key="DC_CURRENT_RS_MEAS" value="45.00" />
 		<define key="PHASE_UH_POLARITY" value="H_ACTIVE_HIGH" />
 		<define key="PHASE_VH_POLARITY" value="H_ACTIVE_HIGH" />
 		<define key="PHASE_WH_POLARITY" value="H_ACTIVE_HIGH" />
@@ -67,10 +67,10 @@
 		<define key="VARIANCE_THRESHOLD" value="0.1" />
 		<define key="F1" value="8192" />
 		<define key="F2" value="2048" />
-		<define key="GAIN1" value="7373" />
-		<define key="GAIN2" value="17908" />
-		<define key="PLL_KP_GAIN" value="27" />
-		<define key="PLL_KI_GAIN" value="1" />
+		<define key="GAIN1" value="819" />
+		<define key="GAIN2" value="22240" />
+		<define key="PLL_KP_GAIN" value="18" />
+		<define key="PLL_KI_GAIN" value="0" />
 		<define key="OBS_MEAS_ERRORS_BEFORE_FAULTS" value="3" />
 		<define key="STO_FIFO_DEPTH_DPP" value="64" />
 		<define key="STO_FIFO_DEPTH_01HZ" value="64" />
@@ -81,12 +81,12 @@
 		<define key="CORD_BEMF_CONSISTENCY_GAIN" value="64" />
 		<define key="CORD_F1" value="8192" />
 		<define key="CORD_F2" value="2048" />
-		<define key="CORD_GAIN1" value="7373" />
-		<define key="CORD_GAIN2" value="17908" />
+		<define key="CORD_GAIN1" value="819" />
+		<define key="CORD_GAIN2" value="22240" />
 		<define key="CORD_MEAS_ERRORS_BEFORE_FAULTS" value="3" />
 		<define key="CORD_FIFO_DEPTH_DPP" value="64" />
 		<define key="CORD_FIFO_DEPTH_01HZ" value="64" />
-		<define key="CORD_MAX_ACCEL_DPPP" value="10" />
+		<define key="CORD_MAX_ACCEL_DPPP" value="4" />
 		<define key="HFI_FREQUENCY" value="400" />
 		<define key="HFI_AMPLITUDE" value="25" />
 		<define key="HFI_PID_KP_DEFAULT" value="800" />
@@ -97,7 +97,7 @@
 		<define key="HFI_PLL_KI_DEFAULT" value="0.00400" />
 		<define key="HFI_MINIMUM_SPEED_RPM" value="402" />
 		<define key="HFI_SPD_BUFFER_DEPTH_01HZ" value="64" />
-		<define key="HFI_LOCKFREQ" value="33" />
+		<define key="HFI_LOCKFREQ" value="22" />
 		<define key="HFI_SCANROTATIONSNO" value="3" />
 		<define key="HFI_WAITBEFORESN" value="6" />
 		<define key="HFI_WAITAFTERNS2" value="4" />
@@ -108,36 +108,36 @@
 		<define key="HFI_REVERT_DIRECTION" value="TRUE" />
 		<define key="STO_HFI_RPM_TH" value="460" />
 		<define key="HFI_NS_MIN_SAT_DIFF" value="0" />
-		<define key="HFI_NOTCH_IQD_0_COEFF" value="0.969619" />
-		<define key="HFI_NOTCH_IQD_1_COEFF" value="-1.923946" />
-		<define key="HFI_NOTCH_IQD_2_COEFF" value="0.969619" />
-		<define key="HFI_NOTCH_IQD_3_COEFF" value="1.923946" />
-		<define key="HFI_NOTCH_IQD_4_COEFF" value="-0.939237" />
-		<define key="HFI_LP_ID_0_COEFF" value="0.00597" />
-		<define key="HFI_LP_ID_1_COEFF" value="0.011941" />
-		<define key="HFI_LP_ID_2_COEFF" value="0.00597" />
-		<define key="HFI_LP_ID_3_COEFF" value="1.769837" />
-		<define key="HFI_LP_ID_4_COEFF" value="-0.793719" />
-		<define key="HFI_HP_ID_0_COEFF" value="0.939693" />
-		<define key="HFI_HP_ID_1_COEFF" value="-1.879386" />
-		<define key="HFI_HP_ID_2_COEFF" value="0.939693" />
-		<define key="HFI_HP_ID_3_COEFF" value="1.875746" />
-		<define key="HFI_HP_ID_4_COEFF" value="-0.883026" />
+		<define key="HFI_NOTCH_IQD_0_COEFF" value="0.979509" />
+		<define key="HFI_NOTCH_IQD_1_COEFF" value="-1.952148" />
+		<define key="HFI_NOTCH_IQD_2_COEFF" value="0.979509" />
+		<define key="HFI_NOTCH_IQD_3_COEFF" value="1.952148" />
+		<define key="HFI_NOTCH_IQD_4_COEFF" value="-0.959018" />
+		<define key="HFI_LP_ID_0_COEFF" value="0.002751" />
+		<define key="HFI_LP_ID_1_COEFF" value="0.005502" />
+		<define key="HFI_LP_ID_2_COEFF" value="0.002751" />
+		<define key="HFI_LP_ID_3_COEFF" value="1.846252" />
+		<define key="HFI_LP_ID_4_COEFF" value="-0.857255" />
+		<define key="HFI_HP_ID_0_COEFF" value="0.959381" />
+		<define key="HFI_HP_ID_1_COEFF" value="-1.918761" />
+		<define key="HFI_HP_ID_2_COEFF" value="0.959381" />
+		<define key="HFI_HP_ID_3_COEFF" value="1.917111" />
+		<define key="HFI_HP_ID_4_COEFF" value="-0.920412" />
 		<define key="HFI_DC_0_COEFF" value="0.00146" />
 		<define key="HFI_DC_1_COEFF" value="0.002921" />
 		<define key="HFI_DC_2_COEFF" value="0.00146" />
 		<define key="HFI_DC_3_COEFF" value="1.889033" />
 		<define key="HFI_DC_4_COEFF" value="-0.894874" />
-		<define key="PWM_FREQUENCY" value="20000" />
+		<define key="PWM_FREQUENCY" value="30000" />
 		<define key="SW_DEADTIME_NS" value="800" />
 		<define key="HIGH_SIDE_IDLE_STATE" value="TURN_OFF" />
 		<define key="LOW_SIDE_IDLE_STATE" value="TURN_OFF" />
 		<define key="REGULATION_EXECUTION_RATE" value="1" />
 		<define key="PID_TORQUE_KP_DEFAULT" value="2054" />
-		<define key="PID_TORQUE_KI_DEFAULT" value="3286" />
+		<define key="PID_TORQUE_KI_DEFAULT" value="2191" />
 		<define key="PID_TORQUE_KD_DEFAULT" value="100" />
 		<define key="PID_FLUX_KP_DEFAULT" value="2054" />
-		<define key="PID_FLUX_KI_DEFAULT" value="3286" />
+		<define key="PID_FLUX_KI_DEFAULT" value="2191" />
 		<define key="PID_FLUX_KD_DEFAULT" value="100" />
 		<define key="TF_KPDIV" value="8192" />
 		<define key="TF_KIDIV" value="4096" />
@@ -199,10 +199,10 @@
 		<define key="FEED_FORWARD_CURRENT_REG_ENABLING" value="ENABLE" />
 		<define key="OVERMODULATION" value="FALSE" />
 		<define key="DISCONTINUOUS_PWM" value="FALSE" />
-		<define key="CONSTANT1_Q" value="90344" />
-		<define key="CONSTANT1_D" value="90344" />
-		<define key="CONSTANT2_QD" value="228269" />
-		<define key="IQMAX" value="21781" />
+		<define key="CONSTANT1_Q" value="135517" />
+		<define key="CONSTANT1_D" value="135517" />
+		<define key="CONSTANT2_QD" value="342403" />
+		<define key="IQMAX" value="24503" />
 		<define key="SEGDIV" value="0" />
 		<define key="ANGC" value="{0,0,0,0,0,0,0,0}" />
 		<define key="OFST" value="{0,0,0,0,0,0,0,0}" />
@@ -479,8 +479,8 @@
 		<define key="OVP_OUTPUTPOL" value="COMP_OutputPol_NonInverted" />
 		<define key="OCP_FILTER" value="COMP_Mode_HighSpeed" />
 		<define key="OVP_FILTER" value="COMP_Mode_HighSpeed" />
-		<define key="MAX_MODULATION_95_PER_CENT" value="TRUE" />
-		<define key="MAX_MODULATION_INDEX" value="MAX_MODULATION_95_PER_CENT" />
+		<define key="MAX_MODULATION_85_PER_CENT" value="TRUE" />
+		<define key="MAX_MODULATION_INDEX" value="MAX_MODULATION_85_PER_CENT" />
 		<define key="CURR_SAMPLING_TIME" value="6" />
 		<define key="VBUS_ADC_SAMPLING_TIME" value="47" />
 		<define key="TEMP_ADC_SAMPLING_TIME" value="47" />

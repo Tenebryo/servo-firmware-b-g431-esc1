@@ -11,6 +11,7 @@
 #include "user_servo_controller.h"
 #include "trajectory_ctrl.h"
 #include "user_calibration.h"
+#include "user_potentiometer.h"
 
 void MAIN_Init(void) {
 
@@ -33,12 +34,12 @@ void MAIN_Init(void) {
 
   SERVO_ResetEncoderOffset(&ServoHandle_M1);
 
-  CALIB_MeasurePositionMinimum(20000.0f, 0.5f);
-  CALIB_MeasurePositionMaximum(20000.0f, 0.5f);
+  CALIB_MeasurePositionMinimum(20000.0f, 1.0f);
+  CALIB_MeasurePositionMaximum(20000.0f, 1.0f);
 
   HAL_Delay(2000);
 
-  CALIB_MeasureInertia(2000.0, 50.0);
+  CALIB_MeasureInertia(2000.0f, 50.0f);
 
   // SERVO_FindEncoderIndex(&ServoHandle_M1);
 
@@ -46,19 +47,38 @@ void MAIN_Init(void) {
 
   // while (!SERVO_IsAnticoggingCalibrationComplete(&ServoHandle_M1)) {}
 
+  ServoHandle_M1.Config.Inertia = 1.25;
+  ServoHandle_M1.Config.TorqueBandwidth = 0.5;
+  // ServoHandle_M1.Config.Inertia = 1.0f * CalibrationHandle_M1.MotionCalib.Inertia;
+  // ServoHandle_M1.Config.TorqueBandwidth = CalibrationHandle_M1.MotionCalib.AccelerationBandwidth;
+
+
+  HAL_Delay(2000);
+
   // SERVO_EnablePID(&ServoHandle_M1);
   // SERVO_EnablePIV(&ServoHandle_M1);
-  // SERVO_EnablePositionFilter(&ServoHandle_M1);
+  SERVO_EnablePositionFilter(&ServoHandle_M1);
 }
 
 State_t state;
 
+
 void MAIN_Loop(void) {
 
-  HAL_Delay(10);
+  HAL_Delay(1);
+
+  uint16_t PotRawValue = 0;
+  POT_ReadValue(&PotRawValue);
+
+  float PotValue = ((float) PotRawValue) * (1.0f / 65536.0f);
+
+  ServoHandle_M1.PosInput = 
+    (       PotValue) * CalibrationHandle_M1.MotionCalib.LowerPositionLimit + 
+    (1.0f - PotValue) * CalibrationHandle_M1.MotionCalib.UpperPositionLimit;
+
+  // ServoHandle_M1.PosInput = (0.00004) * (float)PotRawValue;
 
   state = MC_GetSTMStateMotor1();
-
   if (state == FAULT_NOW || state == FAULT_OVER) {
 
     uint16_t fault = MC_GetOccurredFaultsMotor1();
