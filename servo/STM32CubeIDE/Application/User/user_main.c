@@ -13,6 +13,8 @@
 #include "user_calibration.h"
 #include "user_potentiometer.h"
 
+float Middle = 0.0;
+
 void MAIN_Init(void) {
 
   HAL_Delay(500);
@@ -34,12 +36,12 @@ void MAIN_Init(void) {
 
   SERVO_ResetEncoderOffset(&ServoHandle_M1);
 
-  CALIB_MeasurePositionMinimum(20000.0f, 1.0f);
-  CALIB_MeasurePositionMaximum(20000.0f, 1.0f);
+  CALIB_MeasurePositionMinimum(20000.0f, 1.5f);
+  CALIB_MeasurePositionMaximum(20000.0f, 1.5f);
 
-  HAL_Delay(2000);
+  // HAL_Delay(2000);
 
-  CALIB_MeasureInertia(2000.0f, 50.0f);
+  // CALIB_MeasureInertia(2000.0f, 50.0f);
 
   // SERVO_FindEncoderIndex(&ServoHandle_M1);
 
@@ -47,8 +49,8 @@ void MAIN_Init(void) {
 
   // while (!SERVO_IsAnticoggingCalibrationComplete(&ServoHandle_M1)) {}
 
-  ServoHandle_M1.Config.Inertia = 1.25;
-  ServoHandle_M1.Config.TorqueBandwidth = 0.5;
+  // ServoHandle_M1.Config.Inertia = 1.25;
+  // ServoHandle_M1.Config.TorqueBandwidth = 0.5;
   // ServoHandle_M1.Config.Inertia = 1.0f * CalibrationHandle_M1.MotionCalib.Inertia;
   // ServoHandle_M1.Config.TorqueBandwidth = CalibrationHandle_M1.MotionCalib.AccelerationBandwidth;
 
@@ -58,25 +60,41 @@ void MAIN_Init(void) {
   // SERVO_EnablePID(&ServoHandle_M1);
   // SERVO_EnablePIV(&ServoHandle_M1);
   SERVO_EnablePositionFilter(&ServoHandle_M1);
+
+
+  Middle = 0.5 * (
+    CalibrationHandle_M1.MotionCalib.LowerPositionLimit +
+    CalibrationHandle_M1.MotionCalib.UpperPositionLimit
+  );
+
+
+
 }
 
 State_t state;
-
+bool SetpointToggle = false;
 
 void MAIN_Loop(void) {
 
   HAL_Delay(1);
 
-  uint16_t PotRawValue = 0;
-  POT_ReadValue(&PotRawValue);
+  // uint16_t PotRawValue = 0;
+  // POT_ReadValue(&PotRawValue);
 
-  float PotValue = ((float) PotRawValue) * (1.0f / 65536.0f);
+  // float PotValue = ((float) PotRawValue) * (1.0f / 65536.0f);
 
-  ServoHandle_M1.PosInput = 
-    (       PotValue) * CalibrationHandle_M1.MotionCalib.LowerPositionLimit + 
-    (1.0f - PotValue) * CalibrationHandle_M1.MotionCalib.UpperPositionLimit;
+  // ServoHandle_M1.PosInput = 
+  //   (       PotValue) * CalibrationHandle_M1.MotionCalib.LowerPositionLimit + 
+  //   (1.0f - PotValue) * CalibrationHandle_M1.MotionCalib.UpperPositionLimit;
 
-  // ServoHandle_M1.PosInput = (0.00004) * (float)PotRawValue;
+  HAL_Delay(200);
+
+  if (SetpointToggle) {
+    ServoHandle_M1.PosInput = Middle + 1.0;
+  } else {
+    ServoHandle_M1.PosInput = Middle - 1.0;
+  }
+  SetpointToggle = !SetpointToggle;
 
   state = MC_GetSTMStateMotor1();
   if (state == FAULT_NOW || state == FAULT_OVER) {

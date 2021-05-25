@@ -80,21 +80,22 @@ typedef struct {
 
 
 void SERVO_Init(Servo_t *self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t *TorqueController, FPID_Handle_t *PIDPosRegulator, FPID_Handle_t *PIVPosRegulator, FPID_Handle_t *PIVVelRegulator);
-void SERVO_ControlPosition(Servo_t * self, float DeltaTime);
-void SERVO_ResetEncoderOffset(Servo_t * self);
-void SERVO_Disable(Servo_t * self);
-void SERVO_FindEncoderIndex(Servo_t * self);
-bool SERVO_IsAlignmentComplete(Servo_t * self);
-void SERVO_CalibrateAnticogging(Servo_t * self);
-bool SERVO_IsAnticoggingCalibrationComplete(Servo_t * self);
-void SERVO_EnablePID(Servo_t * self);
-void SERVO_EnablePIV(Servo_t * self);
-void SERVO_EnableVelocity(Servo_t * self);
-void SERVO_EnableTorque(Servo_t * self);
-void SERVO_EnablePositionFilter(Servo_t * self);
-void SERVO_EnableStepDirection(Servo_t * self);
-float SERVO_GetPosition(Servo_t* self);
-float SERVO_GetVelocity(Servo_t* self);
-float SERVO_GetTorque(Servo_t* self);
+void SERVO_ControlPosition(Servo_t *self, float DeltaTime);
+void SERVO_ResetEncoderOffset(Servo_t *self);
+void SERVO_Disable(Servo_t *self);
+void SERVO_FindEncoderIndex(Servo_t *self);
+bool SERVO_IsAlignmentComplete(Servo_t *self);
+void SERVO_CalibrateAnticogging(Servo_t *self);
+bool SERVO_IsAnticoggingCalibrationComplete(Servo_t *self);
+void SERVO_EnablePID(Servo_t *self);
+void SERVO_EnablePIV(Servo_t *self);
+void SERVO_EnableVelocity(Servo_t *self);
+void SERVO_EnableTorque(Servo_t *self);
+void SERVO_EnablePositionFilter(Servo_t *self);
+void SERVO_EnableStepDirection(Servo_t *self);
+void SERVO_UpdatePositionFilter(Servo_t *self);
+float SERVO_GetPosition(Servo_t *self);
+float SERVO_GetVelocity(Servo_t *self);
+float SERVO_GetTorque(Servo_t *self);
 
 #endif /* APPLICATION_INCLUDE_USER_SERVO_CONTROLLER_H_ */

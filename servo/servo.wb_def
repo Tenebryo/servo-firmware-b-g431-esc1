@@ -143,7 +143,7 @@
 		<define key="TF_KIDIV" value="4096" />
 		<define key="TF_KDDIV" value="8192" />
 		<define key="TFDIFFERENTIAL_TERM_ENABLING" value="DISABLE" />
-		<define key="SPEED_LOOP_FREQUENCY_HZ" value="1000" />
+		<define key="SPEED_LOOP_FREQUENCY_HZ" value="2000" />
 		<define key="PID_SPEED_KP_DEFAULT" value="3687" />
 		<define key="PID_SPEED_KI_DEFAULT" value="1" />
 		<define key="PID_SPEED_KD_DEFAULT" value="0" />

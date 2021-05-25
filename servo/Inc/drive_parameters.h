@@ -87,7 +87,7 @@
 #define TFDIFFERENTIAL_TERM_ENABLING  DISABLE
 
 /* Speed control loop */
-#define SPEED_LOOP_FREQUENCY_HZ       1000 /*!<Execution rate of speed
+#define SPEED_LOOP_FREQUENCY_HZ       2000 /*!<Execution rate of speed
                                                       regulation loop (Hz) */
 
 #define PID_SPEED_KP_DEFAULT          3687/(SPEED_UNIT/10) /* Workbench compute the gain for 01Hz unit*/

@@ -43,8 +43,7 @@ void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle
 
     self->AnticoggingCalibrated = false;
 
-    self->Config.InputFiltKi = 2.0f * self->Config.TorqueBandwidth;
-    self->Config.InputFiltKp = self->Config.TorqueBandwidth * self->Config.TorqueBandwidth;
+    SERVO_UpdatePositionFilter(self);
 
     self->LastEncoderCount = TIM4->CNT;
     self->EncoderPosition = self->LastEncoderCount;
@@ -64,6 +63,13 @@ void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle
     self->State = DISABLED;
   }
 }
+
+void SERVO_UpdatePositionFilter(Servo_t *self) {
+    self->Config.InputFiltKi = 2.0f * self->Config.TorqueBandwidth;
+    self->Config.InputFiltKp = self->Config.TorqueBandwidth * self->Config.TorqueBandwidth;
+}
+
+float abs_f(float x);
 
 /// ==================================================================================================================
 /// This is the main servo control loop. It uses the input position (from the Step/Dir interface) to command a torque.
@@ -122,6 +128,16 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     VelDelta = self->VelInput - self->VelSetpoint;
 
     Accel = (self->Config.InputFiltKp * PosDelta) + (self->Config.InputFiltKi * VelDelta);
+
+    if (abs_f(Accel * self->Config.Inertia) > self->Config.TorMaxAbs) {
+      Accel *= self->Config.TorMaxAbs / abs_f(Accel * self->Config.Inertia);
+    }
+
+    // Limit accel to prevent overspeed
+    if (abs_f(DeltaTime * Accel + self->VelSetpoint) > self->Config.VelMaxAbs ) {
+      // multiply by factor (max delta) / (proposed delta)
+      Accel *= (self->Config.VelMaxAbs - abs_f(self->VelSetpoint)) / abs_f(DeltaTime * Accel);
+    }
 
     // calculate the feedforward motion terms
     self->TorSetpoint = self->Config.Inertia * Accel;
@@ -243,25 +259,25 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 void SERVO_Enable(Servo_t * self) {
 
   // we can only enable the servo if the servo is currently disabled and aligned.
-    // use the current position, velocity, and input pos as the initial set points
+  // use the current position, velocity, and input pos as the initial set points
 
-    self->EncoderPosition = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
+  self->EncoderPosition = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
 
-    // clear any windup in the PID integrators
-    FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0f);
-    FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0f);
-    FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0f);
+  // clear any windup in the PID integrators
+  FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0f);
+  FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0f);
+  FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0f);
 
-    float PosActual = TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
+  float PosActual = TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
 
-    self->StepDirOffset = PosActual;
-    self->PosSetpoint = PosActual;
-    self->VelSetpoint = 0.0f;
-    self->TorSetpoint = 0.0f;
+  self->StepDirOffset = PosActual;
+  self->PosSetpoint = PosActual;
+  self->VelSetpoint = 0.0f;
+  self->TorSetpoint = 0.0f;
 
-    self->PosInput = self->PosSetpoint;
-    self->VelInput = self->VelSetpoint;
-    self->TorInput = self->TorSetpoint;
+  self->PosInput = self->PosSetpoint;
+  self->VelInput = self->VelSetpoint;
+  self->TorInput = self->TorSetpoint;
 }
 
 /// ==================================================================================================================

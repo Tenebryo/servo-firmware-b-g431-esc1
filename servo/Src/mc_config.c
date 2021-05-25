@@ -342,11 +342,11 @@ FPID_Handle_t PIVVelHandle_M1 = {
 Servo_t ServoHandle_M1 =
 {
     .Config = {
-      .IndexScanSpeed  =    0.5,
+      .IndexScanSpeed  =    1.0,
       .TurnsPerStep    =    0.001,
-      .Inertia         =    0.9,
-      .TorqueBandwidth =   75.0,
-      .VelMaxAbs       =  100.0,
+      .Inertia         =    0.5,
+      .TorqueBandwidth =   32.0,
+      .VelMaxAbs       =   20.0,
       .TorMaxAbs       = 4000.0,
     },
     .State = UNINIT,
