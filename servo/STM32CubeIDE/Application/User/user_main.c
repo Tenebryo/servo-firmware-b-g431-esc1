@@ -19,6 +19,8 @@ void MAIN_Init(void) {
 
   HAL_Delay(500);
 
+  OSC_Init(&OscilloscopeHandle_M1);
+
   // MC_ProgramSpeedRampMotor1(0, 0);
   MC_ProgramTorqueRampMotor1(0, 0);
   MC_StartMotor1();
@@ -72,7 +74,6 @@ void MAIN_Init(void) {
 }
 
 State_t state;
-bool SetpointToggle = false;
 
 void MAIN_Loop(void) {
 
@@ -87,18 +88,30 @@ void MAIN_Loop(void) {
   //   (       PotValue) * CalibrationHandle_M1.MotionCalib.LowerPositionLimit + 
   //   (1.0f - PotValue) * CalibrationHandle_M1.MotionCalib.UpperPositionLimit;
 
-  HAL_Delay(200);
+  // HAL_Delay(150); ServoHandle_M1.PosInput = Middle + 0.25;
+  // HAL_Delay(150); ServoHandle_M1.PosInput = Middle - 0.25;
+  // HAL_Delay(150); ServoHandle_M1.PosInput = Middle - 0.75;
+  // HAL_Delay(150); ServoHandle_M1.PosInput = Middle + 0.25;
+  // HAL_Delay(150); ServoHandle_M1.PosInput = Middle + 0.0;
+  // HAL_Delay(150); ServoHandle_M1.PosInput = Middle + 0.25;
+  // HAL_Delay(150); ServoHandle_M1.PosInput = Middle - 0.5;
+  // HAL_Delay(150); ServoHandle_M1.PosInput = Middle + 0.25;
 
-  if (SetpointToggle) {
-    ServoHandle_M1.PosInput = Middle + 1.0;
-  } else {
-    ServoHandle_M1.PosInput = Middle - 1.0;
-  }
-  SetpointToggle = !SetpointToggle;
+
+  HAL_Delay(50); ServoHandle_M1.PosInput = Middle - 0.2;
+  HAL_Delay(50); ServoHandle_M1.PosInput = Middle + 0.2;
+  HAL_Delay(50); ServoHandle_M1.PosInput = Middle - 0.2;
+  HAL_Delay(50); ServoHandle_M1.PosInput = Middle + 0.2;
+  HAL_Delay(50); ServoHandle_M1.PosInput = Middle - 0.2;
+  HAL_Delay(50); ServoHandle_M1.PosInput = Middle + 0.2;
+  HAL_Delay(50); ServoHandle_M1.PosInput = Middle - 0.2;
+  HAL_Delay(50); ServoHandle_M1.PosInput = Middle + 0.2;
+
+  HAL_Delay(500);
 
   state = MC_GetSTMStateMotor1();
   if (state == FAULT_NOW || state == FAULT_OVER) {
-
+    OSC_StopRecording(&OscilloscopeHandle_M1);
     uint16_t fault = MC_GetOccurredFaultsMotor1();
     MC_AcknowledgeFaultMotor1();
     MC_StopMotor1();

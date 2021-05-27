@@ -8,8 +8,8 @@
 #ifndef APPLICATION_INCLUDE_USER_OSCILLOSCOPE_H_
 #define APPLICATION_INCLUDE_USER_OSCILLOSCOPE_H_
 
-#define OSCILLOSCOPE_SAMPLE_COUNT    (128)
-#define OSCILLOSCOPE_SAMPLE_INTERVAL (2)
+#define OSCILLOSCOPE_SAMPLE_COUNT    (512)
+#define OSCILLOSCOPE_SAMPLE_INTERVAL (3)
 #define OSCILLOSCOPE_SAMPLE_SIZE     (4)
 
 #include "stdint.h"
@@ -36,13 +36,18 @@ typedef struct {
 } SamplePoint_t;
 
 typedef struct {
+    bool Recording;
     uint32_t Index;
     uint32_t Interval;
     SamplePoint_t Data[OSCILLOSCOPE_SAMPLE_COUNT];
 } Oscilloscope_t;
 
+extern Oscilloscope_t OscilloscopeHandle_M1;
+
 void OSC_Init(Oscilloscope_t *self);
 bool OSC_CheckInterval(Oscilloscope_t *self);
-void OSC_AddPoint(Oscilloscope_t *self, SamplePoint_t data);
+void OSC_AddPoint(Oscilloscope_t *self, SamplePoint_t *data);
+void OSC_StartRecording(Oscilloscope_t *self);
+void OSC_StopRecording(Oscilloscope_t *self);
 
 #endif /* APPLICATION_INCLUDE_USER_OSCILLOSCOPE_H_ */

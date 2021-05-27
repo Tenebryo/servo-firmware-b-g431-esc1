@@ -79,6 +79,11 @@ typedef struct {
 } Servo_t;
 
 
+extern FPID_Handle_t PIDPosHandle_M1;
+extern FPID_Handle_t PIVPosHandle_M1;
+extern FPID_Handle_t PIVVelHandle_M1;
+extern Servo_t ServoHandle_M1;
+
 void SERVO_Init(Servo_t *self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t *TorqueController, FPID_Handle_t *PIDPosRegulator, FPID_Handle_t *PIVPosRegulator, FPID_Handle_t *PIVVelRegulator);
 void SERVO_ControlPosition(Servo_t *self, float DeltaTime);
 void SERVO_ResetEncoderOffset(Servo_t *self);

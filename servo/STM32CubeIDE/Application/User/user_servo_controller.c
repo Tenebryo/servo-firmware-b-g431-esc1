@@ -18,6 +18,8 @@
 #define HZ_PER_SPEED_UNIT      (1.0f / (float)SPEED_UNIT)
 
 
+
+
 float clamp_f(float x, float min, float max) {
   if (x < min) {
     return min;
@@ -455,3 +457,56 @@ float SERVO_GetVelocity(Servo_t *self) {
 float SERVO_GetTorque(Servo_t *self) {
   return self->TorSetpoint;
 }
+
+
+FPID_Handle_t PIDPosHandle_M1 = {
+  
+  .hDefKpGain          =  4000.0,
+  .hDefKiGain          =     0.0,
+  .hDefKdGain          = 16000.0,
+  .wUpperIntegralLimit =  2000.0,
+  .wLowerIntegralLimit = -2000.0,
+  .hUpperOutputLimit   =  8000.0,
+  .hLowerOutputLimit   = -8000.0,
+};
+
+FPID_Handle_t PIVPosHandle_M1 = {
+  
+  .hDefKpGain          =   125.0,
+  .hDefKiGain          =     0.0,
+  .hDefKdGain          =     0.0,
+  .wUpperIntegralLimit =   100.0,
+  .wLowerIntegralLimit =  -100.0,
+  .hUpperOutputLimit   =   100.0,
+  .hLowerOutputLimit   =  -100.0,
+};
+
+FPID_Handle_t PIVVelHandle_M1 = {
+  
+  .hDefKpGain          =    1000.0,
+  .hDefKiGain          =      20.0,
+  .hDefKdGain          =       0.0,
+  .wUpperIntegralLimit =     500.0,
+  .wLowerIntegralLimit =    -500.0,
+  .hUpperOutputLimit   =    5000.0,
+  .hLowerOutputLimit   =   -5000.0,
+};
+
+Servo_t ServoHandle_M1 =
+{
+    .Config = {
+      .IndexScanSpeed  =    2.0,
+      .TurnsPerStep    =    0.001,
+      .Inertia         =    0.5,
+      .TorqueBandwidth =   70.0,
+      .VelMaxAbs       =    8.0,
+      .TorMaxAbs       = 5000.0,
+    },
+    .State = UNINIT,
+    .PosSetpoint = 0.0f,
+    .VelSetpoint = 0.0f,
+    .TorSetpoint = 0.0f,
+    .Aligned = false,
+    .EncoderOffset = 0,
+    .StepDirOffset = 0,
+};

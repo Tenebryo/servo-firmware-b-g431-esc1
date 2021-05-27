@@ -306,62 +306,7 @@ FF_Handle_t *pFF[NBR_OF_MOTORS] = {&FF_M1};
 
 /* USER CODE BEGIN Additional configuration */
 
-FPID_Handle_t PIDPosHandle_M1 = {
-  
-  .hDefKpGain          =  4000.0,
-  .hDefKiGain          =     0.0,
-  .hDefKdGain          = 16000.0,
-  .wUpperIntegralLimit =  2000.0,
-  .wLowerIntegralLimit = -2000.0,
-  .hUpperOutputLimit   =  8000.0,
-  .hLowerOutputLimit   = -8000.0,
-};
 
-FPID_Handle_t PIVPosHandle_M1 = {
-  
-  .hDefKpGain          =   150.0,
-  .hDefKiGain          =     0.0,
-  .hDefKdGain          =     0.0,
-  .wUpperIntegralLimit =   100.0,
-  .wLowerIntegralLimit =  -100.0,
-  .hUpperOutputLimit   =   100.0,
-  .hLowerOutputLimit   =  -100.0,
-};
-
-FPID_Handle_t PIVVelHandle_M1 = {
-  
-  .hDefKpGain          =     800.0,
-  .hDefKiGain          =       4.0,
-  .hDefKdGain          =       0.0,
-  .wUpperIntegralLimit =    1000.0,
-  .wLowerIntegralLimit =   -1000.0,
-  .hUpperOutputLimit   =    4000.0,
-  .hLowerOutputLimit   =   -4000.0,
-};
-
-Servo_t ServoHandle_M1 =
-{
-    .Config = {
-      .IndexScanSpeed  =    1.0,
-      .TurnsPerStep    =    0.001,
-      .Inertia         =    0.5,
-      .TorqueBandwidth =   32.0,
-      .VelMaxAbs       =   20.0,
-      .TorMaxAbs       = 4000.0,
-    },
-    .State = UNINIT,
-    .PosSetpoint = 0.0f,
-    .VelSetpoint = 0.0f,
-    .TorSetpoint = 0.0f,
-    .Aligned = false,
-    .EncoderOffset = 0,
-    .StepDirOffset = 0,
-};
-
-Oscilloscope_t OscilloscopeHandle_M1 = {
-  .Index = 0,
-  .Interval = 0,
-};
 /* USER CODE END Additional configuration */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

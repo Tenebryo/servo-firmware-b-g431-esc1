@@ -311,12 +311,7 @@ __weak void TSK_MediumFrequencyTaskM1(void)
 {
   /* USER CODE BEGIN MediumFrequencyTask M1 0 */
 
-  if (OSC_CheckInterval(&OscilloscopeHandle_M1)) {
-
-    // get configured data point
-
-  }
-
+  SamplePoint_t Sample;
   /* USER CODE END MediumFrequencyTask M1 0 */
 
   State_t StateM1;
@@ -479,16 +474,28 @@ __weak void TSK_MediumFrequencyTaskM1(void)
     /* USER CODE BEGIN MediumFrequencyTask M1 2 */
 
     SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
-    // ServoHandle_M1->PosInput = 0.0;
-    // SERVO_ControlPosition(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
-    // SERVO_ControlPositionFromStepDir(&ServoHandle_M1, 1.0f / SPEED_LOOP_FREQUENCY_HZ);
-
     /* USER CODE END MediumFrequencyTask M1 2 */
 
     MCI_ExecBufferedCommands( &Mci[M1] );
     FOC_CalcCurrRef( M1 );
 
     /* USER CODE BEGIN MediumFrequencyTask M1 3 */
+
+    if (OSC_CheckInterval(&OscilloscopeHandle_M1)) {
+
+      // get configured data point
+
+      qd_t Current = MC_GetIqdMotor1();
+      float Position = SERVO_GetPosition(&ServoHandle_M1);
+      float Velocity = SERVO_GetVelocity(&ServoHandle_M1);
+
+      Sample.Sample[0] = Current.q;
+      Sample.Sample[1] = Current.d;
+      Sample.Sample[2] = Position;
+      Sample.Sample[3] = Velocity;
+
+      OSC_AddPoint(&OscilloscopeHandle_M1, &Sample);
+    }
 
     /* USER CODE END MediumFrequencyTask M1 3 */
     break;
@@ -526,6 +533,8 @@ __weak void TSK_MediumFrequencyTaskM1(void)
   }
 
   /* USER CODE BEGIN MediumFrequencyTask M1 6 */
+
+
 
   /* USER CODE END MediumFrequencyTask M1 6 */
 }
