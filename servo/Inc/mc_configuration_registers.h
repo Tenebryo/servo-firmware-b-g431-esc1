@@ -85,7 +85,7 @@ typedef enum
 #define AUX_SENSOR_M1  eNO_SENSOR
 #define TOPOLOGY_M1 0
 #define FOC_RATE_M1 1
-#define PWM_FREQ_M1 30000
+#define PWM_FREQ_M1 20000
 
 extern char CTL_BOARD[];
 extern char* PWR_BOARD_NAME[NBR_OF_MOTORS];

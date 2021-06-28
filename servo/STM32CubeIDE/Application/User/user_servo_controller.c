@@ -16,6 +16,9 @@
 // encoder position is expressed in 1/65536 of a rotation counts.
 #define TURNS_PER_ENCODER_STEP (1.0f / (float)U16MAX)
 #define HZ_PER_SPEED_UNIT      (1.0f / (float)SPEED_UNIT)
+#define TURNS_PER_ENCODER_COUNT (1.0f / 60000.0)
+#define SERVO_LOOP_DT           (0.0005f)
+#define SERVO_LOOP_HZ           (2000.0f)
 
 
 
@@ -41,14 +44,14 @@ float clamp_f(float x, float min, float max) {
 /// ==================================================================================================================
 void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle_t * TorqueController, FPID_Handle_t *PIDPosRegulator, FPID_Handle_t *PIVPosRegulator, FPID_Handle_t *PIVVelRegulator) {
 
-  if (self->State == UNINIT) {
+  if (self->state.State == UNINIT) {
 
-    self->AnticoggingCalibrated = false;
+    self->state.AnticoggingCalibrated = false;
 
     SERVO_UpdatePositionFilter(self);
 
-    self->LastEncoderCount = TIM4->CNT;
-    self->EncoderPosition = self->LastEncoderCount;
+    self->state.LastEncoderCount = TIM4->CNT;
+    self->state.EncoderPosition = self->state.LastEncoderCount;
 
     self->Encoder = Encoder;
     self->TorqueController = TorqueController;
@@ -57,12 +60,17 @@ void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle
     self->PIVPosRegulator = PIVPosRegulator;
     self->PIVVelRegulator = PIVVelRegulator;
 
+    self->state.Position = 0.0;
+    self->state.RawPosition = 0.0;
+    self->state.Velocity = 0.0;
+    self->state.Accel = 0.0;
+
     // clear integrator windup
     FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0);
     FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0);
     FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0);
 
-    self->State = DISABLED;
+    self->state.State = DISABLED;
   }
 }
 
@@ -86,16 +94,22 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   TorCmd = 0.0f;
 
-  PrevTorCmd = self->TorSetpoint;
+  PrevTorCmd = self->state.TorSetpoint;
+
+  self->state.EncoderPosition = TIM4->CNT;
 
   // some control modes only add to the torque setpoint, so we need to clear it here.
-  self->TorSetpoint = 0.0f;
+  self->state.TorSetpoint = 0.0f;
 
-  self->EncoderPosition = SPD_GetMecAngle(&ENCODER_M1._Super) + self->EncoderOffset;
-  PosActual = TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
-  VelActual = HZ_PER_SPEED_UNIT      * (float)SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
+  // self->state.EncoderPosition = SPD_GetMecAngle(&ENCODER_M1._Super) + self->state.EncoderOffset;
+  // self->state.EncoderPosition = SPD_GetMecAngle(&ENCODER_M1._Super) + self->state.EncoderOffset;
+  // VelActual = HZ_PER_SPEED_UNIT      * (float)SPD_GetAvrgMecSpeedUnit(&self->state.Encoder->_Super);
+  // PosActual = TURNS_PER_ENCODER_COUNT * (float)(self->state.EncoderPosition);
 
-  switch (self->State) {
+  PosActual = self->state.Position;
+  VelActual = self->state.Velocity;
+
+  switch (self->state.State) {
   case UNINIT:
     // command 0 torque when the controller is uninitialized (coasting)
     TorCmd = 0;
@@ -109,25 +123,28 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
   case ALIGNING:
     // command a constant speed during alignment, which is set when alignment starts.
     // this expression does a gradual ramp up to the final speed.
-    self->VelSetpoint = self->VelSetpoint * 0.9f + self->Config.IndexScanSpeed * 0.1f;
+    self->state.VelSetpoint = self->state.VelSetpoint * 0.9f + self->Config.IndexScanSpeed * 0.1f;
 
-    TorCmd = FPI_Controller(self->PIVVelRegulator, self->VelSetpoint - VelActual, DeltaTime);
+    TorCmd = FPI_Controller(self->PIVVelRegulator, self->state.VelSetpoint - VelActual, DeltaTime);
 
     break;
 
   case ENABLED_PID:
-    self->PosSetpoint = self->PosInput;
-    TorCmd = FPID_Controller(self->PIDPosRegulator, (self->PosSetpoint) - PosActual, DeltaTime);
+    self->state.PosSetpoint = self->state.PosInput;
+    TorCmd = FPID_Controller(self->PIDPosRegulator, (self->state.PosSetpoint) - PosActual, DeltaTime);
     break;
 
   case ENABLED_STEP_DIRECTION:
-    self->PosInput = self->Config.TurnsPerStep * (float) (STEPDIR_GetInputPosition() + self->StepDirOffset);
+    self->state.PosInput = self->Config.TurnsPerStep * (float) (STEPDIR_GetInputPosition() + self->state.StepDirOffset);
     // cascade to filter the step/direction inputs
 
   case ENABLED_POSITION_FILTER:
     // filter stepped input position
-    PosDelta = self->PosInput - self->PosSetpoint;
-    VelDelta = self->VelInput - self->VelSetpoint;
+    PosDelta = self->state.PosInput - self->state.PosSetpoint;
+    VelDelta = self->state.VelInput - self->state.VelSetpoint;
+
+    if (PosDelta >  self->Config.MaxPosStep) {PosDelta =  self->Config.MaxPosStep;}
+    if (PosDelta < -self->Config.MaxPosStep) {PosDelta = -self->Config.MaxPosStep;}
 
     Accel = (self->Config.InputFiltKp * PosDelta) + (self->Config.InputFiltKi * VelDelta);
 
@@ -136,57 +153,57 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     }
 
     // Limit accel to prevent overspeed
-    if (abs_f(DeltaTime * Accel + self->VelSetpoint) > self->Config.VelMaxAbs ) {
+    if (abs_f(DeltaTime * Accel + self->state.VelSetpoint) > self->Config.VelMaxAbs ) {
       // multiply by factor (max delta) / (proposed delta)
-      Accel *= (self->Config.VelMaxAbs - abs_f(self->VelSetpoint)) / abs_f(DeltaTime * Accel);
+      Accel *= (self->Config.VelMaxAbs - abs_f(self->state.VelSetpoint)) / abs_f(DeltaTime * Accel);
     }
 
     // calculate the feedforward motion terms
-    self->TorSetpoint = self->Config.Inertia * Accel;
-    self->VelSetpoint += DeltaTime * Accel;
-    self->PosSetpoint += DeltaTime * self->VelSetpoint;
+    self->state.TorSetpoint = self->Config.Inertia * Accel; // simple filter to limit jerk
+    self->state.VelSetpoint += DeltaTime * Accel;
+    self->state.PosSetpoint += DeltaTime * self->state.VelSetpoint;
 
-    self->VelSetpoint = clamp_f(self->VelSetpoint, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
-    self->TorSetpoint = clamp_f(self->TorSetpoint, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
+    self->state.VelSetpoint = clamp_f(self->state.VelSetpoint, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
+    self->state.TorSetpoint = clamp_f(self->state.TorSetpoint, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
 
     // cascade into PIV control with the calculated feedforward setpoints
 
   case ANTICOGGING_CALIBRATION:
     // // todo: do this externally
-    // if (self->State == ANTICOGGING_CALIBRATION) {
-    //   if (abs_f(PosActual - COG_POS(self->AnticoggingIndex)) < COG_POSITION_ERR_EPS && abs_f(VelActual) < COG_VELOCITY_ERR_EPS) {
+    // if (self->state.State == ANTICOGGING_CALIBRATION) {
+    //   if (abs_f(PosActual - COG_POS(self->state.AnticoggingIndex)) < COG_POSITION_ERR_EPS && abs_f(VelActual) < COG_VELOCITY_ERR_EPS) {
     //     // the position is within the cog range.
 
-    //     if (self->AnticoggingSamples < COG_POSITION_SAMPLES) {
+    //     if (self->state.AnticoggingSamples < COG_POSITION_SAMPLES) {
     //       // the position has been stable, so take a sample
-    //       self->AnticoggingSum += PrevTorCmd;
+    //       self->state.AnticoggingSum += PrevTorCmd;
     //     }
-    //     self->AnticoggingSamples--;
+    //     self->state.AnticoggingSamples--;
 
-    //     if (self->AnticoggingSamples == 0) {
+    //     if (self->state.AnticoggingSamples == 0) {
     //       // store the average torque (average of samples from moving forward and backward)
-    //       self->Config.AntcoggingTorque[self->AnticoggingIndex] += 0.5 * self->AnticoggingSum / (float)COG_POSITION_SAMPLES;
+    //       self->Config.AntcoggingTorque[self->state.AnticoggingIndex] += 0.5 * self->state.AnticoggingSum / (float)COG_POSITION_SAMPLES;
 
     //       // advance to the next cog sample position
-    //       self->AnticoggingSum = 0.0f;
-    //       self->AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;
-    //       if (self->AnticoggingReturning) {
-    //         self->AnticoggingIndex--;
+    //       self->state.AnticoggingSum = 0.0f;
+    //       self->state.AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;
+    //       if (self->state.AnticoggingReturning) {
+    //         self->state.AnticoggingIndex--;
     //       } else {
-    //         self->AnticoggingIndex++;
+    //         self->state.AnticoggingIndex++;
     //       }
 
     //       // check if we are done, at the turn-around point, or carrying on
-    //       if (self->AnticoggingIndex == 0 && self->AnticoggingReturning) {
+    //       if (self->state.AnticoggingIndex == 0 && self->state.AnticoggingReturning) {
     //         // we are done
-    //         self->AnticoggingCalibrated = true;
+    //         self->state.AnticoggingCalibrated = true;
     //         SERVO_Disable(self);
-    //       } else if (self->AnticoggingIndex == COGGING_TORQUE_POINTS) {
-    //         self->AnticoggingReturning = true;
-    //         self->AnticoggingIndex--;
+    //       } else if (self->state.AnticoggingIndex == COGGING_TORQUE_POINTS) {
+    //         self->state.AnticoggingReturning = true;
+    //         self->state.AnticoggingIndex--;
     //       } else {
     //         // initialize the next sample point.
-    //         self->PosSetpoint = COG_POS(self->AnticoggingIndex);
+    //         self->state.PosSetpoint = COG_POS(self->state.AnticoggingIndex);
     //       }
     //     }
     //   }
@@ -195,15 +212,15 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   case ENABLED_PIV:
 
-    if (self->State == ENABLED_PIV) {
+    if (self->state.State == ENABLED_PIV) {
       // in the ENABLED_PIV state, we must zero the set points otherwise they will act like integrators
       // this needs to be in an if statement so that the feedforward terms above remain.
-      self->PosSetpoint = self->PosInput;
-      self->VelSetpoint = self->VelInput;
-      self->TorSetpoint = self->TorInput;
+      self->state.PosSetpoint = self->state.PosInput;
+      self->state.VelSetpoint = self->state.VelInput;
+      self->state.TorSetpoint = self->state.TorInput;
     }
 
-    PosCmd = self->PosSetpoint;
+    PosCmd = self->state.PosSetpoint;
     // control position with velocity, then velocity with torque, adding in the feedforward terms
 
     VelCmd += FPID_Controller(self->PIVPosRegulator, PosCmd - PosActual, DeltaTime);
@@ -211,12 +228,12 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   case ENABLED_VELOCITY:
 
-    if (self->State == ENABLED_VELOCITY) {
-      self->VelSetpoint = self->VelInput;
-      self->TorSetpoint = self->TorInput;
+    if (self->state.State == ENABLED_VELOCITY) {
+      self->state.VelSetpoint = self->state.VelInput;
+      self->state.TorSetpoint = self->state.TorInput;
     }
 
-    VelCmd += self->VelSetpoint;
+    VelCmd += self->state.VelSetpoint;
 
     // limit the set velocity
     VelCmd = clamp_f(VelCmd, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
@@ -225,14 +242,14 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   case ENABLED_TORQUE:
 
-    if (self->State == ENABLED_TORQUE) {
-      self->TorSetpoint = self->TorInput;
+    if (self->state.State == ENABLED_TORQUE) {
+      self->state.TorSetpoint = self->state.TorInput;
     }
 
-    TorCmd += self->TorSetpoint;
+    TorCmd += self->state.TorSetpoint;
 
     // only add anticogging compensation when were aren't calibrating it
-    if (self->State != ANTICOGGING_CALIBRATION && self->AnticoggingCalibrated) {
+    if (self->state.State != ANTICOGGING_CALIBRATION && self->state.AnticoggingCalibrated) {
       // add anticogging feedforward term. The actual torque feedforward term is interpolated between the two
       // nearest cogging torque sample points.
       CogPointIndex = COG_INDEX(PosActual);
@@ -249,10 +266,10 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
   // limit the set torque
   TorCmd = clamp_f(TorCmd, -self->Config.TorMaxAbs, self->Config.TorMaxAbs);
   // this is safe because the TorSetpoint is never integrated.
-  self->TorSetpoint = TorCmd;
+  self->state.TorSetpoint = TorCmd;
 
   // actually send the desired torque to the torque controller.
-  MC_ProgramTorqueRampMotor1((int32_t)(self->TorSetpoint), 0);
+  MC_ProgramTorqueRampMotor1((int32_t)(self->state.TorSetpoint), 0);
 }
 
 /// ==================================================================================================================
@@ -263,23 +280,24 @@ void SERVO_Enable(Servo_t * self) {
   // we can only enable the servo if the servo is currently disabled and aligned.
   // use the current position, velocity, and input pos as the initial set points
 
-  self->EncoderPosition = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
+  // self->state.EncoderPosition = SPD_GetMecAngle(&self->state.Encoder->_Super) + self->state.EncoderOffset;
+  // self->state.EncoderPosition = SPD_GetMecAngle(&self->state.Encoder->_Super) + self->state.EncoderOffset;
 
   // clear any windup in the PID integrators
   FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0f);
   FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0f);
   FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0f);
 
-  float PosActual = TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
+  // float PosActual = TURNS_PER_ENCODER_STEP * (float)(self->state.EncoderPosition);
 
-  self->StepDirOffset = PosActual;
-  self->PosSetpoint = PosActual;
-  self->VelSetpoint = 0.0f;
-  self->TorSetpoint = 0.0f;
+  // self->state.StepDirOffset = PosActual;
+  self->state.PosSetpoint = self->state.Position;
+  self->state.VelSetpoint = 0.0f;
+  self->state.TorSetpoint = 0.0f;
 
-  self->PosInput = self->PosSetpoint;
-  self->VelInput = self->VelSetpoint;
-  self->TorInput = self->TorSetpoint;
+  self->state.PosInput = self->state.PosSetpoint;
+  self->state.VelInput = self->state.VelSetpoint;
+  self->state.TorInput = self->state.TorSetpoint;
 }
 
 /// ==================================================================================================================
@@ -288,12 +306,12 @@ void SERVO_Enable(Servo_t * self) {
 /// ==================================================================================================================
 void SERVO_ResetEncoderOffset(Servo_t * self) {
 
-  int32_t PosActual = SPD_GetMecAngle(&self->Encoder->_Super);
+  // int32_t PosActual = SPD_GetMecAngle(&self->state.Encoder->_Super);
 
-  self->EncoderOffset = -PosActual;
+  self->state.EncoderOffset = -(TIM4->CNT);
 
-  self->Aligned = true;
-  self->State = DISABLED;
+  self->state.Aligned = true;
+  self->state.State = DISABLED;
 }
 
 
@@ -302,24 +320,27 @@ void SERVO_ResetEncoderOffset(Servo_t * self) {
 /// ==================================================================================================================
 void SERVO_FindEncoderIndex(Servo_t * self) {
 
-  if (self->State == DISABLED) {
+  if (self->state.State == DISABLED) {
     // set revoke any previous alignment
-    self->State = DISABLED;
-    self->Aligned = false;
+    self->state.State = DISABLED;
+    self->state.Aligned = false;
 
     // use the current position and scan velocity as setpoints
-    int32_t PosActual = SPD_GetMecAngle(&self->Encoder->_Super) + self->EncoderOffset;
-    int32_t VelActual = SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);
+    // int32_t PosActual = SPD_GetMecAngle(&self->state.Encoder->_Super) + self->state.EncoderOffset;
+    // int32_t VelActual = SPD_GetAvrgMecSpeedUnit(&self->state.Encoder->_Super);
 
-    self->PosSetpoint = TURNS_PER_ENCODER_STEP * PosActual;
-    self->VelSetpoint = HZ_PER_SPEED_UNIT      * VelActual;
+    // self->state.PosSetpoint = TURNS_PER_ENCODER_STEP * PosActual;
+    // self->state.VelSetpoint = HZ_PER_SPEED_UNIT      * VelActual;
+
+    self->state.PosSetpoint = self->state.Position;
+    self->state.VelSetpoint = self->state.Velocity;
 
     // clear integrator windup
     FPID_SetIntegralTerm(self->PIDPosRegulator, 0.0f);
     FPID_SetIntegralTerm(self->PIVPosRegulator, 0.0f);
     FPID_SetIntegralTerm(self->PIVVelRegulator, 0.0f);
 
-    self->State = ALIGNING;
+    self->state.State = ALIGNING;
   }
 }
 
@@ -327,7 +348,7 @@ void SERVO_FindEncoderIndex(Servo_t * self) {
 /// Helper function to poll whether the index pulse has been found.
 /// ==================================================================================================================
 bool SERVO_IsAlignmentComplete(Servo_t * self) {
-  return self->Aligned;
+  return self->state.Aligned;
 }
 
 
@@ -335,7 +356,7 @@ bool SERVO_IsAlignmentComplete(Servo_t * self) {
 /// Call this function to start the anticogging proceedure
 /// ==================================================================================================================
 void SERVO_CalibrateAnticogging(Servo_t * self) {
-  if (self->Aligned && self->State == DISABLED) {
+  if (self->state.Aligned && self->state.State == DISABLED) {
 
     // Clear the cogging torque buffer.
     for (int i = 0; i < COGGING_TORQUE_POINTS; i++) {
@@ -343,15 +364,15 @@ void SERVO_CalibrateAnticogging(Servo_t * self) {
     }
 
     // initialize anticogging calibration state variables
-    self->AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;
-    self->AnticoggingIndex = 0;
-    self->AnticoggingSum = 0.0f;
-    self->PosSetpoint = 0.0f;
-    self->VelSetpoint = 0.0f;
-    self->TorSetpoint = 0.0f;
-    self->AnticoggingReturning = false;
+    self->state.AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;
+    self->state.AnticoggingIndex = 0;
+    self->state.AnticoggingSum = 0.0f;
+    self->state.PosSetpoint = 0.0f;
+    self->state.VelSetpoint = 0.0f;
+    self->state.TorSetpoint = 0.0f;
+    self->state.AnticoggingReturning = false;
     SERVO_Enable(self);
-    self->State = ANTICOGGING_CALIBRATION;
+    self->state.State = ANTICOGGING_CALIBRATION;
   }
 }
 
@@ -359,16 +380,16 @@ void SERVO_CalibrateAnticogging(Servo_t * self) {
 /// Helper function to poll whether the anticogging calibration proceedure has finished.
 /// ==================================================================================================================
 bool SERVO_IsAnticoggingCalibrationComplete(Servo_t * self) {
-  return self->AnticoggingCalibrated;
+  return self->state.AnticoggingCalibrated;
 }
 
 /// ==================================================================================================================
 /// Enable the servo control loop in the PID control mode
 /// ==================================================================================================================
 void SERVO_EnablePID(Servo_t * self) {
-  if (self->Aligned && self->State == DISABLED) {
+  if (self->state.Aligned && self->state.State == DISABLED) {
     SERVO_Enable(self);
-    self->State = ENABLED_PID;
+    self->state.State = ENABLED_PID;
   }
 }
 
@@ -376,9 +397,9 @@ void SERVO_EnablePID(Servo_t * self) {
 /// Enable the servo control loop in the PIV control mode
 /// ==================================================================================================================
 void SERVO_EnableTorque(Servo_t * self) {
-  if (self->Aligned && self->State == DISABLED) {
+  if (self->state.Aligned && self->state.State == DISABLED) {
     SERVO_Enable(self);
-    self->State = ENABLED_TORQUE;
+    self->state.State = ENABLED_TORQUE;
   }
 }
 
@@ -386,9 +407,9 @@ void SERVO_EnableTorque(Servo_t * self) {
 /// Enable the servo control loop in the PIV control mode
 /// ==================================================================================================================
 void SERVO_EnableVelocity(Servo_t * self) {
-  if (self->Aligned && self->State == DISABLED) {
+  if (self->state.Aligned && self->state.State == DISABLED) {
     SERVO_Enable(self);
-    self->State = ENABLED_VELOCITY;
+    self->state.State = ENABLED_VELOCITY;
   }
 }
 
@@ -396,9 +417,9 @@ void SERVO_EnableVelocity(Servo_t * self) {
 /// Enable the servo control loop in the PIV control mode
 /// ==================================================================================================================
 void SERVO_EnablePIV(Servo_t * self) {
-  if (self->Aligned && self->State == DISABLED) {
+  if (self->state.Aligned && self->state.State == DISABLED) {
     SERVO_Enable(self);
-    self->State = ENABLED_PIV;
+    self->state.State = ENABLED_PIV;
   }
 }
 
@@ -406,9 +427,9 @@ void SERVO_EnablePIV(Servo_t * self) {
 /// Enable the servo control loop in the position filter control mode
 /// ==================================================================================================================
 void SERVO_EnablePositionFilter(Servo_t * self) {
-  if (self->Aligned && self->State == DISABLED) {
+  if (self->state.Aligned && self->state.State == DISABLED) {
     SERVO_Enable(self);
-    self->State = ENABLED_POSITION_FILTER;
+    self->state.State = ENABLED_POSITION_FILTER;
   }
 }
 
@@ -416,13 +437,11 @@ void SERVO_EnablePositionFilter(Servo_t * self) {
 /// Enable the servo control loop in the step direction control mode
 /// ==================================================================================================================
 void SERVO_EnableStepDirection(Servo_t * self) {
-  if (self->Aligned && self->State == DISABLED) {
+  if (self->state.Aligned && self->state.State == DISABLED) {
     SERVO_Enable(self);
 
-    float PosInput = self->Config.TurnsPerStep * (float) (STEPDIR_GetInputPosition() + self->StepDirOffset);
-
-    self->StepDirOffset -= PosInput;
-    self->State = ENABLED_STEP_DIRECTION;
+    self->state.StepDirOffset = -STEPDIR_GetInputPosition();
+    self->state.State = ENABLED_STEP_DIRECTION;
   }
 }
 
@@ -430,32 +449,71 @@ void SERVO_EnableStepDirection(Servo_t * self) {
 /// Call this function to stop servo control. The servo will coast after calling this function
 /// ==================================================================================================================
 void SERVO_Disable(Servo_t * self) {
-  self->State = DISABLED;
+  self->state.State = DISABLED;
   // clear the setpoints. these should be updated when the servo is enabled again
-  self->PosSetpoint = 0.0f;
-  self->VelSetpoint = 0.0f;
-  self->TorSetpoint = 0.0f;
+  self->state.PosSetpoint = 0.0f;
+  self->state.VelSetpoint = 0.0f;
+  self->state.TorSetpoint = 0.0f;
 }
 
 /// ==================================================================================================================
 /// Get the current position the servo thinks it is in
 /// ==================================================================================================================
 float SERVO_GetPosition(Servo_t *self) {
-  return TURNS_PER_ENCODER_STEP * (float)(self->EncoderPosition);
+  // return TURNS_PER_ENCODER_STEP * (float)(self->state.EncoderPosition);
+  return self->state.Position;
 }
 
 /// ==================================================================================================================
 /// Get the current position the servo thinks it is in
 /// ==================================================================================================================
 float SERVO_GetVelocity(Servo_t *self) {
-  return HZ_PER_SPEED_UNIT      * (float)SPD_GetAvrgMecSpeedUnit(&self->Encoder->_Super);;
+  // return HZ_PER_SPEED_UNIT      * (float)SPD_GetAvrgMecSpeedUnit(&self->state.Encoder->_Super);;
+  return self->state.Velocity;
 }
 
 /// ==================================================================================================================
 /// Get the current position the servo thinks it is in
 /// ==================================================================================================================
 float SERVO_GetTorque(Servo_t *self) {
-  return self->TorSetpoint;
+  return self->state.TorSetpoint;
+}
+
+/// ==================================================================================================================
+/// Calculate the current servo position and velocity
+/// ==================================================================================================================
+void SERVO_UpdateDynamicState(Servo_t *self) {
+  float PrevPosition = self->state.RawPosition;
+  self->state.RawPosition = TURNS_PER_ENCODER_COUNT * TIM4->CNT;
+
+  float InstVelocity = (self->state.RawPosition - PrevPosition);
+
+  if (InstVelocity > 0.5f) {
+    InstVelocity -= 1.0f;
+  }
+  
+  if (InstVelocity < -0.5f) {
+    InstVelocity += 1.0f;
+  }
+
+  self->state.Position += InstVelocity;
+
+  InstVelocity *= SERVO_LOOP_HZ;
+
+  float PrevVelocity = self->state.Velocity;
+
+  // TODO: configurable filter parameters
+  self->state.Velocity = 0.9 * self->state.Velocity + 0.1 * InstVelocity;
+
+  float InstAccel = (self->state.Velocity - PrevVelocity) * SERVO_LOOP_HZ;
+
+  self->state.Accel = 0.9 * self->state.Accel + 0.1 * InstAccel;
+
+  if (self->state.Velocity >  self->state.MaxVelAbsObs) {self->state.MaxVelAbsObs =  self->state.Velocity;}
+  if (self->state.Velocity < -self->state.MaxVelAbsObs) {self->state.MaxVelAbsObs = -self->state.Velocity;}
+  
+  if (self->state.Accel >  self->state.MaxAccAbsObs) {self->state.MaxAccAbsObs =  self->state.Accel;}
+  if (self->state.Accel < -self->state.MaxAccAbsObs) {self->state.MaxAccAbsObs = -self->state.Accel;}
 }
 
 
@@ -472,7 +530,7 @@ FPID_Handle_t PIDPosHandle_M1 = {
 
 FPID_Handle_t PIVPosHandle_M1 = {
   
-  .hDefKpGain          =   125.0,
+  .hDefKpGain          =   200.0,
   .hDefKiGain          =     0.0,
   .hDefKdGain          =     0.0,
   .wUpperIntegralLimit =   100.0,
@@ -483,30 +541,33 @@ FPID_Handle_t PIVPosHandle_M1 = {
 
 FPID_Handle_t PIVVelHandle_M1 = {
   
-  .hDefKpGain          =    1000.0,
-  .hDefKiGain          =      20.0,
-  .hDefKdGain          =       0.0,
-  .wUpperIntegralLimit =     500.0,
-  .wLowerIntegralLimit =    -500.0,
-  .hUpperOutputLimit   =    5000.0,
-  .hLowerOutputLimit   =   -5000.0,
+  .hDefKpGain          =     2000.0,
+  .hDefKiGain          =        1.0,
+  .hDefKdGain          =        0.0,
+  .wUpperIntegralLimit =      500.0,
+  .wLowerIntegralLimit =     -500.0,
+  .hUpperOutputLimit   =     6000.0,
+  .hLowerOutputLimit   =    -6000.0,
 };
 
 Servo_t ServoHandle_M1 =
 {
     .Config = {
-      .IndexScanSpeed  =    2.0,
-      .TurnsPerStep    =    0.001,
-      .Inertia         =    0.5,
-      .TorqueBandwidth =   70.0,
-      .VelMaxAbs       =    8.0,
-      .TorMaxAbs       = 5000.0,
+      .IndexScanSpeed  =     3.0,
+      .TurnsPerStep    =     1.0 / 60000.0,
+      .Inertia         =     1.0,
+      .TorqueBandwidth =   200.0,
+      .VelMaxAbs       =   100.0,
+      .TorMaxAbs       =  6000.0,
+      .MaxPosStep      =     0.5, //bad news if we see too big of a step
     },
-    .State = UNINIT,
-    .PosSetpoint = 0.0f,
-    .VelSetpoint = 0.0f,
-    .TorSetpoint = 0.0f,
-    .Aligned = false,
-    .EncoderOffset = 0,
-    .StepDirOffset = 0,
+    .state = {
+      .State = UNINIT,
+      .PosSetpoint = 0.0f,
+      .VelSetpoint = 0.0f,
+      .TorSetpoint = 0.0f,
+      .Aligned = false,
+      .EncoderOffset = 0,
+      .StepDirOffset = 0,
+    }
 };

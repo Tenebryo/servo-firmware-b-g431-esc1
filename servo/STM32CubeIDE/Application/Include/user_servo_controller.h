@@ -31,6 +31,7 @@ typedef struct {
   float TurnsPerStep;
   float VelMaxAbs;
   float TorMaxAbs;
+  float MaxPosStep;
   float InputFiltKp;
   float InputFiltKi;
   float Inertia;
@@ -50,32 +51,42 @@ typedef enum {
   ENABLED_PIV,
   ENABLED_VELOCITY,
   ENABLED_TORQUE,
-} ServoState_t ;
+} ServoControllerState_t ;
+
+typedef struct {
+
+  ServoControllerState_t State;
+
+  float PosInput, VelInput, TorInput;
+  float PosSetpoint, VelSetpoint, TorSetpoint;
+  float Accel, Velocity, Position, RawPosition;
+  float MaxVelAbsObs, MaxAccAbsObs;
+
+
+  int32_t EncoderOffset, StepDirOffset;
+  int32_t EncoderPosition;
+  uint32_t LastEncoderCount;
+  uint16_t AnticoggingSamples;
+  uint16_t AnticoggingIndex;
+
+  float AnticoggingSum;
+  
+  bool Aligned;
+  bool AnticoggingCalibrated;
+  bool AnticoggingReturning;
+  
+} ServoState_t;
 
 typedef struct {
 
   ServoConfig_t Config;
 
-  ServoState_t State;
-
-  float PosInput, VelInput, TorInput;
-  float PosSetpoint, VelSetpoint, TorSetpoint;
-
-  bool Aligned;
-
-  int32_t EncoderOffset, StepDirOffset;
-  uint32_t LastEncoderCount;
-  int32_t EncoderPosition;
-
-  bool AnticoggingCalibrated;
-  bool AnticoggingReturning;
-  uint16_t AnticoggingSamples;
-  uint16_t AnticoggingIndex;
-  float AnticoggingSum;
-
-  ENCODER_Handle_t *Encoder;
-  SpeednTorqCtrl_Handle_t *TorqueController;
   FPID_Handle_t *PIDPosRegulator, *PIVPosRegulator, *PIVVelRegulator;
+
+  SpeednTorqCtrl_Handle_t *TorqueController;
+  ENCODER_Handle_t *Encoder;
+  
+  ServoState_t state;
 } Servo_t;
 
 
@@ -99,6 +110,7 @@ void SERVO_EnableTorque(Servo_t *self);
 void SERVO_EnablePositionFilter(Servo_t *self);
 void SERVO_EnableStepDirection(Servo_t *self);
 void SERVO_UpdatePositionFilter(Servo_t *self);
+void SERVO_UpdateDynamicState(Servo_t *self);
 float SERVO_GetPosition(Servo_t *self);
 float SERVO_GetVelocity(Servo_t *self);
 float SERVO_GetTorque(Servo_t *self);

@@ -12,20 +12,19 @@ typedef struct FPID_Handle
 {
   float   hDefKpGain;           
   float   hDefKiGain;           
+  float   hDefKdGain;           
   float   hKpGain;              
   float   hKiGain;              
-  float   wIntegralTerm;        
-  float   wUpperIntegralLimit;  
+  float   hKdGain;              
 
+  float   wUpperIntegralLimit;  
   float   wLowerIntegralLimit;
   float   aIntegratorDecay;
   
   float   hUpperOutputLimit;    
-  float   hLowerOutputLimit;    
+  float   hLowerOutputLimit;  
   
-  float   hDefKdGain;           
-  float   hKdGain;              
-  
+  float   wIntegralTerm;        
   float   wPrevProcessVarError; 
                                 
 } FPID_Handle_t;

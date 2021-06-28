@@ -8,6 +8,7 @@
 #include "mc_config.h"
 #include "user_calibration.h"
 #include "user_servo_controller.h"
+#include "virtual_speed_sensor.h"
 
 Calibration_t CalibrationHandle_M1;
 
@@ -16,9 +17,29 @@ float abs_f(float x) {
   return (x < 0) ? (-x) : (x);
 }
 
-
 bool CALIB_MeasureElectricCharacteristics(float Current) {
 
+  /*
+  // setup
+  FOCVars[M1].bDriveInput = EXTERNAL;
+  STC_SetSpeedSensor( pSTC[M1], &VirtualSpeedSensorM1._Super );
+  EAC_StartAlignment( &EncAlignCtrlM1 );
+
+  FOC_Clear( M1 );
+  R3_2_SwitchOnPWM( pwmcHandle[M1] );
+
+  // loop
+  qd_t IqdRef;
+  IqdRef.q = 0;
+  IqdRef.d = STC_CalcTorqueReference( pSTC[M1] );
+  FOCVars[M1].Iqdref = IqdRef;
+
+
+  // cleanup
+  R3_2_SwitchOffPWM( pwmcHandle[M1] );
+  STC_SetControlMode( pSTC[M1], STC_SPEED_MODE );
+  STC_SetSpeedSensor( pSTC[M1], &ENCODER_M1._Super );
+  // */
   return false;
 }
 
@@ -64,7 +85,7 @@ bool CALIB_MeasureAnticoggingTorque(float CalibrationMaxTime, float MaxPositionE
 
       if (AnticoggingSamples < StableSamples) {
         // the position has been stable, so take a sample
-        TorqueAvg += ServoHandle_M1.TorSetpoint;
+        TorqueAvg += ServoHandle_M1.state.TorSetpoint;
       }
       AnticoggingSamples--;
 
@@ -91,7 +112,7 @@ bool CALIB_MeasureAnticoggingTorque(float CalibrationMaxTime, float MaxPositionE
           AnticoggingIndex--;
         } else {
           // initialize the next sample point.
-          ServoHandle_M1.PosInput = COG_POS(AnticoggingIndex);
+          ServoHandle_M1.state.PosInput = COG_POS(AnticoggingIndex);
         }
       }
     }
@@ -111,10 +132,13 @@ void CALIB_MeasurePositionExtremum(float SearchTime, float SearchSpeed, float *L
 
   SERVO_EnableVelocity(&ServoHandle_M1);
 
-  ServoHandle_M1.VelInput = SearchSpeed;
 
-  // wait for a bit for the initial acceleration
-  HAL_Delay(500);
+  ServoHandle_M1.state.VelInput = SERVO_GetVelocity(&ServoHandle_M1);
+
+  for (int i = 0; i < 100; i++) {
+    ServoHandle_M1.state.VelInput = SearchSpeed * 0.01 + ServoHandle_M1.state.VelInput * 0.99;
+    HAL_Delay(5);
+  }
 
 
   float VelocityFiltered = SearchSpeed;
@@ -149,7 +173,7 @@ void CALIB_MeasureInertia(float Torque, float AccelTime) {
 
   SERVO_EnableTorque(&ServoHandle_M1);
 
-  ServoHandle_M1.TorInput = Torque;
+  ServoHandle_M1.state.TorInput = Torque;
 
   HAL_Delay(25);
 
@@ -163,13 +187,13 @@ void CALIB_MeasureInertia(float Torque, float AccelTime) {
   float EndVelocity = SERVO_GetVelocity(&ServoHandle_M1);
 
 
-  ServoHandle_M1.TorInput = 0;
+  ServoHandle_M1.state.TorInput = 0;
 
   HAL_Delay(100);
 
   float Acceleration = 0.5 * (EndVelocity * EndVelocity - StartVelocity * StartVelocity) / (EndPosition - StartPosition);
 
-  ServoHandle_M1.TorInput = -Torque;
+  ServoHandle_M1.state.TorInput = -Torque;
   HAL_Delay(AccelTime / 2);
 
   SERVO_Disable(&ServoHandle_M1);

@@ -8,9 +8,9 @@
 #ifndef APPLICATION_INCLUDE_USER_OSCILLOSCOPE_H_
 #define APPLICATION_INCLUDE_USER_OSCILLOSCOPE_H_
 
-#define OSCILLOSCOPE_SAMPLE_COUNT    (512)
-#define OSCILLOSCOPE_SAMPLE_INTERVAL (3)
-#define OSCILLOSCOPE_SAMPLE_SIZE     (4)
+#define OSCILLOSCOPE_SAMPLE_COUNT    (256)
+#define OSCILLOSCOPE_SAMPLE_INTERVAL (0)
+#define OSCILLOSCOPE_SAMPLE_SIZE     (8)
 
 #include "stdint.h"
 #include "stdbool.h"
@@ -39,6 +39,7 @@ typedef struct {
     bool Recording;
     uint32_t Index;
     uint32_t Interval;
+    uint32_t Length;
     SamplePoint_t Data[OSCILLOSCOPE_SAMPLE_COUNT];
 } Oscilloscope_t;
 

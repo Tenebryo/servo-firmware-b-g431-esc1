@@ -5,6 +5,7 @@ The B-G431-ESC development kit/board from ST is a tiny, low-cost system that is 
 ## Done
 
  * Position Control
+   * PID, PIV, Filtered Position PIV with Feedforward Velocity and torque
  * Step/direction input
 
 ## TODO

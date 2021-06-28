@@ -81,7 +81,7 @@ static volatile uint16_t hStopPermanencyCounterM1 = 0;
 uint8_t bMCBootCompleted = 0;
 
 /* USER CODE BEGIN Private Variables */
-
+uint32_t PostRunCounter = 25;
 /* USER CODE END Private Variables */
 
 /* Private functions ---------------------------------------------------------*/
@@ -311,7 +311,11 @@ __weak void TSK_MediumFrequencyTaskM1(void)
 {
   /* USER CODE BEGIN MediumFrequencyTask M1 0 */
 
-  SamplePoint_t Sample;
+  // SamplePoint_t Sample;
+
+  SERVO_UpdateDynamicState(&ServoHandle_M1);
+
+  // static uint32_t PostRunCounter = 100;
   /* USER CODE END MediumFrequencyTask M1 0 */
 
   State_t StateM1;
@@ -480,22 +484,7 @@ __weak void TSK_MediumFrequencyTaskM1(void)
     FOC_CalcCurrRef( M1 );
 
     /* USER CODE BEGIN MediumFrequencyTask M1 3 */
-
-    if (OSC_CheckInterval(&OscilloscopeHandle_M1)) {
-
-      // get configured data point
-
-      qd_t Current = MC_GetIqdMotor1();
-      float Position = SERVO_GetPosition(&ServoHandle_M1);
-      float Velocity = SERVO_GetVelocity(&ServoHandle_M1);
-
-      Sample.Sample[0] = Current.q;
-      Sample.Sample[1] = Current.d;
-      Sample.Sample[2] = Position;
-      Sample.Sample[3] = Velocity;
-
-      OSC_AddPoint(&OscilloscopeHandle_M1, &Sample);
-    }
+    PostRunCounter = 25;
 
     /* USER CODE END MediumFrequencyTask M1 3 */
     break;
@@ -729,6 +718,30 @@ __weak uint8_t TSK_HighFrequencyTask(void)
     /* USER CODE END HighFrequencyTask SINGLEDRIVE_3 */
   }
   /* USER CODE BEGIN HighFrequencyTask 1 */
+
+
+  if (OSC_CheckInterval(&OscilloscopeHandle_M1) && PostRunCounter > 0) {
+    
+    SamplePoint_t Sample;
+
+    // get configured data point
+
+    qd_t Current = MC_GetIqdMotor1();
+    qd_t Voltage = MC_GetVqdMotor1();
+    float Position = (1.0 / 60000.0) * (int32_t)(TIM4->CNT);
+    float Velocity = SERVO_GetVelocity(&ServoHandle_M1);
+
+    Sample.Sample[0] = Current.q;
+    Sample.Sample[1] = Current.d;
+    Sample.Sample[2] = Voltage.q;
+    Sample.Sample[3] = Voltage.d;
+    Sample.Sample[4] = Position;
+    Sample.Sample[5] = Velocity;
+
+    OSC_AddPoint(&OscilloscopeHandle_M1, &Sample);
+
+    PostRunCounter--;
+  }
 
   /* USER CODE END HighFrequencyTask 1 */
 

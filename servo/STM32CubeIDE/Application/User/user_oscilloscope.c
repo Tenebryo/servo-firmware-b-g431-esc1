@@ -17,6 +17,11 @@ void OSC_Init(Oscilloscope_t *self) {
     self->Interval = 0;
     self->Index = 0;
     self->Recording = true;
+
+    self->Length = OSCILLOSCOPE_SAMPLE_COUNT;
+
+    // self->DataPtr = &(self->Data);
+    // self->Size = sizeof(SamplePoint_t[256]);
 }
 
 
@@ -40,6 +45,8 @@ void OSC_AddPoint(Oscilloscope_t *self, SamplePoint_t *DataPoint) {
         self->Data[self->Index].Sample[1] = DataPoint->Sample[1];
         self->Data[self->Index].Sample[2] = DataPoint->Sample[2];
         self->Data[self->Index].Sample[3] = DataPoint->Sample[3];
+        self->Data[self->Index].Sample[4] = DataPoint->Sample[4];
+        self->Data[self->Index].Sample[5] = DataPoint->Sample[5];
         self->Index++;
 
         if (self->Index >= OSCILLOSCOPE_SAMPLE_COUNT) {
