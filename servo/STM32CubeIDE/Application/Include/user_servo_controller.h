@@ -64,8 +64,6 @@ typedef struct {
 
 
   int32_t EncoderOffset, StepDirOffset;
-  int32_t EncoderPosition;
-  uint32_t LastEncoderCount;
   uint16_t AnticoggingSamples;
   uint16_t AnticoggingIndex;
 
@@ -74,7 +72,7 @@ typedef struct {
   bool Aligned;
   bool AnticoggingCalibrated;
   bool AnticoggingReturning;
-  
+
 } ServoState_t;
 
 typedef struct {

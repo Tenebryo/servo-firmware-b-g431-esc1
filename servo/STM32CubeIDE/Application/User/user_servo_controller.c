@@ -50,9 +50,6 @@ void SERVO_Init(Servo_t * self, ENCODER_Handle_t *Encoder, SpeednTorqCtrl_Handle
 
     SERVO_UpdatePositionFilter(self);
 
-    self->state.LastEncoderCount = TIM4->CNT;
-    self->state.EncoderPosition = self->state.LastEncoderCount;
-
     self->Encoder = Encoder;
     self->TorqueController = TorqueController;
 
@@ -96,15 +93,8 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   PrevTorCmd = self->state.TorSetpoint;
 
-  self->state.EncoderPosition = TIM4->CNT;
-
   // some control modes only add to the torque setpoint, so we need to clear it here.
   self->state.TorSetpoint = 0.0f;
-
-  // self->state.EncoderPosition = SPD_GetMecAngle(&ENCODER_M1._Super) + self->state.EncoderOffset;
-  // self->state.EncoderPosition = SPD_GetMecAngle(&ENCODER_M1._Super) + self->state.EncoderOffset;
-  // VelActual = HZ_PER_SPEED_UNIT      * (float)SPD_GetAvrgMecSpeedUnit(&self->state.Encoder->_Super);
-  // PosActual = TURNS_PER_ENCODER_COUNT * (float)(self->state.EncoderPosition);
 
   PosActual = self->state.Position;
   VelActual = self->state.Velocity;
