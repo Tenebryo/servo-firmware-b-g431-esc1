@@ -33,6 +33,8 @@ float clamp_f(float x, float min, float max) {
   }
 }
 
+float EvalPIController( float kp, float ki, float max, float error, float *integrator);
+
 
 // float abs_f(float x) {
 //   return (x < 0) ? (-x) : (x);
@@ -213,8 +215,8 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     PosCmd = self->state.PosSetpoint;
     // control position with velocity, then velocity with torque, adding in the feedforward terms
 
-    VelCmd += FPID_Controller(self->PIVPosRegulator, PosCmd - PosActual, DeltaTime);
-    
+    VelCmd += self->Config.PositionGain * (PosCmd - PosActual);
+
 
   case ENABLED_VELOCITY:
 
@@ -228,7 +230,7 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     // limit the set velocity
     VelCmd = clamp_f(VelCmd, -self->Config.VelMaxAbs, self->Config.VelMaxAbs);
 
-    TorCmd += FPID_Controller(self->PIVVelRegulator, VelCmd - VelActual, DeltaTime);
+    TorCmd += EvalPIController(self->Config.VelocityGain, self->Config.VelocityIntegratorGain, self->Config.VelocityIntegratorMaxAbs, VelCmd - VelActual, &self->state.VelocityIntegrator);
 
   case ENABLED_TORQUE:
 
@@ -543,13 +545,17 @@ FPID_Handle_t PIVVelHandle_M1 = {
 Servo_t ServoHandle_M1 =
 {
     .Config = {
-      .IndexScanSpeed  =     3.0,
-      .TurnsPerStep    =     1.0 / 60000.0,
-      .Inertia         =     1.0,
-      .TorqueBandwidth =   200.0,
-      .VelMaxAbs       =   100.0,
-      .TorMaxAbs       =  6000.0,
-      .MaxPosStep      =     0.5, //bad news if we see too big of a step
+      .PositionGain             =   200.0,
+      .VelocityGain             =  2000.0,
+      .VelocityIntegratorGain   =     1.0,
+      .VelocityIntegratorMaxAbs =   500.0,
+      .IndexScanSpeed           =     3.0,
+      .TurnsPerStep             =     1.0 / 60000.0,
+      .Inertia                  =     1.0,
+      .TorqueBandwidth          =   200.0,
+      .VelMaxAbs                =   100.0,
+      .TorMaxAbs                =  6000.0,
+      .MaxPosStep               =     0.5, //bad news if we see too big of a step
     },
     .state = {
       .State = UNINIT,
@@ -561,3 +567,15 @@ Servo_t ServoHandle_M1 =
       .StepDirOffset = 0,
     }
 };
+
+
+float EvalPIController( float kp, float ki, float max, float error, float *integrator)
+{
+
+  *integrator += ki * error;
+
+  *integrator = (*integrator >  max) ?  max : *integrator;
+  *integrator = (*integrator < -max) ? -max : *integrator;
+  
+  return (kp * error) + (*integrator);
+}

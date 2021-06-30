@@ -27,6 +27,10 @@ extern float ServoTempInputPos;
 #define COG_POSITION_STABILITY_WAIT (128)
 
 typedef struct {
+  float PositionGain;
+  float VelocityGain;
+  float VelocityIntegratorGain;
+  float VelocityIntegratorMaxAbs;
   float IndexScanSpeed;
   float TurnsPerStep;
   float VelMaxAbs;
@@ -62,6 +66,7 @@ typedef struct {
   float Accel, Velocity, Position, RawPosition;
   float MaxVelAbsObs, MaxAccAbsObs;
 
+  float VelocityIntegrator;
 
   int32_t EncoderOffset, StepDirOffset;
   uint16_t AnticoggingSamples;
