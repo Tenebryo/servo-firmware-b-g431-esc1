@@ -20,6 +20,8 @@ typedef enum {
     SetTorqueControl,
     ClearFaultState,
     PositionCommand,
+    VelocityCommand,
+    TorqueCommand,
     FindUpperMotionLimit,
     FindLowerMotionLimit,
     LoadServoConfig,
@@ -33,6 +35,12 @@ typedef struct {
         struct {
             float position;
         } position_command;
+        struct {
+            float velocity;
+        } velocity_command;
+        struct {
+            float torque;
+        } torque_command;
     };
 } SWDCommand_t;
 

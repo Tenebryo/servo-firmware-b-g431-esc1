@@ -139,8 +139,10 @@ void MAIN_Init(void) {
         SERVO_EnablePositionFilter(&ServoHandle_M1);
         break;
       case SetVelocityControl:
+        SERVO_EnableVelocity(&ServoHandle_M1);
         break;
       case SetTorqueControl:
+        SERVO_EnableTorque(&ServoHandle_M1);
         break;
       case ClearFaultState:
         MC_AcknowledgeFaultMotor1();
@@ -150,8 +152,10 @@ void MAIN_Init(void) {
         ServoHandle_M1.state.PosInput = command.position_command.position;
         break;
       case FindUpperMotionLimit:
+        ServoHandle_M1.state.VelInput = command.velocity_command.velocity;
         break;
       case FindLowerMotionLimit:
+        ServoHandle_M1.state.TorInput = command.torque_command.torque;
         break;
       case LoadServoConfig:
         CONFIG_Load();
