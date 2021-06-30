@@ -95,6 +95,8 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
 
   PrevTorCmd = self->state.TorSetpoint;
 
+  SERVO_UpdatePositionFilter(self);
+
   // some control modes only add to the torque setpoint, so we need to clear it here.
   self->state.TorSetpoint = 0.0f;
 
@@ -241,15 +243,15 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     TorCmd += self->state.TorSetpoint;
 
     // only add anticogging compensation when were aren't calibrating it
-    if (self->state.State != ANTICOGGING_CALIBRATION && self->state.AnticoggingCalibrated) {
-      // add anticogging feedforward term. The actual torque feedforward term is interpolated between the two
-      // nearest cogging torque sample points.
-      CogPointIndex = COG_INDEX(PosActual);
-      TorCmd += (
-        (PosActual - COG_POS(CogPointIndex))     * COG_POSITION_ERR_EPS * self->Config.AntcoggingTorque[(CogPointIndex    ) % COGGING_TORQUE_POINTS] + 
-        (COG_POS(CogPointIndex + 1) - PosActual) * COG_POSITION_ERR_EPS * self->Config.AntcoggingTorque[(CogPointIndex + 1) % COGGING_TORQUE_POINTS]
-      );
-    }
+    // if (self->state.State != ANTICOGGING_CALIBRATION && self->state.AnticoggingCalibrated) {
+    //   // add anticogging feedforward term. The actual torque feedforward term is interpolated between the two
+    //   // nearest cogging torque sample points.
+    //   CogPointIndex = COG_INDEX(PosActual);
+    //   TorCmd += (
+    //     (PosActual - COG_POS(CogPointIndex))     * COG_POSITION_ERR_EPS * self->Config.AntcoggingTorque[(CogPointIndex    ) % COGGING_TORQUE_POINTS] + 
+    //     (COG_POS(CogPointIndex + 1) - PosActual) * COG_POSITION_ERR_EPS * self->Config.AntcoggingTorque[(CogPointIndex + 1) % COGGING_TORQUE_POINTS]
+    //   );
+    // }
 
 
     break;
@@ -351,9 +353,9 @@ void SERVO_CalibrateAnticogging(Servo_t * self) {
   if (self->state.Aligned && self->state.State == DISABLED) {
 
     // Clear the cogging torque buffer.
-    for (int i = 0; i < COGGING_TORQUE_POINTS; i++) {
-      self->Config.AntcoggingTorque[i] = 0.0;
-    }
+    // for (int i = 0; i < COGGING_TORQUE_POINTS; i++) {
+    //   self->Config.AntcoggingTorque[i] = 0.0;
+    // }
 
     // initialize anticogging calibration state variables
     self->state.AnticoggingSamples = COG_POSITION_SAMPLES + COG_POSITION_STABILITY_WAIT;

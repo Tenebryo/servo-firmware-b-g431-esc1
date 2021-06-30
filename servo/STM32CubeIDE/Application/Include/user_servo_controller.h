@@ -41,7 +41,7 @@ typedef struct {
   float Inertia;
   float TorqueBandwidth;
   float VelPLLKi;
-  float AntcoggingTorque[COGGING_TORQUE_POINTS];
+  // float AntcoggingTorque[COGGING_TORQUE_POINTS];
 } ServoConfig_t;
 
 typedef enum {
