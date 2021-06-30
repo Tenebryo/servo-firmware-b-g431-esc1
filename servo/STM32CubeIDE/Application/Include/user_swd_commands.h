@@ -22,6 +22,8 @@ typedef enum {
     PositionCommand,
     FindUpperMotionLimit,
     FindLowerMotionLimit,
+    LoadServoConfig,
+    SaveServoConfig,
 } SWDCommandType_t;
 
 typedef struct {

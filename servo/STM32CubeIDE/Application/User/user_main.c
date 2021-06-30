@@ -153,6 +153,12 @@ void MAIN_Init(void) {
         break;
       case FindLowerMotionLimit:
         break;
+      case LoadServoConfig:
+        CONFIG_Load();
+        break;
+      case SaveServoConfig:
+        CONFIG_Save();
+        break;
       default:
         break;
       }

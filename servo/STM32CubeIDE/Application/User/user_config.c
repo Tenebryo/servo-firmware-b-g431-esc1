@@ -8,7 +8,7 @@
 #include "user_config.h"
 #include "stm32g4xx_hal.h"
 
-#define CONFIG_FLASH_ADDRESS (0x08007C00)
+#define CONFIG_FLASH_ADDRESS (0x0801FC00)
 
 ConfigPointers_t ConfigPointers;
 ConfigFlashStorage_t *ConfigFlashStorage = (ConfigFlashStorage_t *)CONFIG_FLASH_ADDRESS;
@@ -57,31 +57,44 @@ void CONFIG_Init() {
         // invalid stored parameters, write the default ones
         CONFIG_Save();
     }
+
+    CONFIG_Load();
 }
 
 void CONFIG_Load() {
 
-    *(ConfigPointers.servo_config) = ConfigFlashStorage->servo_config;
+    uint32_t crc = 0;
+    crc32((void*)ConfigFlashStorage, sizeof(ConfigFlashStorage_t) - 4, &crc);
+
+    if (crc == ConfigFlashStorage->crc) {
+        *(ConfigPointers.servo_config) = ConfigFlashStorage->servo_config;
+    }
 }
 
 void CONFIG_Save() {
+    // collect the data to be saved
+
+    ConfigFlashStorage_t SaveFlashData = {
+        .servo_config = *ConfigPointers.servo_config
+    };
+    // calculate the crc
+    crc32((void*)&SaveFlashData, sizeof(ConfigFlashStorage_t) - 4, &SaveFlashData.crc);
+
     HAL_FLASH_Unlock();
 
     FLASH_EraseInitTypeDef FLASH_EraseInitStruct = {0};
 
     FLASH_EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
-    FLASH_EraseInitStruct.Page = CONFIG_FLASH_ADDRESS;
+    FLASH_EraseInitStruct.Page = 127;
     FLASH_EraseInitStruct.Banks = FLASH_BANK_BOTH;
     FLASH_EraseInitStruct.NbPages = 1;
 
     uint32_t error = 0;
     HAL_FLASHEx_Erase(&FLASH_EraseInitStruct, &error);
 
-    // calculate the crc
-    crc32((void*)ConfigFlashStorage, sizeof(ConfigFlashStorage_t) - 4, &ConfigFlashStorage->crc);
 
-    for (uint32_t i = 0; i < sizeof(ConfigFlashStorage); i+=8) {
-        HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,CONFIG_FLASH_ADDRESS + i, *(uint64_t*)(((void *) &ConfigFlashStorage) + i));
+    for (uint32_t i = 0; i < sizeof(ConfigFlashStorage_t); i += 8) {
+        HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, CONFIG_FLASH_ADDRESS + i, *(uint64_t*)(((void *) &SaveFlashData) + i));
     }
 
     HAL_FLASH_Lock();
