@@ -25,8 +25,16 @@ typedef struct {
     SWDCommandBuffer_t *swd_command_buffer;
 } ConfigPointers_t;
 
-extern ConfigPointers_t ConfigurationData;
+typedef struct {
+    ServoConfig_t servo_config;
+    uint32_t crc;
+} ConfigFlashStorage_t;
+
+extern ConfigPointers_t ConfigPointers;
+extern ConfigFlashStorage_t *ConfigFlashStorage;
 
 void CONFIG_Init();
+void CONFIG_Load();
+void CONFIG_Save();
 
 #endif /* APPLICATION_INCLUDE_USER_CONFIG_H_ */
