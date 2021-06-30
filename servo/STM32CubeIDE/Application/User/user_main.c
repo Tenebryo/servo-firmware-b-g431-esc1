@@ -143,6 +143,8 @@ void MAIN_Init(void) {
       case SetTorqueControl:
         break;
       case ClearFaultState:
+        MC_AcknowledgeFaultMotor1();
+        MC_StopMotor1();
         break;
       case PositionCommand:
         ServoHandle_M1.state.PosInput = command.position_command.position;
