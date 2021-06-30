@@ -81,7 +81,7 @@ void CONFIG_Save() {
     crc32((void*)ConfigFlashStorage, sizeof(ConfigFlashStorage_t) - 4, &ConfigFlashStorage->crc);
 
     for (uint32_t i = 0; i < sizeof(ConfigFlashStorage); i+=8) {
-        HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,CONFIG_FLASH_ADDRESS + i, ((void *) &ConfigFlashStorage) + i);
+        HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,CONFIG_FLASH_ADDRESS + i, *(uint64_t*)(((void *) &ConfigFlashStorage) + i));
     }
 
     HAL_FLASH_Lock();
