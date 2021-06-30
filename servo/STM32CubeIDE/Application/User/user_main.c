@@ -13,6 +13,7 @@
 #include "user_calibration.h"
 #include "user_potentiometer.h"
 #include "user_config.h"
+#include "user_swd_commands.h"
 
 float Middle = 0.0;
 
@@ -123,6 +124,38 @@ void MAIN_Init(void) {
   POT_ReadValue(&PotRawValue);
 
   PotentiometerOffset = ((float) PotRawValue) * (1.0f / 65536.0f);
+
+  while (1) {
+    SWDCommand_t command;
+    while (SWD_GetNextCommand(&command)) {
+      switch (command.ty) {
+      case MotorStop:
+        MC_StopMotor1();
+        break;
+      case MotorStart:
+        MC_StartMotor1();
+        break;
+      case SetPositionControl:
+        SERVO_EnablePositionFilter(&ServoHandle_M1);
+        break;
+      case SetVelocityControl:
+        break;
+      case SetTorqueControl:
+        break;
+      case ClearFaultState:
+        break;
+      case PositionCommand:
+        ServoHandle_M1.state.PosInput = command.position_command.position;
+        break;
+      case FindUpperMotionLimit:
+        break;
+      case FindLowerMotionLimit:
+        break;
+      default:
+        break;
+      }
+    }
+  }
 }
 
 uint32_t WaveformIndex = 32;

@@ -314,6 +314,35 @@ __weak void TSK_MediumFrequencyTaskM1(void)
   // SamplePoint_t Sample;
 
   SERVO_UpdateDynamicState(&ServoHandle_M1);
+  
+
+  if (OSC_CheckInterval(&OscilloscopeHandle_M1)) {
+    
+    SamplePoint_t Sample;
+
+    // get configured data point
+
+    qd_t Current = MC_GetIqdMotor1();
+    qd_t Voltage = MC_GetVqdMotor1();
+    float Position = SERVO_GetPosition(&ServoHandle_M1);
+    // float Position = (1.0 / 60000.0) * (int32_t)(TIM4->CNT);
+    float Velocity = SERVO_GetVelocity(&ServoHandle_M1);
+
+    Sample.Sample[0] = Position;
+    Sample.Sample[1] = Velocity;
+    Sample.Sample[2] = ServoHandle_M1.state.Accel;
+    Sample.Sample[3] = ServoHandle_M1.state.PosSetpoint;
+    Sample.Sample[4] = ServoHandle_M1.state.VelSetpoint;
+    Sample.Sample[5] = ServoHandle_M1.state.TorSetpoint;
+    Sample.Sample[6] = ServoHandle_M1.state.PosInput;
+    Sample.Sample[7] = ServoHandle_M1.state.VelInput;
+    // Sample.Sample[4] = Current.q;
+    // Sample.Sample[5] = Current.d;
+    // Sample.Sample[6] = Voltage.q;
+    // Sample.Sample[7] = Voltage.d;
+
+    OSC_AddPoint(&OscilloscopeHandle_M1, &Sample);
+  }
 
   // static uint32_t PostRunCounter = 100;
   /* USER CODE END MediumFrequencyTask M1 0 */
@@ -720,28 +749,28 @@ __weak uint8_t TSK_HighFrequencyTask(void)
   /* USER CODE BEGIN HighFrequencyTask 1 */
 
 
-  if (OSC_CheckInterval(&OscilloscopeHandle_M1) && PostRunCounter > 0) {
+  // if (OSC_CheckInterval(&OscilloscopeHandle_M1) && PostRunCounter > 0) {
     
-    SamplePoint_t Sample;
+  //   SamplePoint_t Sample;
 
-    // get configured data point
+  //   // get configured data point
 
-    qd_t Current = MC_GetIqdMotor1();
-    qd_t Voltage = MC_GetVqdMotor1();
-    float Position = (1.0 / 60000.0) * (int32_t)(TIM4->CNT);
-    float Velocity = SERVO_GetVelocity(&ServoHandle_M1);
+  //   qd_t Current = MC_GetIqdMotor1();
+  //   qd_t Voltage = MC_GetVqdMotor1();
+  //   float Position = (1.0 / 60000.0) * (int32_t)(TIM4->CNT);
+  //   float Velocity = SERVO_GetVelocity(&ServoHandle_M1);
 
-    Sample.Sample[0] = Current.q;
-    Sample.Sample[1] = Current.d;
-    Sample.Sample[2] = Voltage.q;
-    Sample.Sample[3] = Voltage.d;
-    Sample.Sample[4] = Position;
-    Sample.Sample[5] = Velocity;
+  //   Sample.Sample[0] = Current.q;
+  //   Sample.Sample[1] = Current.d;
+  //   Sample.Sample[2] = Voltage.q;
+  //   Sample.Sample[3] = Voltage.d;
+  //   Sample.Sample[4] = Position;
+  //   Sample.Sample[5] = Velocity;
 
-    OSC_AddPoint(&OscilloscopeHandle_M1, &Sample);
+  //   OSC_AddPoint(&OscilloscopeHandle_M1, &Sample);
 
-    PostRunCounter--;
-  }
+  //   PostRunCounter--;
+  // }
 
   /* USER CODE END HighFrequencyTask 1 */
 

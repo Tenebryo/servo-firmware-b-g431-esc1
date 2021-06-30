@@ -12,6 +12,7 @@
 
 #include "user_servo_controller.h"
 #include "user_oscilloscope.h"
+#include "user_swd_commands.h"
 
 typedef struct {
     // magic bytes to 
@@ -21,6 +22,7 @@ typedef struct {
     ServoState_t *servo_state;
     Oscilloscope_t *oscilloscope;
     SamplePoint_t *oscilloscope_data;
+    SWDCommandBuffer_t *swd_command_buffer;
 } ConfigPointers_t;
 
 extern ConfigPointers_t ConfigurationData;

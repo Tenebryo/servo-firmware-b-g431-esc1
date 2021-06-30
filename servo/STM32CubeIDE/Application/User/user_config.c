@@ -8,6 +8,7 @@
 #include "user_config.h"
 
 ConfigPointers_t ConfigurationData;
+extern ConfigPointers_t *_ptr_list_addr;
 
 void CONFIG_Init() {
     // Magic byte sequence exists to check if we read the correct struct
@@ -23,6 +24,10 @@ void CONFIG_Init() {
     ConfigurationData.servo_state = &ServoHandle_M1.state;
     ConfigurationData.oscilloscope = &OscilloscopeHandle_M1;
     ConfigurationData.oscilloscope_data = &OscilloscopeHandle_M1.Data[0];
+    ConfigurationData.swd_command_buffer = &SWDBufferInfo;
+
+    // write the address in a location we can always find.
+    _ptr_list_addr = &ConfigurationData;
 
     ConfigurationData.ready = 1;
 }

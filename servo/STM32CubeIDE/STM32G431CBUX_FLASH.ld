@@ -128,6 +128,8 @@ SECTIONS
   {
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
+    _ptr_list_addr = .;/* create a fixed location variable */
+    . = . + 4;
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
 
