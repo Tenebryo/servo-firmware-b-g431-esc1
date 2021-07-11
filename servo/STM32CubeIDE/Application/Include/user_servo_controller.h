@@ -32,7 +32,7 @@ typedef struct {
   float VelocityIntegratorGain;
   float VelocityIntegratorMaxAbs;
   float IndexScanSpeed;
-  float TurnsPerStep;
+  float StepsPerTurn;
   float VelMaxAbs;
   float TorMaxAbs;
   float MaxPosStep;

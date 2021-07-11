@@ -129,7 +129,7 @@ void SERVO_ControlPosition(Servo_t * self, float DeltaTime) {
     break;
 
   case ENABLED_STEP_DIRECTION:
-    self->state.PosInput = self->Config.TurnsPerStep * (float) (STEPDIR_GetInputPosition() + self->state.StepDirOffset);
+    self->state.PosInput = (1.0 / self->Config.StepsPerTurn) * (float) (STEPDIR_GetInputPosition() + self->state.StepDirOffset);
     // cascade to filter the step/direction inputs
 
   case ENABLED_POSITION_FILTER:
@@ -497,7 +497,7 @@ void SERVO_UpdateDynamicState(Servo_t *self) {
   float PrevVelocity = self->state.Velocity;
 
   // TODO: configurable filter parameters
-  self->state.Velocity = 0.9 * self->state.Velocity + 0.1 * InstVelocity;
+  self->state.Velocity = 0.8 * self->state.Velocity + 0.2 * InstVelocity;
 
   float InstAccel = (self->state.Velocity - PrevVelocity) * SERVO_LOOP_HZ;
 
@@ -552,7 +552,7 @@ Servo_t ServoHandle_M1 =
       .VelocityIntegratorGain   =     1.0,
       .VelocityIntegratorMaxAbs =   500.0,
       .IndexScanSpeed           =     3.0,
-      .TurnsPerStep             =     1.0 / 60000.0,
+      .StepsPerTurn             =     60000.0,
       .Inertia                  =     1.0,
       .TorqueBandwidth          =   200.0,
       .VelMaxAbs                =   100.0,

@@ -47,6 +47,8 @@ void OSC_AddPoint(Oscilloscope_t *self, SamplePoint_t *DataPoint) {
         self->Data[self->Index].Sample[3] = DataPoint->Sample[3];
         self->Data[self->Index].Sample[4] = DataPoint->Sample[4];
         self->Data[self->Index].Sample[5] = DataPoint->Sample[5];
+        self->Data[self->Index].Sample[6] = DataPoint->Sample[6];
+        self->Data[self->Index].Sample[7] = DataPoint->Sample[7];
         self->Index++;
 
         if (self->Index >= OSCILLOSCOPE_SAMPLE_COUNT) {

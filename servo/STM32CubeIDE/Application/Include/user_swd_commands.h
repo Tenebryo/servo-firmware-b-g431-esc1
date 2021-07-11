@@ -26,6 +26,7 @@ typedef enum {
     FindLowerMotionLimit,
     LoadServoConfig,
     SaveServoConfig,
+    SetMotionProfile,
 } SWDCommandType_t;
 
 typedef struct {
@@ -41,6 +42,9 @@ typedef struct {
         struct {
             float torque;
         } torque_command;
+        struct {
+            uint32_t profile;
+        } motion_profile_command;
     };
 } SWDCommand_t;
 
