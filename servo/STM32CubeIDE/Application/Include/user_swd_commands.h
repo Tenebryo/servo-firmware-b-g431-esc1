@@ -15,6 +15,7 @@
 typedef enum {
     MotorStop,
     MotorStart,
+    SetStepDirectionControl,
     SetPositionControl,
     SetVelocityControl,
     SetTorqueControl,

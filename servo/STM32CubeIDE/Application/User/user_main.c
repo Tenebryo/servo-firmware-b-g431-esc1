@@ -142,6 +142,9 @@ void MAIN_Init(void) {
       case MotorStart:
         MC_StartMotor1();
         break;
+      case SetStepDirectionControl:
+        SERVO_EnableStepDirection(&ServoHandle_M1);
+        break;
       case SetPositionControl:
         SERVO_EnablePositionFilter(&ServoHandle_M1);
         break;
